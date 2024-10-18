@@ -1,0 +1,19 @@
+// Vimeo or Youtube URL used as a background
+
+.wp-block-cover__video-background__external{
+    position: absolute;
+    width: 100%;
+    inset: 0;
+
+    iframe{
+        box-sizing: border-box;
+        width: 177.77777778vh!important;
+        height: 56.25vw!important;
+        min-width: 100%;
+        min-height: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
