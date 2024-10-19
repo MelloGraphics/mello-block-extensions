@@ -20,11 +20,13 @@ const addFAQSchemaControl = ( BlockEdit ) => ( props ) => {
 		<>
 			<BlockEdit {...props} />
 			<InspectorControls>
+			<div class="enable-faq-schema-container">
 				<ToggleControl
 					label={__('Enable FAQ Schema', 'enable-faq-schema')}
 					checked={hasFAQSchema}
 					onChange={onToggleChange}
 				/>
+			</div>
 			</InspectorControls>
 		</>
 	);

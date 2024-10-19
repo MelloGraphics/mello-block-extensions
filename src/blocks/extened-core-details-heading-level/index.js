@@ -20,7 +20,7 @@ const addHeadingLevelControl = ( BlockEdit ) => ( props ) => {
 		<>
 			<BlockEdit {...props} />
 			<InspectorControls>
-				<SelectControl
+				<div class="enable-faq-schema-container"><SelectControl
 					label={__('Heading Level', 'heading-level')}
 					value={level}
 					options={[
@@ -32,7 +32,7 @@ const addHeadingLevelControl = ( BlockEdit ) => ( props ) => {
 						{ label: __('H6', 'heading-level'), value: '6' },
 					]}
 					onChange={onLevelChange}
-				/>
+				/></div>
 			</InspectorControls>
 		</>
 	);

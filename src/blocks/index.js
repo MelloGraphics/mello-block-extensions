@@ -11,6 +11,7 @@
 
 import "./extened-core-columns";
 import "./extened-core-cover-ext-video";
+// import "./extened-core-details-additional-blocks";
 import "./extened-core-details-heading-level";
 import "./extened-core-details-schema";
 import "./extened-core-group";
