@@ -1,17 +1,26 @@
 {
   "name": "mello-block-extensions",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "MelloBase Block Extensions",
+  "author": "Ashley Pickering",
+  "license": "GPL-2.0-or-later",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "wp-scripts build",
-    "start": "wp-scripts start"
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "lint:js:src": "wp-scripts lint-js ./src",
+    "lint:js:src:fix": "wp-scripts lint-js ./src --fix",
+    "start": "wp-scripts start",
+    "packages-update": "wp-scripts packages-update",
+    "update-pot": "wp i18n make-pot . languages/mello-block-extensions.pot --exclude=src",
+    "prepare": "wp-scripts build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "dependencies": {
+    "classnames": "^2.3.2"
+  },
   "devDependencies": {
-    "@wordpress/scripts": "^30.1.0"
+    "@wordpress/icons": "^9.35.0",
+    "@wordpress/scripts": "^26.15.0",
+    "glob": "^11.0.0"
   }
 }

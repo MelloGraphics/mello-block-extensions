@@ -2,7 +2,6 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import './editor.scss';
 
 /**
  * Add the attribute needed for the block.

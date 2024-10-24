@@ -1,8 +1,0 @@
-.enable-reverse-direction-container{margin-top:-8px;padding:0 16px 16px}
-@media(min-width:0)and (max-width:767px){.wp-block-columns.mello-columns-reverse-on-phone{flex-direction:column-reverse}}
-.cover-video-background iframe{height:100%;left:0;position:absolute;top:0;width:100%}
-.wp-block-cover__video-background__external{inset:0;position:absolute;width:100%}.wp-block-cover__video-background__external iframe{box-sizing:border-box;height:56.25vw!important;left:50%;min-height:100%;min-width:100%;position:absolute;top:50%;transform:translate(-50%,-50%);width:177.77777778vh!important}
-.enable-faq-schema-container{margin-top:-8px;padding:0 16px 16px}
-
-.edit-post-meta-boxes-area #poststuff h2.hndle{color:#1e1e1e!important;font-size:inherit!important;font-weight:500!important;padding:0 17px!important}.edit-post-meta-boxes-area .postbox .handlediv{margin-right:6px!important}
-video.mello-featured-video{height:100%;inset:0;-o-object-fit:cover;object-fit:cover;position:absolute;width:100%}

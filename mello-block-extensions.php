@@ -34,6 +34,11 @@ if ( ! class_exists( 'Mello\Block_Extensions' ) ) {
         private $public_style_handle;
 
         /**
+         * @var string $public_script_handle the public script handle id
+         */
+        private $public_script_handle;
+
+        /**
          * Constructor for setting up handles and hooks.
          */
         public function __construct() {
@@ -42,6 +47,7 @@ if ( ! class_exists( 'Mello\Block_Extensions' ) ) {
             $this->editor_script_handle = 'mello-block-editor-script';
             $this->editor_style_handle  = 'mello-block-editor-style';
             $this->public_style_handle  = 'mello-block-style';
+            $this->public_script_handle  = 'mello-block-frontend-script'; // New handle for frontend script
 
             // Register the hooks to enqueue block assets.
             $this->register_hooks();
@@ -53,33 +59,38 @@ if ( ! class_exists( 'Mello\Block_Extensions' ) ) {
         public function register_hooks() {
             // Hook for editor-only assets.
             add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
-            // Hook for both editor and frontend assets.
-            add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
+            // Hook for frontend-only assets.
+            add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
         }
 
         /**
-         * Enqueue CSS and JS assets for both editor and frontend.
-         * @hooked enqueue_block_assets
+         * Enqueue frontend-specific CSS and JS assets.
          */
-        public function enqueue_block_assets() {
-            $style_css = 'index.css'; // Adjust your CSS filename here.
-
+        public function enqueue_frontend_assets() {
             // Enqueue the public-facing styles for the blocks.
             wp_enqueue_style(
                 $this->public_style_handle,
-                plugin_dir_url( __FILE__ ) . 'build/' . $style_css,
+                plugin_dir_url( __FILE__ ) . 'build/frontend.css',
                 array(),
-                filemtime( plugin_dir_path( __FILE__ ) . 'build/' . $style_css ) // Cache-busting using file modification time.
+                filemtime( plugin_dir_path( __FILE__ ) . 'build/frontend.css' ) // Cache-busting using file modification time.
+            );
+
+            // Enqueue the public-facing script (frontend.js).
+            wp_enqueue_script(
+                $this->public_script_handle,
+                plugin_dir_url( __FILE__ ) . 'build/view.js', // Adjust the path to your frontend.js file
+                array(), // Add dependencies if needed
+                filemtime( plugin_dir_path( __FILE__ ) . 'build/view.js' ), // Cache-busting using file modification time.
+                true // Load in footer
             );
         }
 
         /**
          * Enqueue editor-specific JS and CSS assets.
-         * @hooked enqueue_block_editor_assets
          */
         public function enqueue_block_editor_assets() {
             // Path to asset file created by Webpack, which contains dependencies and version info.
-            $script_asset_path = plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
+            $script_asset_path = plugin_dir_path( __FILE__ ) . 'build/editor.asset.php';
 
             // Check if the index.asset.php file exists.
             if ( ! file_exists( $script_asset_path ) ) {
@@ -91,21 +102,21 @@ if ( ! class_exists( 'Mello\Block_Extensions' ) ) {
             // Load the asset file for script dependencies and version.
             $script_asset = require( $script_asset_path );
 
-            // Enqueue the block editor script (index.js).
+            // Enqueue the block editor script (editor.js).
             wp_enqueue_script(
                 $this->editor_script_handle,
-                plugin_dir_url( __FILE__ ) . 'build/index.js',
+                plugin_dir_url( __FILE__ ) . 'build/editor.js',
                 $script_asset['dependencies'], // Dependencies such as React, WP packages, etc.
-                $script_asset['version'] // Version from the asset file.
+                $script_asset['version'], // Version from the asset file.
+                true // Load in footer
             );
 
-            // Enqueue the block editor styles (index.css).
-            $editor_css = 'index.css'; // Adjust your CSS filename here.
+            // Enqueue the block editor styles (editor.css).
             wp_enqueue_style(
                 $this->editor_style_handle,
-                plugin_dir_url( __FILE__ ) . 'build/' . $editor_css,
+                plugin_dir_url( __FILE__ ) . 'build/editor.css',
                 array(),
-                filemtime( plugin_dir_path( __FILE__ ) . 'build/' . $editor_css ) // Cache-busting.
+                filemtime( plugin_dir_path( __FILE__ ) . 'build/editor.css' ) // Cache-busting.
             );
 
             // Pass data from PHP to JS (optional, only if needed).

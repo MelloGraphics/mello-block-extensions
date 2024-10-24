@@ -1,9 +1,12 @@
+/**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
 import { InspectorControls } from '@wordpress/block-editor';
 import { ToggleControl } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import './editor.scss';
-
 
 /**
  * Add the FAQ schema attribute.
@@ -63,13 +66,13 @@ function addFAQSchemaInspectorControl(BlockEdit) {
          <>
             <BlockEdit {...props} />
             <InspectorControls>
-				<div class="enable-faq-schema-container">
-				<ToggleControl
-					label={__('Enable FAQ Schema', 'enable-faq-schema')}
-					checked={hasFAQSchema}
-					onChange={onToggleChange}
-				/>
-				</div>
+               <div className="enable-faq-schema-container">
+                  <ToggleControl
+                     label={__('Enable FAQ Schema', 'enable-faq-schema')}
+                     checked={hasFAQSchema}
+                     onChange={onToggleChange}
+                  />
+               </div>
             </InspectorControls>
          </>
       );
@@ -80,4 +83,55 @@ addFilter(
    'editor.BlockEdit',
    'enable-faq-schema/add-faq-inspector-control',
    addFAQSchemaInspectorControl
+);
+
+/**
+ * Add custom classes in the Editor.
+ *
+ * @since 0.1.0
+ * @param {Object} BlockListBlock
+ */
+function addClasses( BlockListBlock ) {
+   return ( props ) => {
+       const { name, attributes } = props;
+
+       if ( 'core/details' !== name || ! attributes?.hasFAQSchema ) {
+           return <BlockListBlock { ...props } />;
+       }
+
+       // Create a new class list with the custom class if the attribute is true.
+       const classes = classnames( props.className, 'mello-has-faq-schema' );
+
+       // Return the block with the new class applied.
+       return <BlockListBlock { ...props } className={ classes } />;
+   };
+}
+
+addFilter(
+   'editor.BlockListBlock',
+   'enable-faq-schema/add-classes',
+   addClasses
+);
+
+/**
+* Add the custom class to the front-end save function.
+*
+* @since 0.1.0
+* @param {Object} props
+* @param {Object} blockType
+* @param {Object} attributes
+*/
+function addSaveProps( extraProps, blockType, attributes ) {
+   if ( blockType.name === 'core/details' && attributes.hasFAQSchema ) {
+       // Add the class on the front-end.
+       extraProps.className = classnames( extraProps.className, 'mello-has-faq-schema' );
+   }
+   
+   return extraProps;
+}
+
+addFilter(
+   'blocks.getSaveContent.extraProps',
+   'enable-faq-schema/add-save-props',
+   addSaveProps
 );

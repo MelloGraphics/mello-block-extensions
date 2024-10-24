@@ -4,6 +4,6 @@
 // import "./sass-admin/index.scss";
 
 /**
- * Import all blocks
+ * Import all blocks Blocks are imported through the webpack.config
  */
-import "./blocks/index.js";
+// import "./blocks/index.js";
