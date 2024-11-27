@@ -19,7 +19,8 @@ const ALLOWED_GROUP_HTML_ELEMENTS = [
     'details',
     'time',
     'ul',
-    'li'
+    'li',
+    'cite'
 ];
 
 // Add custom elements to the allowed tagNames
@@ -60,7 +61,8 @@ const htmlElementMessages = {
     details: __('The <details> element creates an interactive widget that can be opened or closed.'),
     time: __('The <time> element represents a specific period in time or date.'),
     ul: __('The <ul> element represents an unordered list of items, typically rendered as a bulleted list.'),
-    li: __('The <li> element is used to represent an item in a list. It must be contained in a parent element: an ordered list (<ol>), unordered list (<ul>), or menu (<menu>).')
+    li: __('The <li> element is used to represent an item in a list. It must be contained in a parent element: an ordered list (<ol>), unordered list (<ul>), or menu (<menu>).'),
+    cite: __('The <cite> element is used to add a citation. This should be contained in a parent element block quote (<blockquote>).')
 };
 
 // Create higher-order component to add custom options to SelectControl

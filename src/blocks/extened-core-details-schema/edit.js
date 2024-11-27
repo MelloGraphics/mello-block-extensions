@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
-
 import { InspectorControls } from '@wordpress/block-editor';
-import { ToggleControl } from '@wordpress/components';
+import { PanelBody, ToggleControl } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
 /**
  * Add the FAQ schema attribute.
@@ -66,13 +65,18 @@ function addFAQSchemaInspectorControl(BlockEdit) {
          <>
             <BlockEdit {...props} />
             <InspectorControls>
-               <div className="enable-faq-schema-container">
-                  <ToggleControl
-                     label={__('Enable FAQ Schema', 'enable-faq-schema')}
-                     checked={hasFAQSchema}
-                     onChange={onToggleChange}
-                  />
-               </div>
+               <PanelBody title={ __( 'FAQ Schema', 'enable-schema' ) } initialOpen={ false }>
+                  <div >
+                     <ToggleControl
+                        label={__('Enable FAQ Schema', 'enable-faq-schema')}
+                        checked={hasFAQSchema}
+                        onChange={onToggleChange}
+                     />
+                     <p className="description">
+								{ __( 'Adds FAQ schema for SEO purposes.', 'enable-schema' ) }
+							</p>
+                  </div>
+               </PanelBody>
             </InspectorControls>
          </>
       );
