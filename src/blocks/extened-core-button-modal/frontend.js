@@ -1,5 +1,3 @@
-console.log('Front end JS for modal');
-
 document.addEventListener('DOMContentLoaded', function () {
     const modalClass = 'open-modal';
 
