@@ -1,6 +1,13 @@
 // Styles for the editor only
 
-.enable-reverse-direction-container {
+.mello-additional-setting {
     margin-top: -8px;
     padding: 0 16px 16px;
+    visibility: hidden;
+    display: none;
+}
+
+.components-panel__body.is-opened + .mello-additional-setting{
+    visibility: visible;
+    display: block;
 }

@@ -66,8 +66,8 @@ function addInspectorControls( BlockEdit ) {
 		return (
 			<>
 				<BlockEdit { ...props } />
-				<InspectorControls>
-					<div className="enable-reverse-direction-container">
+				<InspectorControls group="settings">
+					<div className="mello-additional-setting">
 						<ToggleControl
 							label={ __(
 								'Reverse direction on mobile',

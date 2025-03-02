@@ -22,7 +22,7 @@ function addAllowedBlocks(settings) {
     };
 
     // Log modified settings for debugging purposes.
-    console.log('Modified settings for core/navigation-submenu (allowedBlocks):', modifiedSettings);
+    // console.log('Modified settings for core/navigation-submenu (allowedBlocks):', modifiedSettings);
 
     return modifiedSettings;
 }
@@ -47,7 +47,7 @@ function addSupportsInserter(settings) {
     };
 
     // Log modified settings for debugging purposes.
-    console.log('Modified settings for core/navigation-submenu (supports):', modifiedSettings);
+    // console.log('Modified settings for core/navigation-submenu (supports):', modifiedSettings);
 
     return modifiedSettings;
 }

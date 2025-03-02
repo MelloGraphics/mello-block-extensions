@@ -5,8 +5,6 @@ import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
-console.log("Hi Ash!")
-
 // Add toggle control to Button Block settings
 const addModalToggleControl = (BlockEdit) => {
     return (props) => {
