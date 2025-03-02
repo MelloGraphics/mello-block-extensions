@@ -1,5 +1,5 @@
-import { InspectorControls } from "@wordpress/block-editor";
-import { Button, Modal, TextareaControl } from "@wordpress/components";
+import { InspectorAdvancedControls } from "@wordpress/block-editor";
+import { BaseControl, Button, Modal, TextareaControl } from "@wordpress/components";
 import { createHigherOrderComponent } from "@wordpress/compose";
 import { useState } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
@@ -55,11 +55,16 @@ const withCustomJSControl = createHigherOrderComponent((BlockEdit) => {
     return (
       <>
         <BlockEdit {...props} />
-        <InspectorControls group="advanced">
-          <Button isSecondary onClick={() => setModalOpen(true)}>
-            {__("Edit Custom JavaScript", "mello-block-extensions")}
-          </Button>
-        </InspectorControls>
+        <InspectorAdvancedControls>
+          <BaseControl label="Inline Javascript" help="Add inline JS and render in inline with the the block.">
+            <Button 
+                variant="secondary" 
+                __next40pxDefaultSize
+                onClick={() => setModalOpen(true)}>
+              {__("Edit Custom JavaScript", "mello-block-extensions")}
+            </Button>
+          </BaseControl>
+        </InspectorAdvancedControls>
 
         {isModalOpen && (
           <Modal
@@ -74,13 +79,13 @@ const withCustomJSControl = createHigherOrderComponent((BlockEdit) => {
               rows={15} // Provides a larger editing space
             />
             <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-              <Button isPrimary onClick={handleSave}>
+              <Button variant="primary" onClick={handleSave}>
                 {__("Save", "mello-block-extensions")}
               </Button>
-              <Button isPrimary onClick={handleSaveAndClose}>
+              <Button variant="primary" onClick={handleSaveAndClose}>
                 {__("Save & Close", "mello-block-extensions")}
               </Button>
-              <Button isSecondary onClick={() => setModalOpen(false)}>
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {__("Close", "mello-block-extensions")}
               </Button>
             </div>

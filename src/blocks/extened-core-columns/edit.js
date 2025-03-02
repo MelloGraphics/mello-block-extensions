@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import classnames from "classnames";
 
 /**
  * WordPress dependencies
  */
-import { InspectorControls } from '@wordpress/block-editor';
-import { ToggleControl } from '@wordpress/components';
-import { addFilter } from '@wordpress/hooks';
-import { __ } from '@wordpress/i18n';
-import './editor.scss';
+import { InspectorControls } from "@wordpress/block-editor";
+import { ToggleControl } from "@wordpress/components";
+import { addFilter } from "@wordpress/hooks";
+import { __ } from "@wordpress/i18n";
+import "./editor.scss";
 
 /**
  * Add the attribute needed for reversing column direction on mobile.
@@ -18,34 +18,34 @@ import './editor.scss';
  * @since 0.1.0
  * @param {Object} settings
  */
-function addAttributes( settings ) {
-	if ( 'core/columns' !== settings.name ) {
-		return settings;
-	}
+function addAttributes(settings) {
+  if ("core/columns" !== settings.name) {
+    return settings;
+  }
 
-	// Add the attribute.
-	const columnsAttributes = {
-		isReversedDirectionOnMobile: {
-			type: 'boolean',
-			default: false,
-		},
-	};
+  // Add the attribute.
+  const columnsAttributes = {
+    isReversedDirectionOnMobile: {
+      type: "boolean",
+      default: false,
+    },
+  };
 
-	const newSettings = {
-		...settings,
-		attributes: {
-			...settings.attributes,
-			...columnsAttributes,
-		},
-	};
+  const newSettings = {
+    ...settings,
+    attributes: {
+      ...settings.attributes,
+      ...columnsAttributes,
+    },
+  };
 
-	return newSettings;
+  return newSettings;
 }
 
 addFilter(
-	'blocks.registerBlockType',
-	'enable-column-direction/add-attributes',
-	addAttributes
+  "blocks.registerBlockType",
+  "enable-column-direction/add-attributes",
+  addAttributes
 );
 
 /**
@@ -54,44 +54,39 @@ addFilter(
  * @since 0.1.0
  * @param {Object} BlockEdit
  */
-function addInspectorControls( BlockEdit ) {
-	return ( props ) => {
-		if ( props.name !== 'core/columns' ) {
-			return <BlockEdit { ...props } />;
-		}
+function addInspectorControls(BlockEdit) {
+  return (props) => {
+    if (props.name !== "core/columns") {
+      return <BlockEdit {...props} />;
+    }
 
-		const { attributes, setAttributes } = props;
-		const { isReversedDirectionOnMobile } = attributes;
+    const { attributes, setAttributes } = props;
+    const { isReversedDirectionOnMobile } = attributes;
 
-		return (
-			<>
-				<BlockEdit { ...props } />
-				<InspectorControls group="settings">
-					<div className="mello-additional-setting">
-						<ToggleControl
-							label={ __(
-								'Reverse direction on mobile',
-								'enable-column-direction'
-							) }
-							checked={ isReversedDirectionOnMobile }
-							onChange={ () => {
-								setAttributes( {
-									isReversedDirectionOnMobile:
-										! isReversedDirectionOnMobile,
-								} );
-							} }
-						/>
-					</div>
-				</InspectorControls>
-			</>
-		);
-	};
+    return (
+      <>
+        <BlockEdit {...props} />
+        <InspectorControls>
+          <ToggleControl
+            className="mello-additional-setting"
+            label={__("Reverse direction on mobile", "enable-column-direction")}
+            checked={isReversedDirectionOnMobile}
+            onChange={() => {
+              setAttributes({
+                isReversedDirectionOnMobile: !isReversedDirectionOnMobile,
+              });
+            }}
+          />
+        </InspectorControls>
+      </>
+    );
+  };
 }
 
 addFilter(
-	'editor.BlockEdit',
-	'enable-column-direction/add-inspector-controls',
-	addInspectorControls
+  "editor.BlockEdit",
+  "enable-column-direction/add-inspector-controls",
+  addInspectorControls
 );
 
 /**
@@ -100,26 +95,29 @@ addFilter(
  * @since 0.1.0
  * @param {Object} BlockListBlock
  */
-function addClasses( BlockListBlock ) {
-    return ( props ) => {
-        const { name, attributes } = props;
+function addClasses(BlockListBlock) {
+  return (props) => {
+    const { name, attributes } = props;
 
-        if ( 'core/columns' !== name || ! attributes?.isReversedDirectionOnMobile ) {
-            return <BlockListBlock { ...props } />;
-        }
+    if ("core/columns" !== name || !attributes?.isReversedDirectionOnMobile) {
+      return <BlockListBlock {...props} />;
+    }
 
-        // Create a new class list with the custom class if the attribute is true.
-        const classes = classnames( props.className, 'mello-columns-reverse-on-phone' );
+    // Create a new class list with the custom class if the attribute is true.
+    const classes = classnames(
+      props.className,
+      "mello-columns-reverse-on-phone"
+    );
 
-        // Return the block with the new class applied.
-        return <BlockListBlock { ...props } className={ classes } />;
-    };
+    // Return the block with the new class applied.
+    return <BlockListBlock {...props} className={classes} />;
+  };
 }
 
 addFilter(
-    'editor.BlockListBlock',
-    'enable-column-direction/add-classes',
-    addClasses
+  "editor.BlockListBlock",
+  "enable-column-direction/add-classes",
+  addClasses
 );
 
 /**
@@ -130,18 +128,24 @@ addFilter(
  * @param {Object} blockType
  * @param {Object} attributes
  */
-function addSaveProps( extraProps, blockType, attributes ) {
-    if ( blockType.name === 'core/columns' && attributes.isReversedDirectionOnMobile ) {
-        // Add the class on the front-end.
-        extraProps.className = classnames( extraProps.className, 'mello-columns-reverse-on-phone' );
-        console.log('Adding class for reversed direction on front-end.');
-    }
-    
-    return extraProps;
+function addSaveProps(extraProps, blockType, attributes) {
+  if (
+    blockType.name === "core/columns" &&
+    attributes.isReversedDirectionOnMobile
+  ) {
+    // Add the class on the front-end.
+    extraProps.className = classnames(
+      extraProps.className,
+      "mello-columns-reverse-on-phone"
+    );
+    console.log("Adding class for reversed direction on front-end.");
+  }
+
+  return extraProps;
 }
 
 addFilter(
-    'blocks.getSaveContent.extraProps',
-    'enable-column-direction/add-save-props',
-    addSaveProps
+  "blocks.getSaveContent.extraProps",
+  "enable-column-direction/add-save-props",
+  addSaveProps
 );

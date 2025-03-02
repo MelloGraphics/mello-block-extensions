@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, ToggleControl } from '@wordpress/components';
-import { addFilter } from '@wordpress/hooks';
-import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import { InspectorAdvancedControls } from "@wordpress/block-editor";
+import { ToggleControl } from "@wordpress/components";
+import { addFilter } from "@wordpress/hooks";
+import { __ } from "@wordpress/i18n";
+import classnames from "classnames";
 
 /**
  * Add the FAQ schema attribute.
@@ -14,30 +14,30 @@ import classnames from 'classnames';
  * @return {Object} Modified block settings.
  */
 function addFAQSchemaAttribute(settings) {
-   if (settings.name !== 'core/details') {
-      return settings;
-   }
+  if (settings.name !== "core/details") {
+    return settings;
+  }
 
-   const faqSchemaAttribute = {
-      hasFAQSchema: {
-         type: 'boolean',
-         default: false,
-      },
-   };
+  const faqSchemaAttribute = {
+    hasFAQSchema: {
+      type: "boolean",
+      default: false,
+    },
+  };
 
-   return {
-      ...settings,
-      attributes: {
-         ...settings.attributes,
-         ...faqSchemaAttribute,
-      },
-   };
+  return {
+    ...settings,
+    attributes: {
+      ...settings.attributes,
+      ...faqSchemaAttribute,
+    },
+  };
 }
 
 addFilter(
-   'blocks.registerBlockType',
-   'enable-faq-schema/add-faq-attribute',
-   addFAQSchemaAttribute
+  "blocks.registerBlockType",
+  "enable-faq-schema/add-faq-attribute",
+  addFAQSchemaAttribute
 );
 
 /**
@@ -47,46 +47,40 @@ addFilter(
  * @return {Function} Modified block edit component.
  */
 function addFAQSchemaInspectorControl(BlockEdit) {
-   return (props) => {
-      if (props.name !== 'core/details') {
-         return <BlockEdit {...props} />;
-      }
+  return (props) => {
+    if (props.name !== "core/details") {
+      return <BlockEdit {...props} />;
+    }
 
-      const { attributes, setAttributes } = props;
-      const { hasFAQSchema } = attributes;
+    const { attributes, setAttributes } = props;
+    const { hasFAQSchema } = attributes;
 
-      const onToggleChange = () => {
-         setAttributes({
-            hasFAQSchema: !hasFAQSchema,
-         });
-      };
+    const onToggleChange = () => {
+      setAttributes({
+        hasFAQSchema: !hasFAQSchema,
+      });
+    };
 
-      return (
-         <>
-            <BlockEdit {...props} />
-            <InspectorControls>
-               <PanelBody title={ __( 'FAQ Schema', 'enable-schema' ) } initialOpen={ false }>
-                  <div >
-                     <ToggleControl
-                        label={__('Enable FAQ Schema', 'enable-faq-schema')}
-                        checked={hasFAQSchema}
-                        onChange={onToggleChange}
-                     />
-                     <p className="description">
-								{ __( 'Adds FAQ schema for SEO purposes.', 'enable-schema' ) }
-							</p>
-                  </div>
-               </PanelBody>
-            </InspectorControls>
-         </>
-      );
-   };
+    return (
+      <>
+        <BlockEdit {...props} />
+        <InspectorAdvancedControls>
+          <ToggleControl
+            label={__("Enable FAQ Schema", "enable-faq-schema")}
+            checked={hasFAQSchema}
+            onChange={onToggleChange}
+            help="Adds FAQ schema for SEO purposes."
+          />
+        </InspectorAdvancedControls>
+      </>
+    );
+  };
 }
 
 addFilter(
-   'editor.BlockEdit',
-   'enable-faq-schema/add-faq-inspector-control',
-   addFAQSchemaInspectorControl
+  "editor.BlockEdit",
+  "enable-faq-schema/add-faq-inspector-control",
+  addFAQSchemaInspectorControl
 );
 
 /**
@@ -95,47 +89,46 @@ addFilter(
  * @since 0.1.0
  * @param {Object} BlockListBlock
  */
-function addClasses( BlockListBlock ) {
-   return ( props ) => {
-       const { name, attributes } = props;
+function addClasses(BlockListBlock) {
+  return (props) => {
+    const { name, attributes } = props;
 
-       if ( 'core/details' !== name || ! attributes?.hasFAQSchema ) {
-           return <BlockListBlock { ...props } />;
-       }
+    if ("core/details" !== name || !attributes?.hasFAQSchema) {
+      return <BlockListBlock {...props} />;
+    }
 
-       // Create a new class list with the custom class if the attribute is true.
-       const classes = classnames( props.className, 'mello-has-faq-schema' );
+    // Create a new class list with the custom class if the attribute is true.
+    const classes = classnames(props.className, "mello-has-faq-schema");
 
-       // Return the block with the new class applied.
-       return <BlockListBlock { ...props } className={ classes } />;
-   };
+    // Return the block with the new class applied.
+    return <BlockListBlock {...props} className={classes} />;
+  };
 }
 
-addFilter(
-   'editor.BlockListBlock',
-   'enable-faq-schema/add-classes',
-   addClasses
-);
+addFilter("editor.BlockListBlock", "enable-faq-schema/add-classes", addClasses);
 
 /**
-* Add the custom class to the front-end save function.
-*
-* @since 0.1.0
-* @param {Object} props
-* @param {Object} blockType
-* @param {Object} attributes
-*/
-function addSaveProps( extraProps, blockType, attributes ) {
-   if ( blockType.name === 'core/details' && attributes.hasFAQSchema ) {
-       // Add the class on the front-end.
-       extraProps.className = classnames( extraProps.className, 'mello-has-faq-schema' );
-   }
-   
-   return extraProps;
+ * Add the custom class to the front-end save function.
+ *
+ * @since 0.1.0
+ * @param {Object} props
+ * @param {Object} blockType
+ * @param {Object} attributes
+ */
+function addSaveProps(extraProps, blockType, attributes) {
+  if (blockType.name === "core/details" && attributes.hasFAQSchema) {
+    // Add the class on the front-end.
+    extraProps.className = classnames(
+      extraProps.className,
+      "mello-has-faq-schema"
+    );
+  }
+
+  return extraProps;
 }
 
 addFilter(
-   'blocks.getSaveContent.extraProps',
-   'enable-faq-schema/add-save-props',
-   addSaveProps
+  "blocks.getSaveContent.extraProps",
+  "enable-faq-schema/add-save-props",
+  addSaveProps
 );

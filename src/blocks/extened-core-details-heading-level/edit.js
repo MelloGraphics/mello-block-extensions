@@ -1,8 +1,7 @@
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorAdvancedControls } from '@wordpress/block-editor';
 import { SelectControl } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import './editor.scss';
 
 /**
  * Add the heading level attribute.
@@ -59,9 +58,9 @@ function addHeadingLevelInspectorControl(BlockEdit) {
       return (
          <>
 				<BlockEdit {...props} />
-				<InspectorControls>
-					<div class="enable-faq-schema-container">
+				<InspectorAdvancedControls>
 					<SelectControl
+                  __next40pxDefaultSize
 						label={__('Heading Level', 'heading-level')}
 						value={level}
 						options={[
@@ -74,8 +73,7 @@ function addHeadingLevelInspectorControl(BlockEdit) {
 						]}
 						onChange={onLevelChange}
 					/>
-			   </div>
-            </InspectorControls>
+            </InspectorAdvancedControls>
          </>
       );
    };

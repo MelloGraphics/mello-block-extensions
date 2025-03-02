@@ -1,4 +1,4 @@
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorAdvancedControls } from '@wordpress/block-editor';
 import { TextControl } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -65,14 +65,16 @@ function addInspectorControls(BlockEdit) {
 		return (
 			<>
 				<BlockEdit {...props} />
-				<InspectorControls group="advanced">
+				<InspectorAdvancedControls>
 					<TextControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
 						label={__('Data Attributes', 'mello-block-extensions')}
 						value={dataAttributes}
 						onChange={(value) => setAttributes({ dataAttributes: value })}
 						help={__('Enter attributes in key=value format, separated by spaces.', 'mello-block-extensions')}
 					/>
-				</InspectorControls>
+				</InspectorAdvancedControls>
 			</>
 		);
 	};

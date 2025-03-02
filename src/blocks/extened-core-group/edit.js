@@ -90,6 +90,7 @@ const withCustomElementOptions = createHigherOrderComponent((BlockEdit) => {
                         initialOpen={false}
                     >
                         <SelectControl
+                            __next40pxDefaultSize
                             label={__('Select HTML element')}
                             value={sanitizeGroupTagName(tagName)}
                             options={elementOptions}

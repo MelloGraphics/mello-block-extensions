@@ -1,4 +1,44 @@
-.mello-additional-setting{display:none;margin-top:-8px;padding:0 16px 16px;visibility:hidden}.components-panel__body.is-opened+.mello-additional-setting{display:block;visibility:visible}
-.cover-video-background iframe{height:100%;left:0;position:absolute;top:0;width:100%}
-.wp-block-cover__video-background__external{inset:0;position:absolute;width:100%}.wp-block-cover__video-background__external iframe{box-sizing:border-box;height:56.25vw!important;left:50%;min-height:100%;min-width:100%;position:absolute;top:50%;transform:translate(-50%,-50%);width:177.77777778vh!important}
-.enable-faq-schema-container{margin-top:-8px;padding:0 16px 16px}
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../../../../../../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!../../../../../../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!../../../../../../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/blocks/extened-core-columns/editor.scss ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.mello-additional-setting {
+  padding: 0 16px 16px;
+  visibility: hidden;
+  display: none;
+}
+
+.components-panel__body.is-opened + .mello-additional-setting {
+  visibility: visible;
+  display: block;
+}
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../../../../../../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!../../../../../../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!../../../../../../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/blocks/extened-core-cover-ext-video/editor.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.cover-video-background iframe {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../../../../../../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!../../../../../../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!../../../../../../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/blocks/extened-core-cover-ext-video/styles.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.wp-block-cover__video-background__external {
+  position: absolute;
+  width: 100%;
+  inset: 0;
+}
+.wp-block-cover__video-background__external iframe {
+  box-sizing: border-box;
+  width: 177.77777778vh !important;
+  height: 56.25vw !important;
+  min-width: 100%;
+  min-height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*# sourceMappingURL=editor.css.map*/
