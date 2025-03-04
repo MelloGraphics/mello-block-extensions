@@ -13,7 +13,8 @@
     "start": "wp-scripts start",
     "packages-update": "wp-scripts packages-update",
     "update-pot": "wp i18n make-pot . languages/mello-block-extensions.pot --exclude=src",
-    "prepare": "wp-scripts build"
+    "prepare": "wp-scripts build",
+    "package": "zip -r mello-block-extensions.zip . -x \"node_modules/*\" \"src/*\" \".git/*\" \".github/*\" \".DS_Store\" \"package-lock.json\" \"package.json\" \"webpack.config.js\" \"README.md\"",    "export": "npm run build && npm run package"
   },
   "dependencies": {
     "classnames": "^2.3.2"
