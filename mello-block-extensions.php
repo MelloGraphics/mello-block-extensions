@@ -2,9 +2,9 @@
 /**
  * Plugin Name: Mello Block Extensions
  * Description: Custom block extensions for WordPress.
- * Version: 1.0
- * Author: Ash
- * Text Domain: mello-block-extensions
+ * Version: 1.0.0
+ * Author: Ashley Pickering
+ * License: GPL-2.0+
  */
 
 namespace Mello;
@@ -139,7 +139,7 @@ if ( ! class_exists( 'Mello\Block_Extensions' ) ) {
     new Block_Extensions();
 
     // Include PHP functions from block folders
-    foreach (glob(plugin_dir_path(__FILE__) . 'src/blocks/*/block-functions.php') as $file) {
+    foreach (glob(plugin_dir_path(__FILE__) . 'build/**/block-functions.php') as $file) {
         require_once $file;
         error_log("Loaded: " . $file);  // Debug to check which files are being loaded
     }

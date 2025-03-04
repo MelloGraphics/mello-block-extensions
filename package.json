@@ -5,7 +5,7 @@
   "author": "Ashley Pickering",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "build": "wp-scripts build",
+    "build": "wp-scripts build && rsync -a --prune-empty-dirs --include='*/' --include='block-functions.php' --exclude='exclude-from-build/**' --exclude='exclude-from-build' --exclude='*' src/blocks/ build/",
     "lint:css": "wp-scripts lint-style",
     "lint:js": "wp-scripts lint-js",
     "lint:js:src": "wp-scripts lint-js ./src",
@@ -14,7 +14,8 @@
     "packages-update": "wp-scripts packages-update",
     "update-pot": "wp i18n make-pot . languages/mello-block-extensions.pot --exclude=src",
     "prepare": "wp-scripts build",
-    "package": "zip -r mello-block-extensions.zip . -x \"node_modules/*\" \"src/*\" \".git/*\" \".github/*\" \".DS_Store\" \"package-lock.json\" \"package.json\" \"webpack.config.js\" \"README.md\"",    "export": "npm run build && npm run package"
+    "package": "zip -r mello-block-extensions.zip . -x \"node_modules/*\" \"src/*\" \"build/exclude-from-build/**\" \".git/*\" \".github/*\" \".DS_Store\" \"package-lock.json\" \"package.json\" \"webpack.config.js\" \"README.md\"",
+    "export": "npm run build && npm run package"
   },
   "dependencies": {
     "classnames": "^2.3.2"
