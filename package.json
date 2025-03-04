@@ -5,7 +5,7 @@
   "author": "Ashley Pickering",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "build": "wp-scripts build && rsync -a --prune-empty-dirs --include='*/' --include='block-functions.php' --exclude='exclude-from-build/**' --exclude='exclude-from-build' --exclude='*' src/blocks/ build/",
+    "build": "webpack --config webpack.config.js && wp-scripts build && rsync -a --prune-empty-dirs --include='*/' --include='*.php' --include='*.js' --include='*.css' --exclude='exclude-from-build/**' --exclude='exclude-from-build' --exclude='*' src/blocks/ build/",
     "lint:css": "wp-scripts lint-style",
     "lint:js": "wp-scripts lint-js",
     "lint:js:src": "wp-scripts lint-js ./src",
