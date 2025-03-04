@@ -5,17 +5,14 @@ const glob = require('glob');
 module.exports = {
     ...defaultConfig,
     entry: {
-        // Combine all frontend.js files into a single entry point for frontend js, excluding 'exclude from build' folder
-        'view': glob.sync('./src/blocks/**/frontend.js', {
-            ignore: ['./src/blocks/exclude-from-build/**']
+        'view': glob.sync(path.resolve(__dirname, 'src/blocks/**/frontend.js'), {
+            ignore: [path.resolve(__dirname, 'src/blocks/exclude-from-build/**')]
         }),
-        // Combine all edit.js files into a single entry point for editor js, excluding 'exclude from build' folder
-        'editor': glob.sync('./src/blocks/**/edit.js', {
-            ignore: ['./src/blocks/exclude-from-build/**']
+        'editor': glob.sync(path.resolve(__dirname, 'src/blocks/**/edit.js'), {
+            ignore: [path.resolve(__dirname, 'src/blocks/exclude-from-build/**')]
         }),
-        // Combine all styles.scss files into a single entry point for frontend styling, excluding 'exclude from build' folder
-        'frontend': glob.sync('./src/blocks/**/styles.scss', {
-            ignore: ['./src/blocks/exclude-from-build/**']
+        'frontend': glob.sync(path.resolve(__dirname, 'src/blocks/**/styles.scss'), {
+            ignore: [path.resolve(__dirname, 'src/blocks/exclude-from-build/**')]
         }),
     },
     output: {
