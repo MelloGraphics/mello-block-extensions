@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Mello Block Extensions
  * Description: Custom block extensions and functionality for WordPress.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: Ashley Pickering
  * License: GPL-2.0+
  */
