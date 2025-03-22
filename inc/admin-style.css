@@ -1,0 +1,156 @@
+:root {
+    --mello-primary: #00D9FF;
+    --mello-base: #0F1421;
+    --mello-contrast: #ffffff;
+    --mello-gray: #747474;
+    --mello-radius-med: 5px;
+    --mello-spacing-small: 15px;
+    --mello-spacing-med: 25px;
+    --mello-spacing-large: 50px;
+    --mello-font-small: .9em;
+    --mello-font-med: 1em;
+    --mello-font-large: 1.3em;
+    --mello-font-x-large: 3.5em;
+    --mello-switch-bg: #ededed;
+    --mello-switch-active: var(--mello-base);
+}
+
+/* #wpcontent{
+    background-color: var(--mello-base);
+} */
+
+.mello-header-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--mello-spacing-large);
+    background: var(--mello-base);
+    min-height: 200px;
+    padding: var(--mello-spacing-med);
+    border-radius: var(--mello-radius-med);
+    position: relative;
+    overflow: clip;
+}
+
+.mello-header-content-wrapper{
+    max-width: 550px;
+    z-index: +1;
+}
+
+.wrap{
+    margin: 20px 20px 0 2px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--mello-spacing-large);
+}
+
+.wrap .mello-heading{
+    font-size: var(--mello-font-x-large);
+    color: var(--mello-contrast);
+}
+
+.mello-intro{
+    font-size: var(--mello-font-large);
+    margin: 0;
+    color: var(--mello-contrast);
+}
+
+.mello-script{
+    position: absolute;
+    inset: -11% -3% -1% auto;
+    height: 140%;
+    width: auto;
+    opacity: .1;
+}
+
+.mello-extension-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--mello-spacing-med);
+}
+
+.mello-extension-section{
+    display: flex;
+    flex-direction: column;
+    gap: var(--mello-spacing-small);
+    border-radius: var(--mello-radius-med);
+    padding: var(--mello-spacing-med);
+    background-color: var(--mello-contrast);
+    color: var(--mello-base)
+}
+
+.mello-extension-header{
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.mello-extension-title{
+    color: var(--mello-base);
+    font-size: var(--mello-font-large);
+    margin: 0;
+}
+
+.mello-extension-description{
+    margin: 0;
+    font-size: var(--mello-font-small);
+}
+
+.mello-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.mello-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.mello-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0;
+    right: 0; bottom: 0;
+    background-color: var(--mello-switch-bg);
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.mello-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--mello-base);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+.mello-switch input:checked + .mello-slider {
+    background-color: var(--mello-switch-active);
+}
+
+.mello-switch input:checked + .mello-slider:before {
+    transform: translateX(26px);
+    background-color: var(--mello-primary);
+}
+
+.wp-core-ui .button-primary{
+    padding: 10px 20px;
+    background-color: var(--mello-base);
+    border: unset;
+    border-radius: unset;
+}
+
+.wp-core-ui .button-primary:hover{
+    background-color: var(--mello-primary);
+    color: var(--mello-base);
+}
