@@ -3,7 +3,7 @@
 <p >
   A modular plugin for extending WordPress core blocks with enhanced functionality, built for Mello Graphics projects.
   <br /><br />
-  <a href="https://mellographics.com"><strong>Visit Mello Graphics</strong></a>
+  <a href="https://mellographics.com" target="blank"><strong>Visit Mello Graphics</strong></a>
 </p>
 
 <hr />
