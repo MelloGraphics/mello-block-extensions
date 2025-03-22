@@ -1,6 +1,6 @@
-<h1 align="center">Mello Block Extensions</h1>
+<h1 >Mello Block Extensions</h1>
 
-<p align="center">
+<p >
   A modular plugin for extending WordPress core blocks with enhanced functionality, built for Mello Graphics projects.
   <br /><br />
   <a href="https://mellographics.com"><strong>Visit Mello Graphics</strong></a>
@@ -8,14 +8,14 @@
 
 <hr />
 
-<h2>🚀 Overview</h2>
+<h2>Overview</h2>
 
 <p>
   <strong>Mello Block Extensions</strong> allows toggled enhancements for WordPress core blocks through a modular, well-structured plugin architecture.
   Each enhancement (or "extension") targets a specific core block and can be enabled or disabled from the WordPress admin interface.
 </p>
 
-<h2>📦 Plugin Structure</h2>
+<h2>Plugin Structure</h2>
 
 <pre><code>
 mello-block-extensions/
@@ -36,7 +36,7 @@ mello-block-extensions/
   <li><code>block-functions.php</code> – Optional PHP for rendering filters/templates</li>
 </ul>
 
-<h2>🧩 Example Extensions</h2>
+<h2>Example Extensions</h2>
 
 <table>
   <thead>
@@ -73,7 +73,7 @@ mello-block-extensions/
   </tbody>
 </table>
 
-<h2>⚙️ Admin Settings</h2>
+<h2>Developer Admin Settings</h2>
 
 <p>
   The plugin adds a settings page under <strong>Settings → Block Extensions</strong> where you can:
@@ -84,7 +84,7 @@ mello-block-extensions/
   <li>Theme-specific configurations (coming soon)</li>
 </ul>
 
-<h2>📥 Installation</h2>
+<h2>Installation</h2>
 
 <ol>
   <li>Visit the <a href="https://github.com/MelloGraphics/mello-block-extensions/releases">GitHub Releases page</a>.</li>
@@ -93,7 +93,7 @@ mello-block-extensions/
   <li>Upload the zip and activate the plugin.</li>
 </ol>
 
-<h2>🧪 Development</h2>
+<h2>Development</h2>
 
 <h3>Requirements</h3>
 <ul>
@@ -112,16 +112,16 @@ npm run build
 <ul>
   <li><code>npm run build</code> – Build all enabled extensions</li>
   <li><code>npm run start</code> – Watch mode for dev</li>
-  <li><code>npm run create-zip</code> – Create deployable plugin .zip</li>
+  <li><code>npm run export</code> – Create deployable plugin .zip</li>
 </ul>
 
-<h2>🖼️ Screenshot</h2>
+<h2>Screenshot</h2>
 
 <p>
   <img src="https://via.placeholder.com/1200x600?text=Mello+Block+Extensions+Admin+Screenshot" alt="Mello Block Extensions Admin Screenshot" />
 </p>
 
-<h2>📌 Roadmap</h2>
+<h2>Roadmap</h2>
 <ul>
   <li>[ ] UI improvements for admin toggles</li>
   <li>[ ] Auto-detection of available extensions</li>
@@ -129,8 +129,8 @@ npm run build
   <li>[ ] JSON config import/export</li>
 </ul>
 
-<h2>📄 License</h2>
+<h2>License</h2>
 <p>GPL-3.0 © <a href="https://mellographics.com">Mello Graphics</a></p>
 
-<h2>🧑‍💻 Maintainer</h2>
+<h2>Maintainer</h2>
 <p><strong>Ashley Pickering</strong> – <a href="https://mellographics.com">https://mellographics.com</a></p>
