@@ -3,7 +3,7 @@
 <p >
   A modular plugin for extending WordPress core blocks with enhanced functionality, built for Mello Graphics projects.
   <br /><br />
-  <a href="https://mellographics.com" target="blank"><strong>Visit Mello Graphics</strong></a>
+  <a href="https://mellographics.com" target="_blank"><strong>Visit Mello Graphics</strong></a>
 </p>
 
 <hr />
@@ -19,7 +19,7 @@
 
 <pre><code>
 mello-block-extensions/
-├── build/               # Compiled assets for active extensions
+├── build/              # Compiled assets for active extensions
 ├── src/blocks/         # Source files for each block extension
 ├── inc/                # Admin panel, enqueue logic, helpers
 ├── languages/          # .pot file for translations
@@ -59,16 +59,48 @@ mello-block-extensions/
       <td>Allows external video URLs (YouTube/Vimeo) in Cover block</td>
     </tr>
     <tr>
-      <td><code>extend-core-query-video</code></td>
-      <td>Enables featured video (ACF) inside Query Loop block</td>
-    </tr>
-    <tr>
       <td><code>extend-core-details-heading-level</code></td>
       <td>Adds custom heading level control inside the Details block</td>
     </tr>
     <tr>
+      <td><code>extend-core-details-name-attribute</code></td>
+      <td>Adds an input for a name attribute on the details block</td>
+    </tr>
+    <tr>
+      <td><code>extend-core-details-schema</code></td>
+      <td>Adds a toggle that outputs FAQ schema on the Details block</td>
+    </tr>
+    <tr>
+      <td><code>extend-core-group</code></td>
+      <td>Adds more html tag options to the Group block</td>
+    </tr>
+    <tr>
+      <td><code>extend-core-navigation</code></td>
+      <td>Allows for additional blocks within the Navigation block to create complex menus</td>
+    </tr>
+    <tr>
       <td><code>extend-core-navigation-link</code></td>
-      <td>Adds custom data attributes to nav links</td>
+      <td>Allows for additional blocks within the Navigation-link block to create complex menus</td>
+    </tr>
+    <tr>
+      <td><code>extend-core-navigation-submenu</code></td>
+      <td>Allows for additional blocks within the Navigation-link block to create complex menus</td>
+    </tr>
+    <tr>
+      <td><code>extend-core-query</code></td>
+      <td>Re-renders the block without the current post in the loop</td>
+    </tr>
+    <tr>
+      <td><code>extend-core-query</code></td>
+      <td>Re-renders the block without the current post in the loop</td>
+    </tr>
+    <tr>
+      <td><code>extend-core-query-video</code></td>
+      <td>Enables featured video (ACF) inside Query Loop block. ACF field 'featured_video' must be added seperately</td>
+    </tr>
+    <tr>
+      <td><code>extend-data-attruibutes</code></td>
+      <td>Adds an input for to render data attributes on the front end</td>
     </tr>
   </tbody>
 </table>
@@ -118,7 +150,7 @@ npm run build
 <h2>Screenshot</h2>
 
 <p>
-  <img src="https://via.placeholder.com/1200x600?text=Mello+Block+Extensions+Admin+Screenshot" alt="Mello Block Extensions Admin Screenshot" />
+  <img src="https://mellographics.com/wp-content/uploads/ashley-pickering-mello-graphics-working-2022-43.jpeg" alt="Mello Block Extensions Admin Screenshot" />
 </p>
 
 <h2>Roadmap</h2>
