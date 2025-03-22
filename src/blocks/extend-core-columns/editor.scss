@@ -1,0 +1,12 @@
+// Styles for the editor only
+
+.mello-additional-setting {
+    padding: 0 16px 16px;
+    visibility: hidden;
+    display: none;
+}
+
+.components-panel__body.is-opened + .mello-additional-setting{
+    visibility: visible;
+    display: block;
+}

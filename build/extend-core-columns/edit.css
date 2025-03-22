@@ -1,0 +1,15 @@
+/*!*************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/blocks/extend-core-columns/editor.scss ***!
+  \*************************************************************************************************************************************/
+.mello-additional-setting {
+  padding: 0 16px 16px;
+  visibility: hidden;
+  display: none;
+}
+
+.components-panel__body.is-opened + .mello-additional-setting {
+  visibility: visible;
+  display: block;
+}
+
+/*# sourceMappingURL=edit.css.map*/
