@@ -22,8 +22,31 @@
         <div class="wrap">
             <div class="mello-header-wrapper">
                 <div class="mello-header-content-wrapper">
-                    <h1 class="mello-heading">Mello Block Extensions</h1>
-                    <p class="mello-intro">Toggle individual block extensions on or off depending on your project needs. Press save to see changes apply immediately across the theme.</p>
+                    <h1 class="mello-heading">
+                        Mello Block Extensions
+                    </h1>
+                    <p class="mello-intro">Toggle individual block extensions on or off depending on your project needs. Press save to see changes apply across the theme.</p>
+                    <?php
+                        $plugin_data = get_plugin_data( plugin_dir_path( __DIR__ ) . 'mello-block-extensions.php' );
+                    ?>
+                    <div class="mello-meta-block">
+                        <p>
+                            <strong>Version:</strong>
+                            <span class="mello-plugin-version">
+                                <?php echo esc_html( $plugin_data['Version'] ); ?>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Author:</strong>
+                            <?php echo wp_kses_post( $plugin_data['Author'] ); ?>
+                        </p>
+                        <p>
+                            <strong>Website:</strong>
+                            <a href="<?php echo esc_url( $plugin_data['PluginURI'] ); ?>" target="_blank">
+                                <?php echo esc_html( $plugin_data['PluginURI'] ); ?>
+                            </a>
+                        </p>
+                    </div>
                 </div>
                 <?php if ( $image_melloScript ) : ?>
                     <img src="<?php echo esc_url( $image_melloScript ); ?>" alt="Section Icon" class="mello-script" />
@@ -48,84 +71,121 @@
     
     add_action('admin_init', 'mello_register_settings');
     function mello_register_settings() {
+        $titles = [
+            'button-modal-toggle' => 'Modal Toggle for Buttons',
+            'columns-reverse-toggle' => 'Reverse Column Order on Mobile',
+            'cover-ext-video' => 'External Video Input for Cover Block',
+            'details-faq-schema' => 'FAQ Schema in Details Block',
+            'details-heading-level' => 'Heading Level Option for Details Block',
+            'details-name-attribute' => 'Custom Name Attribute for Details Block',
+            'extend-data-attributes' => 'Custom Data Attributes Field',
+            'group-tag-name' => 'HTML Tag Options for Group Block',
+            'navigation-allowed-blocks' => 'Allow Blocks in Navigation',
+            'navigation-link-render-image' => 'Image Support in Navigation Link',
+            'navigation-submenu-allowed-blocks' => 'Allow Blocks in Submenu',
+            'query-exclude-current-post' => 'Exclude Current Post in Query',
+            'query-render-featured-video' => 'Featured Video Output in Query'
+        ];
+        $descriptions = [
+            'button-modal-toggle' => 'Adds a toggle to buttons for opening modals.',
+            'columns-reverse-toggle' => 'Allows reversing the order of columns on mobile devices.',
+            'cover-ext-video' => 'Adds an input for embedding external video URLs into the Cover block.',
+            'details-faq-schema' => 'Outputs FAQ schema markup in frontend for Details blocks.',
+            'details-heading-level' => 'Choose the heading level for Details block summary.',
+            'details-name-attribute' => 'Adds a custom name attribute to Details block.',
+            'extend-data-attributes' => 'Input field for adding data-* attributes.',
+            'group-tag-name' => 'Choose the HTML tag used for the Group block wrapper.',
+            'navigation-allowed-blocks' => 'Allows additional blocks inside Navigation block.',
+            'navigation-link-render-image' => 'Adds image field support to Navigation Link block.',
+            'navigation-submenu-allowed-blocks' => 'Allows blocks inside Navigation Submenu items.',
+            'query-exclude-current-post' => 'Toggle to exclude the current post from Query block results.',
+            'query-render-featured-video' => 'Renders featured video from custom field in the Query block.'
+        ];
+        
         register_setting('mello_block_extensions_group', 'mello_enabled_extensions');
 
         $extensions = mello_get_available_extensions();
         
-        $titles = [
-            'button-modal-toggle'                  => 'Button: Modal Toggle',
-            'columns-reverse-on-mobile-toggle'     => 'Columns: Reverse on Mobile',
-            'cover-external-video-input'           => 'Cover: External Video Input',
-            'details-heading-level-select'         => 'Details: Heading Level Select',
-            'details-name-atribute-input'          => 'Details: Name Attribute Input',
-            'details-faq-schema-toggle'            => 'Details: FAQ Schema Toggle',
-            'group-additional-html-tags'           => 'Group: Additional HTML Tags',
-            'navigation-extend-allowed-blocks'     => 'Navigation: Extend Allowed Blocks',
-            'navigation-link-background-image'     => 'Navigation Link: Background Image',
-            'navigation-submenu-extend-allowed-blocks' => 'Navigation Submenu: Extended Blocks',
-            'query-exclude-current-post-toggle'    => 'Query: Exclude Current Post',
-            'query-render-featured-video'          => 'Query: Featured Video',
-            'data-attributes-input'                => 'Global: Data Attributes Input',
+        $grouped = [
+            'extensions' => [],
+            'blocks'     => [],
         ];
 
-        $descriptions = [
-            'button-modal-toggle'                  => 'Adds a modal toggle option to the Button block.',
-            'columns-reverse-on-mobile-toggle'     => 'Adds reverse order support on small screens.',
-            'cover-external-video-input'           => 'Allows video URLs (YouTube/Vimeo) as background for the Cover block.',
-            'details-heading-level-select'         => 'Adds a heading level selector to the Details block summary.',
-            'details-name-atribute-input'          => 'Adds a name attribute to the Details block.',
-            'details-faq-schema-toggle'            => 'Enables schema markup for the Details block.',
-            'group-additional-html-tags'           => 'Extends Group block with additional HTML tag options.',
-            'navigation-extend-allowed-blocks'     => 'Customises allowed blocks inside the Navigation block.',
-            'navigation-link-background-image'     => 'Adds a background image field to Navigation Link blocks.',
-            'navigation-submenu-extend-allowed-blocks' => 'Extends submenu behaviour and allowed inner blocks.',
-            'query-exclude-current-post-toggle'    => 'Adds a toggle to exclude the current post in Query loop.',
-            'query-render-featured-video'          => 'Displays ACF video fields in the Query block loop.',
-            'data-attributes-input'                => 'Adds a data attribute input to all blocks.',
-        ];
+        foreach ($extensions as $slug => $meta) {
+            $grouped[$meta['type']][$slug] = $meta['label'];
+        }
 
-        foreach ($extensions as $extension_slug => $extension_label) {
-            // Use the slug as a unique section ID
-            $section_id = 'section_' . $extension_slug;
-
+        foreach (['extensions' => 'Core Block Extensions', 'blocks' => 'MelloBlocks'] as $type => $heading) {
             add_settings_section(
-                $section_id,
+                "heading_$type",
                 '',
-                function () use ($extension_slug, $titles, $extensions, $descriptions) {
-                    $options = get_option('mello_enabled_extensions', []);
-                    $checked = isset($options[$extension_slug]) && $options[$extension_slug] ? 'checked' : '';
+                function () use ( $heading, $type ) {
+                    $descriptions = [
+                        'extensions' => 'Enhance core blocks with added functionality tailored for better editorial experience.',
+                        'blocks'     => 'Add custom MelloBlocks designed for layout, interaction and storytelling.'
+                    ];
 
-                    $extension_label = isset( $titles[ $extension_slug ] ) ? $titles[ $extension_slug ] : $extensions[ $extension_slug ];
-                    $description = isset( $descriptions[ $extension_slug ] )
-                        ? $descriptions[ $extension_slug ]
-                        : ucwords( str_replace( '-', ' ', $extension_slug ) ) . ' extension.';
-
-                    echo "<div class='mello-extension-section'>";
-                    echo "<div class='mello-extension-header'>";
-                    echo "<h2 class='mello-extension-title'>" . esc_html($extension_label) . "</h2>";
-                    echo "<label class='mello-switch'>
-                            <input type='checkbox' name='mello_enabled_extensions[$extension_slug]' value='1' $checked>
-                            <span class='mello-slider'></span>
-                          </label>";
-                    echo "</div>";
-                    echo "<p class='mello-extension-description'>" . esc_html( $description ) . "</p>";
+                    echo "<div class='mello-extension-group'>";
+                    echo "<h2 class='mello-extension-type-heading'>" . esc_html( $heading ) . "</h2>";
+                    echo "<p class='mello-extension-type-description'>" . esc_html( $descriptions[ $type ] ) . "</p>";
                     echo "</div>";
                 },
                 'mello-block-extensions'
             );
+
+            foreach ($grouped[$type] as $extension_slug => $extension_label) {
+                $section_id = 'section_' . $extension_slug;
+
+                add_settings_section(
+                    $section_id,
+                    '',
+                    function () use ($extension_slug, $titles, $grouped, $descriptions, $type) {
+                        $options = get_option('mello_enabled_extensions', []);
+                        $checked = isset($options[$extension_slug]) && $options[$extension_slug] ? 'checked' : '';
+
+                        $extension_label = isset( $titles[ $extension_slug ] ) ? $titles[ $extension_slug ] : $grouped[$type][$extension_slug];
+                        $description = isset( $descriptions[ $extension_slug ] )
+                            ? $descriptions[ $extension_slug ]
+                            : ucwords( str_replace( '-', ' ', $extension_slug ) ) . ' extension.';
+
+                        echo "<div class='mello-extension-section'>";
+                        echo "<div class='mello-extension-header'>";
+                        echo "<h2 class='mello-extension-title'>" . esc_html($extension_label) . "</h2>";
+                        echo "<label class='mello-switch'>
+                                <input type='checkbox' name='mello_enabled_extensions[$extension_slug]' value='1' $checked>
+                                <span class='mello-slider'></span>
+                              </label>";
+                        echo "</div>";
+                        echo "<p class='mello-extension-description'>" . esc_html( $description ) . "</p>";
+                        echo "</div>";
+                    },
+                    'mello-block-extensions'
+                );
+            }
         }
     }
     
     function mello_get_available_extensions() {
-        $extensions_dir = plugin_dir_path(__FILE__) . '../src/blocks/';
-        $extensions = [];
-    
-        foreach (scandir($extensions_dir) as $item) {
-            if ($item === '.' || $item === '..' || !is_dir($extensions_dir . $item)) continue;
-            $extensions[$item] = ucwords(str_replace('-', ' ', $item));
+        $extension_paths = [
+            'extensions' => plugin_dir_path(__FILE__) . '../src/extensions/',
+            'blocks'     => plugin_dir_path(__FILE__) . '../src/blocks/',
+        ];
+
+        $all_extensions = [];
+
+        foreach ($extension_paths as $type => $dir) {
+            if (!is_dir($dir)) continue;
+
+            foreach (scandir($dir) as $item) {
+                if ($item === '.' || $item === '..' || !is_dir($dir . $item)) continue;
+                $all_extensions[$item] = [
+                    'label' => ucwords(str_replace('-', ' ', $item)),
+                    'type'  => $type,
+                ];
+            }
         }
-    
-        return $extensions;
+
+        return $all_extensions;
     }
 
     add_action( 'admin_enqueue_scripts', function( $hook ) {

@@ -40,13 +40,15 @@ class Block_Extensions {
     }
 
     /**
-     * Register the hooks for enqueuing assets.
+     * Register the hooks for enqueuing assets and registering blocks.
      */
     public function register_hooks() {
         // Hook for editor-only assets.
         add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
         // Hook for frontend-only assets.
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
+        // Hook to register blocks on init
+        add_action( 'init', [ $this, 'register_blocks' ] );
     }
 
     /**
@@ -58,29 +60,34 @@ class Block_Extensions {
         foreach ($enabled as $slug => $active) {
             if (! $active) continue;
 
-            $editor_js = plugin_dir_path(__FILE__) . "../build/$slug/edit.js";
-            $editor_css = plugin_dir_path(__FILE__) . "../build/$slug/styles.css";
+            // Try both extensions and blocks directories
+            $base_dirs = ['extensions', 'blocks'];
 
-            if (file_exists($editor_js)) {
-                $asset_file = plugin_dir_path(__FILE__) . "../build/$slug/edit.asset.php";
-                $asset = file_exists($asset_file) ? require $asset_file : [ 'dependencies' => [], 'version' => false ];
+            foreach ($base_dirs as $base) {
+                $editor_js = plugin_dir_path(__FILE__) . "../build/$base/$slug/edit.js";
+                $editor_css = plugin_dir_path(__FILE__) . "../build/$base/$slug/styles.css";
 
-                wp_enqueue_script(
-                    "mello-editor-$slug",
-                    plugin_dir_url(__FILE__) . "../build/$slug/edit.js",
-                    $asset['dependencies'],
-                    $asset['version'],
-                    true
-                );
-            }
+                if (file_exists($editor_js)) {
+                    $asset_file = plugin_dir_path(__FILE__) . "../build/$base/$slug/edit.asset.php";
+                    $asset = file_exists($asset_file) ? require $asset_file : [ 'dependencies' => [], 'version' => false ];
 
-            if (file_exists($editor_css)) {
-                wp_enqueue_style(
-                    "mello-editor-style-$slug",
-                    plugin_dir_url(__FILE__) . "../build/$slug/styles.css",
-                    [],
-                    filemtime($editor_css)
-                );
+                    wp_enqueue_script(
+                        "mello-editor-$slug",
+                        plugin_dir_url(__FILE__) . "../build/$base/$slug/edit.js",
+                        $asset['dependencies'],
+                        $asset['version'],
+                        true
+                    );
+                }
+
+                if (file_exists($editor_css)) {
+                    wp_enqueue_style(
+                        "mello-editor-style-$slug",
+                        plugin_dir_url(__FILE__) . "../build/$base/$slug/styles.css",
+                        [],
+                        filemtime($editor_css)
+                    );
+                }
             }
         }
     }
@@ -94,26 +101,66 @@ class Block_Extensions {
         foreach ($enabled as $slug => $active) {
             if (! $active) continue;
 
-            $frontend_js = plugin_dir_path(__FILE__) . "../build/$slug/frontend.js";
-            $frontend_css = plugin_dir_path(__FILE__) . "../build/$slug/styles.css";
+            $base_dirs = ['extensions', 'blocks'];
 
-            if (file_exists($frontend_css)) {
-                wp_enqueue_style(
-                    "mello-style-$slug",
-                    plugin_dir_url(__FILE__) . "../build/$slug/styles.css",
-                    [],
-                    filemtime($frontend_css)
-                );
+            foreach ($base_dirs as $base) {
+                $frontend_js = plugin_dir_path(__FILE__) . "../build/$base/$slug/frontend.js";
+                $frontend_css = plugin_dir_path(__FILE__) . "../build/$base/$slug/styles.css";
+
+                if (file_exists($frontend_css)) {
+                    wp_enqueue_style(
+                        "mello-style-$slug",
+                        plugin_dir_url(__FILE__) . "../build/$base/$slug/styles.css",
+                        [],
+                        filemtime($frontend_css)
+                    );
+                }
+
+                if (file_exists($frontend_js)) {
+                    wp_enqueue_script(
+                        "mello-frontend-$slug",
+                        plugin_dir_url(__FILE__) . "../build/$base/$slug/frontend.js",
+                        [],
+                        filemtime($frontend_js),
+                        true
+                    );
+                }
             }
+        }
+    }
 
-            if (file_exists($frontend_js)) {
-                wp_enqueue_script(
-                    "mello-frontend-$slug",
-                    plugin_dir_url(__FILE__) . "../build/$slug/frontend.js",
-                    [],
-                    filemtime($frontend_js),
-                    true
-                );
+    /**
+     * Register blocks from the build/blocks folder.
+     * Scans each directory in build/blocks and, if a block.json file exists and the toggle is enabled, registers the block.
+     */
+    public function register_blocks() {
+        // Get the enabled extensions/settings.
+        $enabled = \Mello\mello_get_enabled_extensions();
+
+        $blocks_dir = plugin_dir_path( __FILE__ ) . "../build/blocks/";
+
+        if ( ! file_exists( $blocks_dir ) ) {
+            return;
+        }
+
+        // Get all directories in the build/blocks folder
+        $directories = glob( $blocks_dir . '*', GLOB_ONLYDIR );
+
+        if ( ! $directories ) {
+            return;
+        }
+
+        foreach ( $directories as $dir ) {
+            // The block slug is the directory name.
+            $slug = basename( $dir );
+            // Only register if the toggle for this block is enabled.
+            if ( empty( $enabled[ $slug ] ) || ! $enabled[ $slug ] ) {
+                continue;
+            }
+            $block_json = trailingslashit( $dir ) . 'block.json';
+            if ( file_exists( $block_json ) ) {
+                // Register the block using the directory path.
+                register_block_type( $dir );
             }
         }
     }

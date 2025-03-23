@@ -1,0 +1,13 @@
+/*!*************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/extensions/query-render-featured-video/editor.scss ***!
+  \*************************************************************************************************************************************************/
+.edit-post-meta-boxes-area #poststuff h2.hndle {
+  color: #1e1e1e !important;
+  font-size: inherit !important;
+  font-weight: 500 !important;
+  padding: 0 17px !important;
+}
+
+.edit-post-meta-boxes-area .postbox .handlediv {
+  margin-right: 6px !important;
+}

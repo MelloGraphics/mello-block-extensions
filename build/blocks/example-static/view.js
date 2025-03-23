@@ -1,0 +1,1 @@
+console.log("Hello World! (from mello-block-example-static block)");

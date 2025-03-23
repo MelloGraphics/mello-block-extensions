@@ -5,17 +5,19 @@
   "author": "Ashley Pickering",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "build": "webpack --config webpack.config.js && rsync -a --prune-empty-dirs --include='*/' --include='*.php' --include='*.css' --exclude='*.js' --exclude='exclude-from-build/**' --exclude='exclude-from-build' --exclude='*' src/blocks/ build/",
+    "build": "wp-scripts build --webpack-src-dir=src/blocks --output-path=build/blocks && webpack --config webpack.extensions.config.js --env outputPath=build/extensions",
+    "start": "wp-scripts start src/blocks",
     "lint:css": "wp-scripts lint-style",
     "lint:js": "wp-scripts lint-js",
     "lint:js:src": "wp-scripts lint-js ./src",
     "lint:js:src:fix": "wp-scripts lint-js ./src --fix",
-    "start": "wp-scripts start",
     "packages-update": "wp-scripts packages-update",
     "update-pot": "wp i18n make-pot . languages/mello-block-extensions.pot --exclude=src",
     "prepare": "wp-scripts build",
     "package": "zip -r mello-block-extensions.zip . -x \"node_modules/*\" \"src/*\" \"build/exclude-from-build/**\" \".git/*\" \".github/*\" \".DS_Store\" \"package-lock.json\" \"package.json\" \"webpack.config.js\" \"README.md\"",
-    "export": "npm run build && npm run package"
+    "export": "npm run build && npm run package",
+    "create-block": "cd ./src/blocks && npx @wordpress/create-block --namespace=mello-block --no-plugin",
+    "create-block:dynamic": "cd ./src/blocks && npx @wordpress/create-block --namespace=mello-block --no-plugin --variant=dynamic"
   },
   "dependencies": {
     "classnames": "^2.3.2"
@@ -23,6 +25,8 @@
   "devDependencies": {
     "@wordpress/icons": "^9.35.0",
     "@wordpress/scripts": "^26.15.0",
-    "glob": "^11.0.0"
+    "glob": "^11.0.0",
+    "mini-css-extract-plugin": "^2.9.2",
+    "webpack-remove-empty-scripts": "^1.0.4"
   }
 }

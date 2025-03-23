@@ -13,6 +13,10 @@
     --mello-font-x-large: 3.5em;
     --mello-switch-bg: #ededed;
     --mello-switch-active: var(--mello-base);
+    --mello-speed-fast: .25s;
+    --mello-speed-medium: .4s;
+    --mello-speed-slow: .5s;
+    --mello-ease-circ: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* #wpcontent{
@@ -35,6 +39,9 @@
 }
 
 .mello-header-content-wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: var(--mello-spacing-small);
     max-width: 550px;
     z-index: +1;
 }
@@ -49,6 +56,7 @@
 .wrap .mello-heading{
     font-size: var(--mello-font-x-large);
     color: var(--mello-contrast);
+    font-weight: bold;
 }
 
 .mello-intro{
@@ -57,18 +65,37 @@
     color: var(--mello-contrast);
 }
 
+.mello-header-content-wrapper p:not(#setting-error-settings_updated p){
+    margin: 0;
+    color: var(--mello-contrast);
+}
+
+.mello-header-content-wrapper a{
+    color: var(--mello-primary);
+    text-decoration: none;
+}
+
+.mello-meta-block{
+    display: flex;
+    gap: 1em;
+}
+
 .mello-script{
     position: absolute;
     inset: -11% -3% -1% auto;
     height: 140%;
     width: auto;
-    opacity: .1;
+    opacity: .2;
 }
 
 .mello-extension-sections {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: var(--mello-spacing-med);
+}
+
+.mello-extension-group {
+    grid-column: 1 / -1;
 }
 
 .mello-extension-section{
@@ -85,6 +112,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--mello-spacing-small);
     width: 100%;
 }
 
@@ -102,7 +130,7 @@
 .mello-switch {
     position: relative;
     display: inline-block;
-    width: 50px;
+    min-width: 50px;
     height: 24px;
 }
 
@@ -118,7 +146,7 @@
     top: 0; left: 0;
     right: 0; bottom: 0;
     background-color: var(--mello-switch-bg);
-    transition: .4s;
+    transition: var(--mello-speed-fast) ;
     border-radius: 24px;
 }
 
@@ -130,7 +158,7 @@
     left: 3px;
     bottom: 3px;
     background-color: var(--mello-base);
-    transition: .4s;
+    transition: var(--mello-speed-medium) var(--mello-ease-circ);
     border-radius: 50%;
 }
 
@@ -143,11 +171,17 @@
     background-color: var(--mello-primary);
 }
 
+.mello-extension-section:not(:has(.mello-switch input:checked)){
+    opacity: .6;
+}
+
 .wp-core-ui .button-primary{
     padding: 10px 20px;
     background-color: var(--mello-base);
     border: unset;
     border-radius: unset;
+    font-weight: bold;
+    transition: var(--mello-speed-slow) var(--mello-ease-circ);
 }
 
 .wp-core-ui .button-primary:hover{
