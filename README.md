@@ -20,10 +20,10 @@
 <pre><code>
 mello-block-extensions/
 ├── build/              # Compiled assets for active extensions
-├── src/blocks/         # Source files for each block extension
+├── src/blocks/         # Source files for each MelloBlock
 ├── inc/                # Admin panel, enqueue logic, helpers
 ├── languages/          # .pot file for translations
-├── webpack.config.js   # Custom build process
+├── bin/                # Holds custom build processess
 ├── mello-block-extensions.php  # Plugin bootstrap
 </code></pre>
 
@@ -105,6 +105,35 @@ mello-block-extensions/
   </tbody>
 </table>
 
+<h2>MelloBlocks</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Block title</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Table of Contents</td>
+      <td>Displays a list of core/heading titles as a table of contents</td>
+    </tr>
+    <tr>
+      <td>Post Type</td>
+      <td>Displays the post-type name of the current page or within a query loop</td>
+    </tr>
+    <tr>
+      <td>Read Time</td>
+      <td>Displays the read time of the current page</td>
+    </tr>
+    <tr>
+      <td>Example Static</td>
+      <td>Here for admin testing purposes, this block has no functionality</td>
+    </tr>
+  </tbody>
+</table>
+
 <h2>Developer Admin Settings</h2>
 
 <p>
@@ -150,7 +179,7 @@ npm run build
 <h2>Screenshot</h2>
 
 <p>
-  <img src="https://mellographics.com/wp-content/uploads/ashley-pickering-mello-graphics-working-2022-43.jpeg" alt="Mello Block Extensions Admin Screenshot" />
+  <img src="https://mellographics.com/images/mello-blocks/mello-block-extensions.png" alt="Mello Block Extensions Admin Screenshot" />
 </p>
 
 <h2>Roadmap</h2>
