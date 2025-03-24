@@ -72,19 +72,19 @@
     add_action('admin_init', 'mello_register_settings');
     function mello_register_settings() {
         $titles = [
-            'button-modal-toggle' => 'Modal Toggle for Buttons',
-            'columns-reverse-toggle' => 'Reverse Column Order on Mobile',
-            'cover-ext-video' => 'External Video Input for Cover Block',
-            'details-faq-schema' => 'FAQ Schema in Details Block',
-            'details-heading-level' => 'Heading Level Option for Details Block',
-            'details-name-attribute' => 'Custom Name Attribute for Details Block',
-            'extend-data-attributes' => 'Custom Data Attributes Field',
-            'group-tag-name' => 'HTML Tag Options for Group Block',
-            'navigation-allowed-blocks' => 'Allow Blocks in Navigation',
-            'navigation-link-render-image' => 'Image Support in Navigation Link',
-            'navigation-submenu-allowed-blocks' => 'Allow Blocks in Submenu',
-            'query-exclude-current-post' => 'Exclude Current Post in Query',
-            'query-render-featured-video' => 'Featured Video Output in Query'
+            'button-modal-toggle' => 'Button: Show link in modal',
+            'columns-reverse-toggle' => 'Columns: Reverse order on mobile',
+            'cover-ext-video' => 'Cover: Render external video URL',
+            'details-faq-schema' => 'Details: Add FAQ schema',
+            'details-heading-level' => 'Details: Add heading level to summary',
+            'details-name-attribute' => 'Details: Add name attribute',
+            'extend-data-attributes' => 'Global: Add data attributes',
+            'group-tag-name' => 'Group: Additional HTML tag options',
+            'navigation-allowed-blocks' => 'Navigation: Extend allowed blocks',
+            'navigation-link-render-image' => 'Navigation Link: Render image in link',
+            'navigation-submenu-allowed-blocks' => 'Navigation Submenu: Extend allowed blocks',
+            'query-exclude-current-post' => 'Query: Exclude current post',
+            'query-render-featured-video' => 'Query: Render a featured video'
         ];
         $descriptions = [
             'button-modal-toggle' => 'Adds a toggle to buttons for opening modals.',
@@ -99,7 +99,8 @@
             'navigation-link-render-image' => 'Adds image field support to Navigation Link block.',
             'navigation-submenu-allowed-blocks' => 'Allows blocks inside Navigation Submenu items.',
             'query-exclude-current-post' => 'Toggle to exclude the current post from Query block results.',
-            'query-render-featured-video' => 'Renders featured video from custom field in the Query block.'
+            'query-render-featured-video' => 'Renders featured video from custom field in the Query block.',
+            'table-of-contents' => 'Enable experimental core/table-of-contents block'
         ];
         
         register_setting('mello_block_extensions_group', 'mello_enabled_extensions');

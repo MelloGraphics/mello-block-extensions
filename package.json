@@ -5,8 +5,8 @@
   "author": "Ashley Pickering",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "build": "wp-scripts build --webpack-src-dir=src/blocks --output-path=build/blocks && webpack --config webpack.extensions.config.js --env outputPath=build/extensions",
-    "start": "wp-scripts start src/blocks",
+    "build": "wp-scripts build --webpack-src-dir=src/blocks --output-path=build/blocks && webpack --config bin/webpack.extensions.config.js --env outputPath=build/extensions",
+    "start": "wp-scripts start --config /bin/webpack.dev.config.js",
     "lint:css": "wp-scripts lint-style",
     "lint:js": "wp-scripts lint-js",
     "lint:js:src": "wp-scripts lint-js ./src",
