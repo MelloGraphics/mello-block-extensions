@@ -100,7 +100,9 @@
             'navigation-submenu-allowed-blocks' => 'Allows blocks inside Navigation Submenu items.',
             'query-exclude-current-post' => 'Toggle to exclude the current post from Query block results.',
             'query-render-featured-video' => 'Renders featured video from custom field in the Query block.',
-            'table-of-contents' => 'Enable experimental core/table-of-contents block'
+            'table-of-contents' => 'Enable experimental core/table-of-contents block',
+            'read-time' => 'Display the read time of the current page',
+            'post-type' => 'Display the post type for the page, or in a query'
         ];
         
         register_setting('mello_block_extensions_group', 'mello_enabled_extensions');

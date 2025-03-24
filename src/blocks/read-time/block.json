@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mello-block/read-time",
+	"version": "0.1.0",
+	"title": "Read Time",
+	"category": "widgets",
+	"icon": "clock",
+	"description": "Display the read time of a page",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "read-time",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}

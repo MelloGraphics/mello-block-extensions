@@ -1,0 +1,1 @@
+(()=>{console.log("Read Time Script Loaded");const e=document.querySelector(".entry-content").innerText.trim(),o=e?e.split(/\s+/).length:0,t=Math.ceil(o/200);console.log(`Word Count: ${o}, Read Time: ${t} min`),document.querySelectorAll(".wp-block-mello-block-read-time").forEach((e=>{e.innerText=`${t}min read`}))})();

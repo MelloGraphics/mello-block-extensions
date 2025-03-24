@@ -1,17 +1,17 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "melloblock/cursor",
+  "name": "mello-block/read-time",
   "version": "0.1.0",
-  "title": "Cursor",
-  "category": "design",
-  "icon": "paperclip",
-  "description": "Custom Cursor",
+  "title": "Read Time",
+  "category": "widgets",
+  "icon": "clock",
+  "description": "Display the read time of a page",
   "example": {},
   "supports": {
     "html": false
   },
-  "textdomain": "cursor",
+  "textdomain": "read-time",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",
