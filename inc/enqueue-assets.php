@@ -43,6 +43,8 @@ class Block_Extensions {
      * Register the hooks for enqueuing assets and registering blocks.
      */
     public function register_hooks() {
+        // Hook for including extension functions early.
+        add_action( 'init', [ $this, 'include_extension_functions' ] );
         // Hook for editor-only assets.
         add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
         // Hook for frontend-only assets.
@@ -52,7 +54,27 @@ class Block_Extensions {
     }
 
     /**
-     * Enqueue editor-specific JS and CSS assets.
+     * Include block-functions.php for enabled extensions early in the lifecycle.
+     */
+    public function include_extension_functions() {
+        $enabled = \Mello\mello_get_enabled_extensions();
+        $function_dirs = ['extensions'];
+
+        foreach ($enabled as $slug => $active) {
+            if (! $active) continue;
+
+            foreach ($function_dirs as $base) {
+                $functions_file = plugin_dir_path(__FILE__) . "../build/$base/$slug/block-functions.php";
+                if (file_exists($functions_file)) {
+                    include_once $functions_file;
+                    error_log("✅ Included early: $functions_file");
+                }
+            }
+        }
+    }
+
+    /**
+     * Enqueue editor-specific assets.
      */
     public function enqueue_block_editor_assets() {
         $enabled = \Mello\mello_get_enabled_extensions();
@@ -60,10 +82,9 @@ class Block_Extensions {
         foreach ($enabled as $slug => $active) {
             if (! $active) continue;
 
-            // Try both extensions and blocks directories
-            $base_dirs = ['extensions', 'blocks'];
+            $asset_dirs = ['extensions', 'blocks'];
 
-            foreach ($base_dirs as $base) {
+            foreach ($asset_dirs as $base) {
                 $editor_js = plugin_dir_path(__FILE__) . "../build/$base/$slug/edit.js";
                 $editor_css = plugin_dir_path(__FILE__) . "../build/$base/$slug/styles.css";
 
@@ -93,7 +114,7 @@ class Block_Extensions {
     }
 
     /**
-     * Enqueue frontend-specific CSS and JS assets.
+     * Enqueue frontend-specific assets.
      */
     public function enqueue_frontend_assets() {
         $enabled = \Mello\mello_get_enabled_extensions();
@@ -101,9 +122,9 @@ class Block_Extensions {
         foreach ($enabled as $slug => $active) {
             if (! $active) continue;
 
-            $base_dirs = ['extensions', 'blocks'];
+            $asset_dirs = ['extensions', 'blocks'];
 
-            foreach ($base_dirs as $base) {
+            foreach ($asset_dirs as $base) {
                 $frontend_js = plugin_dir_path(__FILE__) . "../build/$base/$slug/frontend.js";
                 $frontend_css = plugin_dir_path(__FILE__) . "../build/$base/$slug/styles.css";
 
