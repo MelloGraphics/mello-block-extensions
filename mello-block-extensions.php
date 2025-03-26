@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once plugin_dir_path(__FILE__) . 'inc/helpers.php';
-require_once plugin_dir_path(__FILE__) . 'inc/load-blocks.php';
 require_once plugin_dir_path(__FILE__) . 'inc/enqueue-assets.php';
 require_once plugin_dir_path(__FILE__) . 'inc/admin-settings.php';
+
+register_activation_hook(__FILE__, 'Mello\\mello_initialize_enabled_extensions');

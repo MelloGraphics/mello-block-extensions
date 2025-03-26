@@ -14,7 +14,7 @@
     "packages-update": "wp-scripts packages-update",
     "update-pot": "wp i18n make-pot . languages/mello-block-extensions.pot --exclude=src",
     "prepare": "wp-scripts build",
-    "package": "zip -r mello-block-extensions.zip . -x \"node_modules/*\" \"src/*\" \"build/exclude-from-build/**\" \".git/*\" \".github/*\" \".DS_Store\" \"package-lock.json\" \"package.json\" \"webpack.config.js\" \"README.md\"",
+    "package": "zip -r mello-block-extensions.zip ./mello-block-extensions.php ./build/extensions ./build/blocks ./inc ./languages ./assets -x \"*.map\"",
     "export": "npm run build && npm run package",
     "create-block": "cd ./src/blocks && npx @wordpress/create-block --namespace=mello-block --no-plugin",
     "create-block:dynamic": "cd ./src/blocks && npx @wordpress/create-block --namespace=mello-block --no-plugin --variant=dynamic"

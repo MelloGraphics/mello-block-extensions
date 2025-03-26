@@ -9,6 +9,23 @@
             'mello_render_settings_page'
         );
     }
+
+    function mello_initialize_enabled_extensions() {
+        if (get_option('mello_enabled_extensions') !== false) {
+            return; // Already set, no need to overwrite
+        }
+    
+        $enabled_extensions = [];
+        $base_dir = plugin_dir_path(__FILE__) . '/../build/extensions/';
+        foreach (scandir($base_dir) as $item) {
+            if ($item === '.' || $item === '..') continue;
+            if (is_dir($base_dir . $item)) {
+                $enabled_extensions[$item] = true;
+            }
+        }
+    
+        update_option('mello_enabled_extensions', $enabled_extensions);
+    }
     
     function mello_render_settings_page() {
         $image_melloScript = '';
@@ -169,9 +186,10 @@
     }
     
     function mello_get_available_extensions() {
+        $base_dir = plugin_dir_path(__FILE__) . '../';
         $extension_paths = [
-            'extensions' => plugin_dir_path(__FILE__) . '../src/extensions/',
-            'blocks'     => plugin_dir_path(__FILE__) . '../src/blocks/',
+            'extensions' => is_dir($base_dir . 'src/extensions/') ? $base_dir . 'src/extensions/' : $base_dir . 'build/extensions/',
+            'blocks'     => is_dir($base_dir . 'src/blocks/') ? $base_dir . 'src/blocks/' : $base_dir . 'build/blocks/',
         ];
 
         $all_extensions = [];

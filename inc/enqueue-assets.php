@@ -85,7 +85,7 @@ class Block_Extensions {
 
             foreach ($asset_dirs as $base) {
                 $editor_js = plugin_dir_path(__FILE__) . "../build/$base/$slug/edit.js";
-                $editor_css = plugin_dir_path(__FILE__) . "../build/$base/$slug/styles.css";
+                $editor_css = plugin_dir_path(__FILE__) . "../build/$base/$slug/editor-style.css";
 
                 if (file_exists($editor_js)) {
                     $asset_file = plugin_dir_path(__FILE__) . "../build/$base/$slug/edit.asset.php";
@@ -103,7 +103,7 @@ class Block_Extensions {
                 if (file_exists($editor_css)) {
                     wp_enqueue_style(
                         "mello-editor-style-$slug",
-                        plugin_dir_url(__FILE__) . "../build/$base/$slug/styles.css",
+                        plugin_dir_url(__FILE__) . "../build/$base/$slug/editor-style.css",
                         [],
                         filemtime($editor_css)
                     );
