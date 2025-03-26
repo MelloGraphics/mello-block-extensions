@@ -67,7 +67,6 @@ class Block_Extensions {
                 $functions_file = plugin_dir_path(__FILE__) . "../build/$base/$slug/block-functions.php";
                 if (file_exists($functions_file)) {
                     include_once $functions_file;
-                    error_log("✅ Included early: $functions_file");
                 }
             }
         }
