@@ -24,4 +24,14 @@ require_once plugin_dir_path(__FILE__) . 'inc/helpers.php';
 require_once plugin_dir_path(__FILE__) . 'inc/enqueue-assets.php';
 require_once plugin_dir_path(__FILE__) . 'inc/admin-settings.php';
 
-register_activation_hook(__FILE__, 'Mello\\mello_initialize_enabled_extensions');
+register_activation_hook(__FILE__, function () {
+	if (function_exists('Mello\\mello_initialize_enabled_extensions')) {
+		\Mello\mello_initialize_enabled_extensions();
+	} else {
+		add_action('plugins_loaded', function () {
+			if (function_exists('Mello\\mello_initialize_enabled_extensions')) {
+				\Mello\mello_initialize_enabled_extensions();
+			}
+		});
+	}
+});
