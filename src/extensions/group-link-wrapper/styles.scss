@@ -1,0 +1,14 @@
+// Extend Query Video front end style
+
+.mello-cover-link {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+}
+.wp-block-group:has(> .mello-cover-link) {
+  position: relative;
+}

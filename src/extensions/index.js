@@ -35,5 +35,8 @@ import './navigation-submenu-allowed-blocks/edit.js';
 // Query Exclude Current Post Extension
 import './query-exclude-current-post/edit.js';
 
+// Query Exclude Current Post Extension
+import './group-link-wrapper/edit.js';
+
 // Query Render Featured Video Extension
 // Note: This extension does not include an edit.js file. Its functionality is managed via PHP and stylesheet files.
