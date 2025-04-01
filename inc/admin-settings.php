@@ -95,23 +95,25 @@
             'details-faq-schema' => 'Details: Add FAQ schema',
             'details-heading-level' => 'Details: Add heading level to summary',
             'details-name-attribute' => 'Details: Add name attribute',
-            'extend-data-attributes' => 'Global: Add data attributes',
+            'add-data-attributes' => 'Global: Add data attributes',
+            'add-scroll-data' => 'Global: Lenis scroll speed',
             'group-tag-name' => 'Group: Additional HTML tag options',
             'group-link-wrapper' => 'Group: Add group link',
             'navigation-allowed-blocks' => 'Navigation: Extend allowed blocks',
             'navigation-link-render-image' => 'Navigation Link: Render image in link',
             'navigation-submenu-allowed-blocks' => 'Navigation Submenu: Extend allowed blocks',
             'query-exclude-current-post' => 'Query: Exclude current post',
-            'query-render-featured-video' => 'Query: Render a featured video'
+            'query-render-featured-video' => 'Query: Render a featured video',
         ];
         $descriptions = [
-            'button-modal-toggle' => 'Adds a toggle to buttons for opening modals.',
+            'button-modal-toggle' => 'Adds a toggle to buttons for opening link content in an iframe modal.',
             'columns-reverse-toggle' => 'Allows reversing the order of columns on mobile devices.',
             'cover-ext-video' => 'Adds an input for embedding external video URLs into the Cover block.',
             'details-faq-schema' => 'Outputs FAQ schema markup in frontend for Details blocks.',
             'details-heading-level' => 'Choose the heading level for Details block summary.',
-            'details-name-attribute' => 'Adds a custom name attribute to Details block.',
-            'extend-data-attributes' => 'Input field for adding data-* attributes.',
+            'details-name-attribute' => 'Adds a custom name attribute to Details block',
+            'add-data-attributes' => 'Input field for adding custom data-* attributes to a block.',
+            'add-scroll-data' => 'Add a slider to change a blocks scroll speed creating a parallax effect. Lenis.js and motion.js is needed for this to function.',
             'group-tag-name' => 'Choose the HTML tag used for the Group block wrapper.',
             'group-link-wrapper' => 'Add a link URL within the group block that wraps the whole content',
             'navigation-allowed-blocks' => 'Allows additional blocks inside Navigation block.',
@@ -119,7 +121,6 @@
             'navigation-submenu-allowed-blocks' => 'Allows blocks inside Navigation Submenu items.',
             'query-exclude-current-post' => 'Toggle to exclude the current post from Query block results.',
             'query-render-featured-video' => 'Renders featured video from custom field in the Query block.',
-            'table-of-contents' => 'Enable experimental core/table-of-contents block',
             'read-time' => 'Display the read time of the current page',
             'post-type' => 'Display the post type for the page, or in a query'
         ];

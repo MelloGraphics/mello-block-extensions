@@ -1,71 +1,57 @@
 /*!*****************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/extensions/button-modal-toggle/styles.scss ***!
   \*****************************************************************************************************************************************/
-@charset "UTF-8";
-.responsive-iframe {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-  height: 0;
-  overflow: hidden;
-  max-width: 100%;
-}
-
-.responsive-iframe iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.modal__content video {
-  width: 100%;
-  max-height: 80vh;
-}
-
-/* Basic modal styling */
-.modal {
-  display: none;
-}
-
-.modal.is-open {
-  display: block;
-}
-
-.modal__overlay {
+.mello-modal__overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: none;
+  visibility: hidden;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
+.mello-modal__overlay.mello-modal--active {
+  display: flex;
+  visibility: visible;
+}
 
-.modal__container {
-  background-color: transparent;
-  padding: 30px;
+.mello-modal__content {
+  padding: unset;
   max-width: 90%;
   max-height: 90vh;
   border-radius: 4px;
   overflow-y: auto;
   box-sizing: border-box;
+  position: relative;
+}
+.mello-modal__content iframe,
+.mello-modal__content video {
+  width: 90svw;
+  max-height: 90vh;
+  aspect-ratio: 16/9;
+  padding: 0;
+  margin: 0;
 }
 
-.modal__close {
+.mello-modal__close {
   position: absolute;
   right: 15px;
   top: 15px;
+  padding: 0;
   color: white;
   background: none;
   border: none;
   cursor: pointer;
+  font-size: 1em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
 }
-
-.modal__close::before {
-  content: "×";
-  font-size: 30px;
+.mello-modal__close svg {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  vertical-align: middle;
 }

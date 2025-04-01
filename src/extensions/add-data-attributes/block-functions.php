@@ -1,6 +1,6 @@
 <?php
 
-function mello_extend_post_title_attributes($block_content, $block) {
+function mello_render_data_attribute($block_content, $block) {
     if (!in_array($block['blockName'], ['core/post-title', 'core/query-title'])) {
         return $block_content;
     }
@@ -15,4 +15,4 @@ function mello_extend_post_title_attributes($block_content, $block) {
     return $block_content;
 }
 
-add_filter('render_block', 'mello_extend_post_title_attributes', 10, 2);
+add_filter('render_block', 'mello_render_data_attribute', 10, 2);
