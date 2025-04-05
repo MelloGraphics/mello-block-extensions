@@ -3,7 +3,8 @@ const defaultConfig = require("@wordpress/scripts/config/webpack.config");
 
 module.exports = {
   ...defaultConfig,
-  mode: "development",
+  mode: "production",
+  devtool: false,
   output: {
     ...defaultConfig.output,
     clean: false, // Disable cleaning of the build folder during development

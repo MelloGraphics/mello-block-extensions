@@ -90,6 +90,7 @@
     function mello_register_settings() {
         $titles = [
             'button-modal-toggle' => 'Button: Show link in modal',
+            'content-in-modal-toggle' => 'Mixed: Show content in a modal',
             'columns-reverse-toggle' => 'Columns: Reverse order on mobile',
             'cover-ext-video' => 'Cover: Render external video URL',
             'details-faq-schema' => 'Details: Add FAQ schema',
@@ -107,6 +108,7 @@
         ];
         $descriptions = [
             'button-modal-toggle' => 'Adds a toggle to buttons for opening link content in an iframe modal.',
+            'content-in-modal-toggle' => 'Adds a toggle to various blocks to open the linked content in a modal.',
             'columns-reverse-toggle' => 'Allows reversing the order of columns on mobile devices.',
             'cover-ext-video' => 'Adds an input for embedding external video URLs into the Cover block.',
             'details-faq-schema' => 'Outputs FAQ schema markup in frontend for Details blocks.',

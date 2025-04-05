@@ -1,0 +1,83 @@
+/* Disable scrolling on the main website when modal is open */
+body:has(.mello-modal.is-open) {
+  overflow: clip;
+}
+
+/* Mello Modal Base Styles */
+.mello-modal {
+  display: none;
+  visibility: hidden;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+
+  &.is-open {
+    display: flex;
+    visibility: visible;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  /* Modal Overlay */
+  .modal__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(0 0 0 / 75%);
+  }
+
+  /* Modal Container */
+  .modal__container {
+    background: black;
+    width: 90%;
+    height: 90%;
+    position: relative;
+    overflow-y: auto;
+
+    border-radius: .5rem;
+  }
+
+  /* Modal Content Area */
+  .modal__content {
+    position: relative;
+
+    iframe,
+    video {
+      width: 90svw;
+      max-height: 90vh;
+      aspect-ratio: 16/9;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  /* Modal Close Button */
+  .modal__close {
+    position: fixed;
+    z-index: 1;
+    right: 15px;
+    top: 15px;
+    padding: 0;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 3rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+
+    svg {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      fill: currentColor;
+      vertical-align: middle;
+    }
+  }
+}

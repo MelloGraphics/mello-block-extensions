@@ -43,7 +43,8 @@ const buildExtensionEntries = () => {
 };
 
 module.exports = {
-  mode: "development",
+  mode: "production",
+  devtool: false,
   entry: buildExtensionEntries(),
   output: {
     path: path.resolve(__dirname, "../build/extensions"),
