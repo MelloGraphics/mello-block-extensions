@@ -37,8 +37,10 @@ body:has(.mello-modal.is-open) {
     max-height: 90%;
     position: relative;
     overflow-y: auto;
+    border-radius: 0.75rem;
+    opacity: 0;
 
-    border-radius: 0.5rem;
+    transition: 0.5s ease-out;
   }
 
   /* Modal Content Area */
@@ -60,7 +62,12 @@ body:has(.mello-modal.is-open) {
     }
   }
 
-  /* Modal Close Button */
+  // buttons
+
+  button {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+  }
   .modal__close {
     position: fixed;
     z-index: 1;
@@ -71,22 +78,25 @@ body:has(.mello-modal.is-open) {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 3rem;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
+
+    transition: 0.25s ease-out;
 
     svg {
       display: inline-block;
-      width: 1em;
-      height: 1em;
+      width: 1.5em;
+      height: 1.5em;
       fill: currentColor;
       vertical-align: middle;
     }
+
+    &:hover {
+      scale: 0.8;
+      rotate: 90deg;
+    }
   }
 
-  .modal__next, .modal__prev{
+  .modal__next,
+  .modal__prev {
     background-color: transparent;
     border: none;
     box-shadow: none;
@@ -98,20 +108,37 @@ body:has(.mello-modal.is-open) {
     padding: 1em;
     position: absolute;
     touch-action: manipulation;
-    transition: opacity .25s ease-in-out;
+    transition: 0.25s ease-out;
+
+    svg {
+      display: inline-block;
+      width: 1.5em;
+      height: 1.5em;
+      fill: currentColor;
+      vertical-align: middle;
+    }
   }
 
-  .modal__next{
+  .modal__next {
     left: auto;
     right: 0;
+
+    &:hover {
+      translate: 0.25em 0;
+    }
   }
 
-  .modal__prev{
+  .modal__prev {
     left: 0;
     right: auto;
+
+    &:hover {
+      translate: -0.25em 0;
+    }
   }
 
-  /* Modal Loader */
+  // Loader
+
   .modal__loader {
     display: flex;
     align-items: center;
@@ -123,22 +150,34 @@ body:has(.mello-modal.is-open) {
     pointer-events: none;
 
     .modal__loader-inner {
-      animation: pulse 1.5s infinite ease-in-out;
+      animation: mello-modal-pulse 1.5s infinite ease-in-out;
     }
-
-    // &[hidden] {
-    //   display: none !important;
-    // }
   }
 
-
-
-  @keyframes pulse {
-    0%, 100% {
+  @keyframes mello-modal-pulse {
+    0%,
+    100% {
       opacity: 0.4;
     }
     50% {
       opacity: 1;
     }
+  }
+}
+
+// when content has loaded a class is applied
+
+.mello-modal.mello-modal--loaded {
+  .modal__loader {
+    display: none;
+    visibility: hidden;
+  }
+
+  button {
+    opacity: 1;
+  }
+
+  .modal__container {
+    opacity: 1;
   }
 }

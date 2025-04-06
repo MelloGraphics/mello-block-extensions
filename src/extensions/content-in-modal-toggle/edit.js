@@ -30,7 +30,10 @@ const addModalToggleControl = (BlockEdit) => {
         <BlockEdit {...props} />
         {isSelected && (
           <InspectorControls>
-            <PanelBody title={__("Modal Settings", "mello-block-extensions")} initialOpen={false}>
+            <PanelBody
+              title={__("Modal Settings", "mello-block-extensions")}
+              initialOpen={false}
+            >
               <ToggleControl
                 __next40pxDefaultSize
                 label={__("Open in Modal", "mello-block-extensions")}

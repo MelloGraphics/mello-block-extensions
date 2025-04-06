@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
       onClose: () => {
         const modalContent = document.getElementById("modal-content");
         if (modalContent) modalContent.innerHTML = "";
+        const modalWrapper = document.getElementById("modal-identifier");
+        if (modalWrapper) modalWrapper.classList.remove("mello-modal--loaded");
       }
     });
   }
@@ -43,11 +45,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const modalContent = document.getElementById("modal-content");
         const loader = document.getElementById("modal-loader");
+        const modalWrapper = document.getElementById("modal-identifier");
 
         if (modalContent) modalContent.innerHTML = "";
         if (loader) loader.hidden = false;
 
         MicroModal.show("modal-identifier");
+
+        if (modalWrapper) {
+          modalWrapper.classList.add("mello-modal--loading");
+          modalWrapper.classList.remove("mello-modal--loaded");
+        }
 
         try {
           console.log(`Fetching content from: ${url}`);
@@ -61,12 +69,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (contentElement) {
             document.getElementById("modal-content").innerHTML = contentElement.innerHTML;
+
+            if (modalWrapper) {
+              modalWrapper.classList.remove("mello-modal--loading");
+              modalWrapper.classList.add("mello-modal--loaded");
+            }
+
             MicroModal.show("modal-identifier");
           } else {
             console.error("Post content element not found in the loaded HTML.");
           }
         } catch (error) {
           console.error("Error fetching post content:", error);
+          if (modalWrapper) modalWrapper.classList.remove("mello-modal--loading");
         }
       });
     });

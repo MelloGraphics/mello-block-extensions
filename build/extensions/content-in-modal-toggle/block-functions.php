@@ -74,10 +74,19 @@ function mello_modal_markup() {
             <div id="modal-loader" class="modal__loader" hidden>
                 <div class="modal__loader-inner" aria-hidden="true">Loading…</div>
             </div>
-            <button class="modal__prev" aria-label="Previous slide">Prev</button>
-            <button class="modal__next" aria-label="Next slide">Next</button>
+            <button class="modal__prev" aria-label="Previous slide"><svg viewBox="0 0 27 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="arrow-left" d="M0.585938 11.457L11.3672 1.14453L11.7188 0.792969L12.3633 1.49609L12.0117 1.78906L2.05078 11.2812H25.7812H26.25V12.2188H25.7812H2.05078L12.0117 21.7695L12.3633 22.0625L11.7188 22.7656L11.3672 22.4141L0.585938 12.1016L0.234375 11.75L0.585938 11.457Z" fill="white"/>
+</svg>
+</button>
+            <button class="modal__next" aria-label="Next slide"><svg viewBox="0 0 26 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="arrow-right" d="M25.6055 12.1016L14.8242 22.4141L14.4727 22.7656L13.8281 22.0625L14.1797 21.7695L24.1406 12.2188H0.46875H0V11.2812H0.46875H24.1406L14.1797 1.78906L13.8281 1.49609L14.4727 0.792969L14.8242 1.14453L25.6055 11.457L25.957 11.75L25.6055 12.1016Z" fill="white"/>
+</svg>
+</button>
+<button class="modal__close" aria-label="Close modal" data-micromodal-close><svg viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="close" d="M9.25 9.10547L17.8047 0.550781L18.4492 1.19531L9.89453 9.75L18.4492 18.3633L17.8047 19.0078L9.25 10.4531L0.636719 19.0078L-0.0078125 18.3633L8.54688 9.75L-0.0078125 1.19531L0.636719 0.550781L9.25 9.10547Z" fill="white"/>
+</svg>
+</button>
             <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-identifier-title">
-                <button class="modal__close" aria-label="Close modal" data-micromodal-close>&times;</button>
                 <main class="modal__content" id="modal-content">
                     <!-- Dynamic content will be loaded here -->
                 </main>
