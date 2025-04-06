@@ -13,7 +13,7 @@ const addModalToggleControl = (BlockEdit) => {
     // Ensure we're working with the button block
     if (name !== "core/button") return <BlockEdit {...props} />;
 
-    const { openInModal = false } = attributes;
+    const { buttonOpenInModal = false } = attributes;
 
     return (
       <Fragment>
@@ -23,8 +23,8 @@ const addModalToggleControl = (BlockEdit) => {
             <ToggleControl
               className="mello-additional-setting"
               label={__("Open Content in Modal", "mello-block-extensions")}
-              checked={openInModal}
-              onChange={(value) => setAttributes({ openInModal: value })}
+              checked={buttonOpenInModal}
+              onChange={(value) => setAttributes({ buttonOpenInModal: value })}
             />
           </InspectorControls>
         )}
@@ -46,7 +46,7 @@ const addModalAttributes = (settings, name) => {
 
   settings.attributes = {
     ...settings.attributes,
-    openInModal: {
+    buttonOpenInModal: {
       type: "boolean",
       default: false,
     },

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const modalClass = 'is-open-in-modal';
+    const modalClass = 'is-button-open-in-modal';
 
     // Function to create a simple modal
     const createModal = (url) => {

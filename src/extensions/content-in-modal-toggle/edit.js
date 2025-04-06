@@ -15,15 +15,17 @@ const addModalToggleControl = (BlockEdit) => {
       ![
         "core/post-title",
         "core/post-featured-image",
-        "core/read-more",
-        "core/button",
+        "core/read-more"
       ].includes(name)
     ) {
       return <BlockEdit {...props} />;
     }
 
-    const { openInModal = false, modalContentSelector = ".entry-content" } =
-      attributes;
+    const { 
+      openInModal = false, 
+      modalContentSelector = ".entry-content", 
+      renderAsIframe = false 
+    } = attributes;
 
     return (
       <Fragment>
@@ -36,16 +38,20 @@ const addModalToggleControl = (BlockEdit) => {
             >
               <ToggleControl
                 __next40pxDefaultSize
-                label={__("Open in Modal", "mello-block-extensions")}
+                label={__("Open Content in Modal", "mello-block-extensions")}
+                help={__(
+                  "Enable this if the linked content should be rendered in a modal.",
+                  "mello-block-extensions"
+                )}
                 checked={openInModal}
-                onChange={(value) => setAttributes({ openInModal: value })}
+                onChange={(value) => setAttributes({ openInModal: value, renderAsIframe: value ? false : renderAsIframe })}
               />
               {openInModal && (
                 <TextControl
                   __next40pxDefaultSize
                   label={__("Modal Content Selector", "mello-block-extensions")}
                   help={__(
-                    "Enter a CSS class selector to identify the content to pull in. Defaults to .entry-content.",
+                    "Enter a CSS selector to identify the content to pull in. Defaults to .entry-content for regular content.",
                     "mello-block-extensions"
                   )}
                   value={modalContentSelector}
@@ -54,6 +60,16 @@ const addModalToggleControl = (BlockEdit) => {
                   }
                 />
               )}
+              <ToggleControl
+                __next40pxDefaultSize
+                label={__("Open Iframe in Modal", "mello-block-extensions")}
+                help={__(
+                  "Enable this if the linked content should be rendered as an iframe (e.g. for Vimeo or video content).",
+                  "mello-block-extensions"
+                )}
+                checked={renderAsIframe}
+                onChange={(value) => setAttributes({ renderAsIframe: value, openInModal: value ? false : openInModal })}
+              />
             </PanelBody>
           </InspectorControls>
         )}
@@ -91,6 +107,10 @@ const addModalAttributes = (settings, name) => {
     modalContentSelector: {
       type: "string",
       default: ".entry-content",
+    },
+    renderAsIframe: {
+      type: "boolean",
+      default: false,
     },
   };
   return settings;

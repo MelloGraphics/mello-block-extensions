@@ -67,6 +67,11 @@ body:has(.mello-modal.is-open) {
   button {
     opacity: 0;
     transition: opacity 0.5s ease-out;
+
+    &.disabled{
+      filter: brightness(.25);
+      pointer-events: none;
+    }
   }
   .modal__close {
     position: fixed;

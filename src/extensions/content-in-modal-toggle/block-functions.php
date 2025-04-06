@@ -17,7 +17,7 @@ $mello_openinmodal_found = false;
 function mello_render_content_modal_global( $block_content, $block ) {
     global $mello_openinmodal_found;
     // Only process if openInModal is enabled and the block is one of our target blocks.
-    if ( ! empty( $block['attrs']['openInModal'] ) && in_array( $block['blockName'], array( 'core/button', 'core/post-title', 'core/post-featured-image', 'core/read-more' ) ) ) {
+    if ( ! empty( $block['attrs']['openInModal'] ) && in_array( $block['blockName'], array( 'core/post-title', 'core/post-featured-image', 'core/read-more' ) ) ) {
         // Mark that we found a block with openInModal enabled
         $mello_openinmodal_found = true;
         
