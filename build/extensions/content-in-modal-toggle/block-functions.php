@@ -71,18 +71,16 @@ function mello_modal_markup() {
     ?>
     <div class="modal micromodal micromodal-slide mello-modal" id="modal-identifier" aria-hidden="true">
         <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+            <div id="modal-loader" class="modal__loader" hidden>
+                <div class="modal__loader-inner" aria-hidden="true">Loading…</div>
+            </div>
+            <button class="modal__prev" aria-label="Previous slide">Prev</button>
+            <button class="modal__next" aria-label="Next slide">Next</button>
             <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-identifier-title">
-                <header class="modal__header">
-                    <!-- <h2 class="modal__title" id="modal-identifier-title">Modal Title</h2> -->
-                    <button class="modal__close" aria-label="Close modal" data-micromodal-close>&times;</button>
-                </header>
+                <button class="modal__close" aria-label="Close modal" data-micromodal-close>&times;</button>
                 <main class="modal__content" id="modal-content">
                     <!-- Dynamic content will be loaded here -->
                 </main>
-                <!-- <footer class="modal__footer">
-                    <button class="modal__btn modal__btn-primary">Continue</button>
-                    <button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
-                </footer> -->
             </div>
         </div>
     </div>

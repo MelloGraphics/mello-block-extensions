@@ -8,7 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     MicroModal.init({
       disableScroll: true,
       awaitCloseAnimation: true,
-      debugMode: false
+      debugMode: false,
+      onClose: () => {
+        const modalContent = document.getElementById("modal-content");
+        if (modalContent) modalContent.innerHTML = "";
+      }
     });
   }
 
@@ -36,6 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("No URL found on trigger.");
           return;
         }
+
+        const modalContent = document.getElementById("modal-content");
+        const loader = document.getElementById("modal-loader");
+
+        if (modalContent) modalContent.innerHTML = "";
+        if (loader) loader.hidden = false;
+
+        MicroModal.show("modal-identifier");
 
         try {
           console.log(`Fetching content from: ${url}`);
