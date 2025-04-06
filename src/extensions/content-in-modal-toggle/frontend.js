@@ -72,39 +72,36 @@ document.addEventListener("DOMContentLoaded", () => {
   const debounceDelay = 250; // ms
   
   function setupMutationObserver() {
-    const contentArea = document.querySelector('.search-filter-results') || 
-                        document.querySelector('.content-area') || 
-                        document.querySelector('main') || 
-                        document.querySelector('#content');
-    
-    if (contentArea) {
-      console.log("Setting up mutation observer with debouncing");
-      const observer = new MutationObserver(function(mutations) {
-        // Only process mutations that might affect our modal triggers
+    const contentAreas = document.querySelectorAll('.wp-block-query');
+
+    if (contentAreas.length) {
+      console.log(`Setting up mutation observers on ${contentAreas.length} .wp-block-query elements`);
+      const observer = new MutationObserver((mutations) => {
         const relevantMutation = mutations.some(mutation => {
-          // Check if the mutation affects our links
           return Array.from(mutation.addedNodes).some(node => {
-            if (node.nodeType === 1) { // ELEMENT_NODE
-              // Either the node itself is a link or contains links
-              return node.classList?.contains('is-open-mello-modal') || 
+            if (node.nodeType === 1) {
+              return node.classList?.contains('is-open-mello-modal') ||
                      node.querySelector?.('.is-open-mello-modal');
             }
             return false;
           });
         });
-        
+
         if (relevantMutation) {
           console.log("Relevant DOM mutation detected");
-          // Clear any existing timer
           clearTimeout(debounceTimer);
-          // Set a new timer
           debounceTimer = setTimeout(bindModalTriggers, debounceDelay);
         }
       });
-      
-      observer.observe(contentArea, { childList: true, subtree: true });
+
+      contentAreas.forEach(area => {
+        observer.observe(area, { childList: true, subtree: true });
+      });
+
       return true;
     }
+
+    console.log("No suitable content area found for MutationObserver.");
     return false;
   }
   
