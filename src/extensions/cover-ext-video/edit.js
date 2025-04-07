@@ -1,6 +1,6 @@
 // Import necessary WordPress packages
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl } from '@wordpress/components';
+import { PanelBody, RangeControl, TextControl } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
@@ -21,6 +21,10 @@ const addAttributes = (settings, name) => {
         videoUrl: {
             type: 'string',
             default: ''
+        },
+        videoScale: {
+            type: 'number',
+            default: 1
         }
     };
 
@@ -35,7 +39,7 @@ const addInspectorControl = createHigherOrderComponent((BlockEdit) => {
         }
 
         const { attributes, setAttributes } = props;
-        const { videoUrl } = attributes;
+        const { videoUrl, videoScale } = attributes;
 
         // Function to clear the video URL
         const clearVideoUrl = () => {
@@ -46,19 +50,20 @@ const addInspectorControl = createHigherOrderComponent((BlockEdit) => {
             <Fragment>
                 <BlockEdit {...props} />
                 <InspectorControls>
-                    <PanelBody title={__('Background Video URL', 'your-text-domain')}>
+                    <PanelBody title={__('External Video Embed', 'mello-block-extensions')} initialOpen={ false }>
                         <TextControl
-                            label={__('Vimeo / YouTube URL', 'your-text-domain')}
+                            label={__('Vimeo / YouTube URL', 'mello-block-extensions')}
                             value={videoUrl}
                             onChange={(url) => setAttributes({ videoUrl: url })}
-                            placeholder={__('Enter Vimeo or YouTube URL', 'your-text-domain')}
+                            placeholder={__('Enter Vimeo or YouTube URL', 'mello-block-extensions')}
+                            help={('Add first part of the player url only e.g. "https://player.vimeo.com/639819410"')}
                         />
                         {videoUrl && (
                             <Fragment>
                                 <div className="video-preview">
-                                    <p>{__('Preview:', 'your-text-domain')}</p>
+                                    <p>{__('Preview:', 'mello-block-extensions')}</p>
                                     <iframe
-                                        src={videoUrl.includes('youtube.com') 
+                                        src={videoUrl.includes('youtube.com')
                                             ? videoUrl.replace('watch?v=', 'embed/') + '?autoplay=0&controls=0'
                                             : `https://player.vimeo.com/video/${videoUrl.split('.com/')[1]}?autoplay=0`}
                                         frameBorder="0"
@@ -67,13 +72,22 @@ const addInspectorControl = createHigherOrderComponent((BlockEdit) => {
                                         style={{ width: '100%', height: '140px' }}
                                     ></iframe>
                                 </div>
+                                <RangeControl
+                                    label={__('Video Scale', 'mello-block-extensions')}
+                                    value={videoScale}
+                                    onChange={(value) => setAttributes({ videoScale: value })}
+                                    min={1}
+                                    max={4}
+                                    step={0.1}
+                                    help={('Due to iframe limitations, we need to scale the video to fill the container. Adjust the scale and check on the front end to see if the cover container is fully filled with the video content')}
+                                />
                                 <div className="components-panel__row">
                                     <button
                                         type="button"
                                         className="components-button block-library-cover__reset-button is-secondary is-small"
                                         onClick={clearVideoUrl}
                                     >
-                                        {__('Clear Video', 'your-text-domain')}
+                                        {__('Clear Video', 'mello-block-extensions')}
                                     </button>
                                 </div>
                             </Fragment>
@@ -96,7 +110,7 @@ const addSaveContent = (element, blockType, attributes) => {
         return element;
     }
 
-    const { videoUrl } = attributes;
+    const { videoUrl, videoScale } = attributes;
 
     if (videoUrl) {
         let embedUrl;
@@ -119,7 +133,7 @@ const addSaveContent = (element, blockType, attributes) => {
         // Create a new array of children, including the existing children
         const newChildren = [
             ...childrenArray, // Preserve all existing children
-            <div className="wp-block-cover__video-background__external">
+            <div className="wp-block-cover__video-background__external" style={{ transform: `scale(${videoScale})` }}>
                 <iframe
                     src={embedUrl}
                     frameBorder="0"
