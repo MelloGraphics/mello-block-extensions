@@ -79,7 +79,7 @@ const addInspectorControl = createHigherOrderComponent((BlockEdit) => {
                                     min={1}
                                     max={4}
                                     step={0.1}
-                                    help={('Due to iframe limitations, we need to scale the video to fill the container. Adjust the scale and check on the front end to see if the cover container is fully filled with the video content')}
+                                    help={('Adjusts the scale so the video covers the container')}
                                 />
                                 <div className="components-panel__row">
                                     <button
