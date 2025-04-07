@@ -8,6 +8,8 @@ import { __ } from '@wordpress/i18n';
 import './editor.scss';
 import './styles.scss';
 
+console.log('Keep my file in the build!')
+
 // Extend attributes to include Vimeo/YouTube URL
 const addAttributes = (settings, name) => {
     if (name !== 'core/cover') {
@@ -138,3 +140,5 @@ const addSaveContent = (element, blockType, attributes) => {
 // Add filter to modify the save content of the core/cover block
 addFilter('blocks.getSaveElement', 'mello/modify-cover-save-content', addSaveContent);
 
+// force include this file in the build folder
+export const __nonEmpty = true;
