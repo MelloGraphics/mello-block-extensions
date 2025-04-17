@@ -12,7 +12,35 @@
     "html": false,
     "reusable": false,
     "anchor": true,
-    "align": ["wide", "full"]
+	"color": {
+		"text": true
+	},
+	"spacing": {
+		"margin": true,
+		"padding": true,
+		"blockGap": true
+	},
+	"layout": {
+      "default": {
+        "type": "flex",
+        "orientation": "vertical"
+      }
+    },
+	"dimensions": {
+		"minHeight": true
+	},
+	"__experimentalBorder": {
+		"color": true,
+		"radius": true,
+		"style": true,
+		"width": true,
+		"__experimentalDefaultControls": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true
+		}
+	}
   },
   "attributes": {
     "startingFigure": {

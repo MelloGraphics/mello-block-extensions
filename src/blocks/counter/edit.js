@@ -12,7 +12,7 @@ export default function Edit({ attributes, setAttributes }) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={__("Counter Settings", "counter")}>
+        <PanelBody title={__("Settings", "counter")}>
           <TextControl
             label={__("Starting Figure", "counter")}
             type="number"
@@ -38,17 +38,8 @@ export default function Edit({ attributes, setAttributes }) {
       </InspectorControls>
       <div {...useBlockProps()}>
         <InnerBlocks
-          allowedBlocks={['core/paragraph', 'core/group']}
+          allowedBlocks={['core/paragraph', 'core/group', 'core/image']}
           template={[
-            [
-              'core/paragraph',
-              {
-                placeholder: 'Descriptive text goes here',
-                className: 'wp-block-mello-block-counter__description',
-                lock: { move: false, remove: true },
-                metadata: { name: 'description' },
-              },
-            ],
             [
               'core/group',
               {
@@ -77,6 +68,15 @@ export default function Edit({ attributes, setAttributes }) {
                   },
                 ],
               ],
+            ],
+            [
+              'core/paragraph',
+              {
+                placeholder: 'Descriptive text goes here',
+                className: 'wp-block-mello-block-counter__description',
+                lock: { move: false, remove: true },
+                metadata: { name: 'description' },
+              },
             ],
           ]}
           templateLock={false}

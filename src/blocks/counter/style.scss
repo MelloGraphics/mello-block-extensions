@@ -6,6 +6,7 @@
  */
 
 .wp-block-mello-block-counter {
+
 	*{
 		margin-block-start: unset;
 		margin-block-end: unset;
@@ -15,15 +16,15 @@
 	// 	border: solid purple 5px;
 	// }
 
-	.wp-block-mello-block-counter__figure-wrapper{
+	&__figure-wrapper{
 		gap: .5em;
 	}
 
-	.wp-block-mello-block-counter__metric{
+	&__metric, &__figure{
 		line-height: 1;
 	}
 
-	.wp-block-mello-block-counter__figure{
-		line-height: .7;
-	}
+	// &__figure{
+	// 	line-height: .7;
+	// }
 }
