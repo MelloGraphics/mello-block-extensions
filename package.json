@@ -28,10 +28,13 @@
     "glob": "^11.0.0",
     "micromodal": "^0.6.1",
     "mini-css-extract-plugin": "^2.9.2",
+    "motion": "^12.7.3",
     "webpack-remove-empty-scripts": "^1.0.4"
   },
   "sideEffects": [
     "./src/extensions/cover-ext-video/edit.js",
-    "./src/extensions/**/*"
-]
+    "./src/extensions/**/*",
+    "**/*.css",
+    "**/*.scss"
+  ]
 }

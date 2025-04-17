@@ -10,34 +10,46 @@ $faq_data = array();
 
 // Collect FAQ data from blocks
 function collect_faq_data( $block_content, $block ) {
+    error_log( print_r( $block, true ) );
     global $faq_data;
 
-    // Check if it's the 'core/details' block and if it has the 'hasFAQSchema' attribute
-    if ( isset( $block['blockName'] ) && 'core/details' === $block['blockName'] && isset( $block['attrs']['hasFAQSchema'] ) && $block['attrs']['hasFAQSchema'] ) {
-        // Get the question content
+    // Check if it's the 'core/details' block and if it has the 'mello-has-faq-schema' class
+    if (
+        isset( $block['blockName'] ) &&
+        'core/details' === $block['blockName'] &&
+        isset( $block['attrs']['className'] ) &&
+        strpos( $block['attrs']['className'], 'mello-has-faq-schema' ) !== false
+    ) {
+        // Re-render the dynamic inner blocks
         $question = '';
-        if ( ! empty( $block['innerContent'] ) && is_array( $block['innerContent'] ) ) {
-            $question = implode( '', $block['innerContent'] );
-        }
-        $question = esc_html( $question );
-
-        // Collect the answer content from inner blocks
         $answer = '';
-        if ( ! empty( $block['innerBlocks'] ) ) {
-            foreach ( $block['innerBlocks'] as $inner_block ) {
-                if ( ! empty( $inner_block['innerContent'] ) && is_array( $inner_block['innerContent'] ) ) {
-                    $answer .= implode( '', $inner_block['innerContent'] );
+
+        if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+            foreach ( $block['innerBlocks'] as $index => $inner_block ) {
+                $rendered = render_block( $inner_block );
+
+                if ( $index === 0 ) {
+                    $question = wp_strip_all_tags( $rendered );
+                } else {
+                    $answer .= wp_strip_all_tags( $rendered );
                 }
             }
         }
-        $answer = esc_html( $answer );
 
         // Add to the FAQ data array if both question and answer are available
         if ( ! empty( $question ) && ! empty( $answer ) ) {
-            $faq_data[] = array(
-                'question' => $question,
-                'answer' => $answer
-            );
+            echo '<script type="application/ld+json">' . wp_json_encode([
+                "@context" => "https://schema.org",
+                "@type" => "FAQPage",
+                "mainEntity" => [[
+                    "@type" => "Question",
+                    "name" => $question,
+                    "acceptedAnswer" => [
+                        "@type" => "Answer",
+                        "text" => $answer
+                    ]
+                ]]
+            ]) . '</script>';
         }
     }
 
@@ -82,3 +94,35 @@ function output_faq_schema( $content ) {
 }
 
 add_filter( 'the_content', 'output_faq_schema' );
+
+add_action( 'wp_footer', 'output_faq_schema_footer' );
+
+function output_faq_schema_footer() {
+    global $faq_data;
+
+    if ( empty( $faq_data ) ) {
+        return;
+    }
+
+    $faq_schema = array(
+        '@context' => 'https://schema.org',
+        '@type' => 'FAQPage',
+        'mainEntity' => array()
+    );
+
+    foreach ( $faq_data as $faq ) {
+        $faq_schema['mainEntity'][] = array(
+            '@type' => 'Question',
+            'name' => $faq['question'],
+            'acceptedAnswer' => array(
+                '@type' => 'Answer',
+                'text' => $faq['answer']
+            )
+        );
+    }
+
+    echo '<script type="application/ld+json">' . wp_json_encode( $faq_schema ) . '</script>';
+
+    // Clear FAQ data
+    $faq_data = array();
+}

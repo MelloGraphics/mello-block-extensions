@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "mello-block/counter",
+  "version": "0.1.0",
+  "title": "Counter",
+  "category": "text",
+  "icon": "info",
+  "description": "Show figures and as quick stats, animating in",
+  "textdomain": "counter",
+  "supports": {
+    "html": false,
+    "reusable": false,
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "attributes": {
+    "startingFigure": {
+      "type": "number",
+      "default": 0
+    },
+    "animationDuration": {
+      "type": "number",
+      "default": 2
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js",
+  "keywords": [
+    "counter",
+    "figure",
+    "number",
+    "stats"
+  ],
+  "example": {
+    "attributes": {
+      "startingFigure": 0,
+      "animationDuration": 2
+    },
+    "innerBlocks": [
+      [
+        "core/paragraph",
+        {
+          "placeholder": "Descriptive text goes here",
+          "className": "wp-block-mello-block-counter__description"
+        }
+      ],
+      [
+        "core/group",
+        {
+          "className": "wp-block-mello-block-counter__figure-wrapper",
+          "layout": {
+            "type": "flex",
+            "flexWrap": "nowrap",
+            "verticalAlignment": "top"
+          }
+        },
+        [
+          [
+            "core/paragraph",
+            {
+              "placeholder": "1234",
+              "className": "wp-block-mello-block-counter__figure has-xx-large-font-size"
+            }
+          ],
+          [
+            "core/paragraph",
+            {
+              "placeholder": "unit",
+              "className": "wp-block-mello-block-counter__metric"
+            }
+          ]
+        ]
+      ]
+    ]
+  }
+}

@@ -1,0 +1,82 @@
+import {
+  InnerBlocks,
+  InspectorControls,
+  useBlockProps,
+} from "@wordpress/block-editor";
+import { PanelBody, RangeControl, TextControl } from "@wordpress/components";
+import { __ } from "@wordpress/i18n";
+
+export default function Edit({ attributes, setAttributes }) {
+  const { startingFigure, animationDuration } = attributes;
+
+  return (
+    <>
+      <InspectorControls>
+        <PanelBody title={__("Counter Settings", "counter")}>
+          <TextControl
+            label={__("Starting Figure", "counter")}
+            type="number"
+            value={startingFigure}
+            onChange={(val) =>
+              setAttributes({ startingFigure: parseFloat(val) })
+            }
+          />
+          <RangeControl
+            label={__("Animation Duration (s)", "counter")}
+            min={0.5}
+            max={10}
+            step={0.1}
+            value={animationDuration}
+            onChange={(val) => setAttributes({ animationDuration: val })}
+          />
+        </PanelBody>
+      </InspectorControls>
+      <div {...useBlockProps()}>
+        <InnerBlocks
+          allowedBlocks={['core/paragraph', 'core/group']}
+          template={[
+            [
+              'core/paragraph',
+              {
+                placeholder: 'Descriptive text goes here',
+                className: 'wp-block-mello-block-counter__description',
+                lock: { move: false, remove: true },
+                metadata: { name: 'description' },
+              },
+            ],
+            [
+              'core/group',
+              {
+                className: 'wp-block-mello-block-counter__figure-wrapper',
+                layout: { type: 'flex', flexWrap: 'nowrap', verticalAlignment: 'top' },
+                metadata: { name: 'figure wrapper' },
+              },
+              [
+                [
+                  'core/paragraph',
+                  {
+                    placeholder: '123',
+                    className: 'wp-block-mello-block-counter__figure has-xx-large-font-size',
+                    fontSize: 'xx-large',
+                    lock: { move: false, remove: true },
+                    metadata: { name: 'figure' },
+                  },
+                ],
+                [
+                  'core/paragraph',
+                  {
+                    placeholder: 'unit',
+                    className: 'wp-block-mello-block-counter__metric',
+                    lock: { move: false, remove: true },
+                    metadata: { name: 'metric' },
+                  },
+                ],
+              ],
+            ],
+          ]}
+          templateLock={false}
+        />
+      </div>
+    </>
+  );
+}
