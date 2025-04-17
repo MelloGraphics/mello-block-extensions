@@ -1,24 +1,37 @@
-import { animate, inView } from 'motion';
+import { animate, easeOut, inView } from 'motion';
 
-/* eslint-disable no-console */
 const counterBlocks = document.querySelectorAll('.wp-block-mello-block-counter');
+console.log('[Counter Block] Found:', counterBlocks.length);
 
-counterBlocks.forEach((block) => {
+counterBlocks.forEach((block, index) => {
+  console.log(`[Counter Block ${index}] Initialising...`);
+
   const figureEl = block.querySelector('.wp-block-mello-block-counter__figure');
-  if (!figureEl) return;
+  if (!figureEl) {
+    console.warn(`[Counter Block ${index}] Missing .wp-block-mello-block-counter__figure`);
+    return;
+  }
 
   const starting = parseFloat(block.dataset.startingFigure || 0);
   const duration = parseFloat(block.dataset.animationDuration || 2);
   const final = parseFloat(figureEl.textContent.replace(/[^0-9.-]+/g, ''));
 
-  if (isNaN(final)) return;
+  console.log(`[Counter Block ${index}] Data:`, { starting, final, duration });
+
+  if (isNaN(final)) {
+    console.warn(`[Counter Block ${index}] Final number is invalid`);
+    return;
+  }
 
   inView(block, () => {
-    animate(figureEl, { innerText: [starting, final] }, {
-      duration: duration,
-      easing: 'ease-out',
-      round: 1
+    console.log(`[Counter Block ${index}] In view — animating`);
+    animate(starting, final, {
+      duration,
+      ease: easeOut,
+      round: 1,
+      onUpdate: (latest) => {
+        figureEl.textContent = latest.toLocaleString(); // optional: format with commas
+      }
     });
   }, { once: true });
 });
-/* eslint-enable no-console */

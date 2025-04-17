@@ -7,13 +7,27 @@
 
 .wp-block-mello-block-counter {
 	border: solid pink 5px;
+
+	*{
+		margin-block-start: unset;
+		margin-block-end: unset;
+	}
 	
 	.wp-block-mello-block-counter__description{
-		border: solid green 5px;
+		border: solid purple 5px;
+	}
+
+	.wp-block-mello-block-counter__figure-wrapper{
+		gap: .5em;
+	}
+
+	.wp-block-mello-block-counter__metric{
+		margin: 0;
+		line-height: 1;
+	}
+
+	.wp-block-mello-block-counter__figure{
+		margin: 0;
+		line-height: 1;
 	}
 }
-
-body::before {
-	content: 'force-compile';
-	display: none;
-  }
