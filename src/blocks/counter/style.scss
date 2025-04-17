@@ -5,7 +5,9 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-.wp-block-mello-block-counter {
+.wp-block-mello-block-counter.is-layout-flex {
+	font-size: 1em;
+	gap: .5rem;
 
 	*{
 		margin-block-start: unset;
@@ -16,15 +18,14 @@
 	// 	border: solid purple 5px;
 	// }
 
-	&__figure-wrapper{
-		gap: .5em;
-	}
-
-	&__metric, &__figure{
+	.wp-block-mello-block-counter__figure-wrapper{
+		gap: .5rem;
 		line-height: 1;
+		font-size: 3em;
 	}
 
-	// &__figure{
-	// 	line-height: .7;
+	// .wp-block-mello-block-counter__metric, .wp-block-mello-block-counter__figure{
+	// 	line-height: 1;
+	// 	font-size: 3em;
 	// }
 }

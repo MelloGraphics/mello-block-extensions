@@ -52,8 +52,7 @@ export default function Edit({ attributes, setAttributes }) {
                   'core/paragraph',
                   {
                     placeholder: '123',
-                    className: 'wp-block-mello-block-counter__figure has-xx-large-font-size',
-                    fontSize: 'xx-large',
+                    className: 'wp-block-mello-block-counter__figure',
                     lock: { move: false, remove: true },
                     metadata: { name: 'figure' },
                   },
