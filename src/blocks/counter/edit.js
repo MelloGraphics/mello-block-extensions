@@ -3,11 +3,11 @@ import {
   InspectorControls,
   useBlockProps,
 } from "@wordpress/block-editor";
-import { PanelBody, RangeControl, TextControl } from "@wordpress/components";
+import { PanelBody, RangeControl, TextControl, ToggleControl } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 
 export default function Edit({ attributes, setAttributes }) {
-  const { startingFigure, animationDuration } = attributes;
+  const { startingFigure, animationDuration, showDecimals } = attributes;
 
   return (
     <>
@@ -28,6 +28,11 @@ export default function Edit({ attributes, setAttributes }) {
             step={0.1}
             value={animationDuration}
             onChange={(val) => setAttributes({ animationDuration: val })}
+          />
+          <ToggleControl
+            label={__("Show Decimals", "counter")}
+            checked={showDecimals}
+            onChange={(val) => setAttributes({ showDecimals: val })}
           />
         </PanelBody>
       </InspectorControls>

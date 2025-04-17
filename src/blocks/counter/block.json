@@ -22,7 +22,11 @@
     "animationDuration": {
       "type": "number",
       "default": 2
-    }
+    },
+	"showDecimals": {
+		"type": "boolean",
+		"default": false
+	}
   },
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
