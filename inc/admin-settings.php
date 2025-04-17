@@ -143,8 +143,9 @@ function mello_register_settings() {
         'navigation-submenu-allowed-blocks' => 'Allows blocks inside Navigation Submenu items.',
         'query-exclude-current-post' => 'Toggle to exclude the current post from Query block results.',
         'query-render-featured-video' => 'Renders featured video from custom field in the Query block.',
-        'read-time'                 => 'Display the read time of the current page',
-        'post-type'                 => 'Display the post type for the page, or in a query'
+        'read-time'                 => 'Display the read time of the current page.',
+        'post-type'                 => 'Display the post type for the page, or in a query.',
+        'counter'                 => 'Display stats and figures animated in on scroll.'
     ];
     
     // New array to manually define data attributes for each extension.
