@@ -8,8 +8,6 @@ import { __ } from '@wordpress/i18n';
 import './editor.scss';
 import './styles.scss';
 
-console.log('Keep my file in the build!')
-
 // Extend attributes to include Vimeo/YouTube URL
 const addAttributes = (settings, name) => {
     if (name !== 'core/cover') {
