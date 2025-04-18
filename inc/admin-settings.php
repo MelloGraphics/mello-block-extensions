@@ -125,6 +125,7 @@ function mello_register_settings() {
         'navigation-submenu-allowed-blocks' => 'Navigation Submenu: Extend allowed blocks',
         'query-exclude-current-post' => 'Query: Exclude current post',
         'query-render-featured-video' => 'Query: Render a featured video',
+        'render-svg' => 'Mixed: Render SVG'
     ];
     $descriptions = [
         'button-modal-toggle'       => 'Adds a toggle to buttons for opening link content in an iframe modal.',
@@ -145,7 +146,8 @@ function mello_register_settings() {
         'query-render-featured-video' => 'Renders featured video from custom field in the Query block.',
         'read-time'                 => 'Display the read time of the current page.',
         'post-type'                 => 'Display the post type for the page, or in a query.',
-        'counter'                 => 'Display stats and figures animated in on scroll.'
+        'counter'                 => 'Display stats and figures animated in on scroll.',
+        'render-svg' => 'Renders an SVG inline on the frontend'
     ];
     
     // New array to manually define data attributes for each extension.
@@ -166,6 +168,7 @@ function mello_register_settings() {
         'navigation-submenu-allowed-blocks' => 'navigation',
         'query-exclude-current-post' => 'query',
         'query-render-featured-video' => 'query',
+        'render-svg' => 'mixed'
     ];
     
     register_setting('mello_block_extensions_group', 'mello_enabled_extensions');
