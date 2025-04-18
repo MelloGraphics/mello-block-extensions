@@ -1,0 +1,24 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.wp-block-block-theme-read-time {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--wp--preset--spacing--small) / 2);
+  color: var(--wp--preset--color--secondary);
+  font-weight: 600;
+}
+.wp-block-block-theme-read-time::before {
+  content: "";
+  mask-image: url('data:image/svg+xml,<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M28.2999 12.8365C29.7338 20.3356 21.547 28.8472 14.237 28.8472C6.92702 28.8472 1.00137 24.8109 1.00137 17.1634C1.00137 9.51586 6.92702 1.15271 14.237 1.15271C21.547 1.15271 26.8522 5.26387 28.2999 12.8365Z" stroke="%23A37FCC" stroke-width="2" stroke-miterlimit="10"/><path d="M13.8424 4.73469C16.7418 5.44273 16.5489 7.58459 16.6047 13.8097C16.6606 20.0348 13.0963 16.5213 12.9123 13.8097C12.7283 11.0981 12.4187 4.38702 13.8424 4.73469Z" fill="%23A37FCC"/><path d="M21.983 18.5718C20.0214 20.7657 18.821 19.7912 15.008 17.4844C11.1951 15.1775 15.2136 13.4798 16.9596 14.349C18.7055 15.2181 22.9474 17.4945 21.9843 18.5705L21.983 18.5718Z" fill="%23A37FCC"/></svg>');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  background-color: currentColor;
+  width: 1em;
+  height: 1em;
+  display: flex;
+}/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,5 @@
+@media (min-width: 0) and (max-width: 782px) {
+  .wp-block-columns.mello-columns-reverse-on-phone {
+    flex-direction: column-reverse;
+  }
+}/*# sourceMappingURL=styles.css.map */

@@ -1,0 +1,157 @@
+/* Disable scrolling on the main website when modal is open */
+body:has(.mello-modal.is-open) {
+  overflow: clip;
+}
+
+/* Mello Modal Base Styles */
+.mello-modal {
+  display: none;
+  visibility: hidden;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  /* Modal Overlay */
+  /* Modal Container */
+  /* Modal Content Area */
+}
+.mello-modal.is-open {
+  display: flex;
+  visibility: visible;
+  align-items: stretch;
+  justify-content: center;
+}
+.mello-modal .modal__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+.mello-modal .modal__container {
+  background: black;
+  max-width: 90%;
+  max-height: 90%;
+  position: relative;
+  overflow-y: auto;
+  border-radius: 0.75rem;
+  opacity: 0;
+  transition: 0.5s ease-out;
+}
+.mello-modal .modal__content {
+  position: relative;
+}
+.mello-modal .modal__content iframe,
+.mello-modal .modal__content video {
+  width: 90svw;
+  max-height: 90vh;
+  aspect-ratio: 16/9;
+  padding: 0;
+  margin: 0;
+}
+.mello-modal .modal__content > * {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+.mello-modal button {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+.mello-modal button.disabled {
+  filter: brightness(0.25);
+  pointer-events: none;
+}
+.mello-modal .modal__close {
+  position: fixed;
+  z-index: 1;
+  right: 15px;
+  top: 15px;
+  padding: 0;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease-out;
+}
+.mello-modal .modal__close svg {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  fill: currentColor;
+  vertical-align: middle;
+}
+.mello-modal .modal__close:hover {
+  scale: 0.8;
+  rotate: 90deg;
+}
+.mello-modal .modal__next,
+.mello-modal .modal__prev {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  color: white;
+  cursor: pointer;
+  display: block;
+  margin: 0;
+  outline: 0;
+  padding: 1em;
+  position: absolute;
+  touch-action: manipulation;
+  transition: 0.25s ease-out;
+}
+.mello-modal .modal__next svg,
+.mello-modal .modal__prev svg {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  fill: currentColor;
+  vertical-align: middle;
+}
+.mello-modal .modal__next {
+  left: auto;
+  right: 0;
+}
+.mello-modal .modal__next:hover {
+  translate: 0.25em 0;
+}
+.mello-modal .modal__prev {
+  left: 0;
+  right: auto;
+}
+.mello-modal .modal__prev:hover {
+  translate: -0.25em 0;
+}
+.mello-modal .modal__loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+  font-size: 1.25rem;
+  color: white;
+  pointer-events: none;
+}
+.mello-modal .modal__loader .modal__loader-inner {
+  animation: mello-modal-pulse 1.5s infinite ease-in-out;
+}
+@keyframes mello-modal-pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.mello-modal.mello-modal--loaded .modal__loader {
+  display: none;
+  visibility: hidden;
+}
+.mello-modal.mello-modal--loaded button {
+  opacity: 1;
+}
+.mello-modal.mello-modal--loaded .modal__container {
+  opacity: 1;
+}/*# sourceMappingURL=styles.css.map */
