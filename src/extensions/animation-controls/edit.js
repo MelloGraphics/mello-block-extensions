@@ -36,13 +36,13 @@ function addAttributes(settings) {
 
 	// Add the attributes.
 	const customAttributes = {
-		animationType: { type: "string", default: "" },
+		animationType: { type: "string", default: "fade-in" },
 		animationTriggerSelf: { type: "boolean", default: false },
-		animationDuration: { type: "number", default: 600 },
+		animationDuration: { type: "number", default: 500 },
 		animationDelay: { type: "number", default: 0 },
 		animateChildren: { type: "boolean", default: false },
-		childAnimationType: { type: "string", default: "" },
-		childAnimationDuration: { type: "number", default: 600 },
+		childAnimationType: { type: "string", default: "fade-in" },
+		childAnimationDuration: { type: "number", default: 500 },
 		childAnimationStaggerDelay: { type: "number", default: 100 },
 		animateSelf: { type: "boolean", default: false }, // New attribute
 	};
@@ -124,7 +124,10 @@ function addInspectorControls(BlockEdit) {
 										{ label: "Slide Down", value: "slide-down" },
 										{ label: "Slide Left", value: "slide-left" },
 										{ label: "Slide Right", value: "slide-right" },
-										{ label: "Crazy Rotate", value: "rotate" },
+										{ label: "Clip From Top", value: "clip-from-top" },
+										{ label: "Clip From Bottom", value: "clip-from-bottom" },
+										{ label: "Clip From Left", value: "clip-from-left" },
+										{ label: "Clip From Right", value: "clip-from-right" },
 									]}
 									onChange={(value) => setAttributes({ animationType: value })}
 								/>
@@ -196,7 +199,10 @@ function addInspectorControls(BlockEdit) {
 													{ label: "Slide Down", value: "slide-down" },
 													{ label: "Slide Left", value: "slide-left" },
 													{ label: "Slide Right", value: "slide-right" },
-													{ label: "Crazy Rotate", value: "rotate" },
+													{ label: "Clip From Top", value: "clip-from-top" },
+													{ label: "Clip From Bottom", value: "clip-from-bottom" },
+													{ label: "Clip From Left", value: "clip-from-left" },
+													{ label: "Clip From Right", value: "clip-from-right" },
 												]}
 												onChange={(value) =>
 													setAttributes({ childAnimationType: value })

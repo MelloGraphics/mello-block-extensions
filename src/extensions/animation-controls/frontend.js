@@ -6,7 +6,10 @@ const animationDefaults = {
     'slide-down': { opacity: [ 0 , 1 ], y: [ -10 , 0 ] },
     'slide-left': { opacity: [ 0 , 1 ], x: [ 10 , 0 ] },
     'slide-right': { opacity: [ 0 , 1 ], x: [ -10 , 0 ] },
-    'rotate': { opacity: [ 0 , 1 ], rotate: [ '360deg' , 0 ] }
+    'clip-from-top': { opacity: [ 0 , 1 ], clipPath: ['inset(0 0 100% 0)', 'inset(0 0 0 0)'] },
+    'clip-from-bottom': { opacity: [ 0 , 1 ], clipPath: ['inset(100% 0 0 0)', 'inset(0 0 0 0)'] },
+    'clip-from-left': { opacity: [ 0 , 1 ], clipPath: ['inset(0 100% 0 0)', 'inset(0 0 0 0)'] },
+    'clip-from-right': { opacity: [ 0 , 1 ], clipPath: ['inset(0 0 0 100%)', 'inset(0 0 0 0)'] },
 };
 
 document.addEventListener('DOMContentLoaded', () => {
