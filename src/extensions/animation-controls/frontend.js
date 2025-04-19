@@ -20,36 +20,50 @@ document.addEventListener('DOMContentLoaded', () => {
         const duration = element.getAttribute('data-animation-duration') || 0.5;
         const delay = element.getAttribute('data-animation-delay') || 0;
         const trigger = element.getAttribute('data-animation-trigger') || 'enter';
+        const triggerPointValue = element.getAttribute('data-animation-trigger-point') || '-25';
+        const triggerPoint = triggerPointValue.includes('%') ? triggerPointValue : `${triggerPointValue}%`;
+        
+        let triggerElement = element;
+        if (trigger === 'parent') {
+            triggerElement = element.closest('section') || element;
+        } else if (trigger === 'self') {
+            console.log('Trigger element set to self:', element);
+        }
+        triggerElement.style.outline = '2px dashed lime';
 
-        inView(element, () => {
-            console.log(`In view: ${element}, applying animation: ${animationType}, duration: ${duration}, delay: ${delay}`);
-            animate(element, animationDefaults[animationType], {
-                duration: parseFloat(duration) / 1000,
-                delay: parseFloat(delay) / 1000,
-            });
+        const animationTimeline = animate(element, animationDefaults[animationType], {
+            duration: parseFloat(duration) / 1000,
+            delay: parseFloat(delay) / 1000,
+        });
+        animationTimeline.cancel();
+        animationTimeline.time = 0;
+
+        inView(triggerElement, () => {
+            animationTimeline.play();
         }, {
-            once: trigger === 'enter'
+            margin: `0% 0% ${triggerPoint} 0%`,
         });
     });
 
     const animatedChildren = document.querySelectorAll('[data-child-animation="true"]');
     
     animatedChildren.forEach(parent => {
-        console.log(`Parent found: ${parent}`);
         const children = parent.querySelectorAll(':scope > *');
-        console.log(`Children targeted: ${children}`);
         const childAnimationType = parent.getAttribute('data-child-animation-type') || 'fade-in';
         const childDuration = parseFloat(parent.getAttribute('data-child-animation-duration') || 0.5) / 1000;
         const childStagger = parseFloat(parent.getAttribute('data-child-animation-stagger-delay') || 0) / 1000;
 
+        const childAnimationTimeline = animate(children, animationDefaults[childAnimationType], {
+            duration: childDuration,
+            delay: stagger(childStagger),
+        });
+        childAnimationTimeline.pause();
+        childAnimationTimeline.time = 0;
+
         inView(parent, () => {
-            console.log(`In view: ${parent}, number of children: ${children.length}, child selector: ${Array.from(children)}, applying child animation: ${childAnimationType}, confirming timeline is playing.`);
-            animate(children, animationDefaults[childAnimationType], {
-                duration: childDuration,
-                delay: stagger(childStagger),
-            }).play();
+            childAnimationTimeline.play();
         }, {
-            once: true
+            margin: '0% 0% -25% 0%',
         });
     });
 });

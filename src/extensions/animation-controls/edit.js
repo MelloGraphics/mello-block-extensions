@@ -35,17 +35,18 @@ function addAttributes(settings) {
 	}
 
 	// Add the attributes.
-	const customAttributes = {
-		animationType: { type: "string", default: "fade-in" },
-		animationTriggerSelf: { type: "boolean", default: false },
-		animationDuration: { type: "number", default: 500 },
-		animationDelay: { type: "number", default: 0 },
-		animateChildren: { type: "boolean", default: false },
-		childAnimationType: { type: "string", default: "fade-in" },
-		childAnimationDuration: { type: "number", default: 500 },
-		childAnimationStaggerDelay: { type: "number", default: 100 },
-		animateSelf: { type: "boolean", default: false }, // New attribute
-	};
+		const customAttributes = {
+			animationType: { type: "string", default: "fade-in" },
+			animationTriggerSelf: { type: "boolean", default: false },
+			animationDuration: { type: "number", default: 500 },
+			animationDelay: { type: "number", default: 0 },
+			animateSelf: { type: "boolean", default: false }, // New attribute
+			animationTriggerPoint: { type: "number", default: -25 },
+			animateChildren: { type: "boolean", default: false },
+			childAnimationType: { type: "string", default: "fade-in" },
+			childAnimationDuration: { type: "number", default: 500 },
+			childAnimationStaggerDelay: { type: "number", default: 100 },
+		};
 
 	const newSettings = {
 		...settings,
@@ -81,6 +82,7 @@ function addInspectorControls(BlockEdit) {
 			animationTriggerSelf,
 			animationDuration,
 			animationDelay,
+			animationTriggerPoint,
 			animateChildren,
 			childAnimationType,
 			childAnimationDuration,
@@ -98,7 +100,7 @@ function addInspectorControls(BlockEdit) {
 					>
 						<ToggleControl
 							__next40pxDefaultSize
-							label={__("Animate Self", "mello-block-extensions")} // New ToggleControl
+							label={__("Animate block", "mello-block-extensions")} // New ToggleControl
 							checked={!!animateSelf}
 							onChange={(value) => {
 								setAttributes({ animateSelf: value });
@@ -165,6 +167,20 @@ function addInspectorControls(BlockEdit) {
 									max={3000}
 									step={50}
 									help={"Adjust delays to chain a timeline style animation"}
+								/>
+								<RangeControl
+									__next40pxDefaultSize
+									label={__("Trigger Point (%)", "mello-block-extensions")}
+									value={animationTriggerPoint}
+									onChange={(value) => setAttributes({ animationTriggerPoint: value })}
+									min={-100}
+									max={0}
+									step={1}
+									marks={[
+										{ value: -50, label: __("Center", "mello-block-extensions") },
+									]}
+									help={"Zero is the bottom, -100 is the top"}
+									className="mello-hide-range-input"
 								/>
 							</>
 						)}
@@ -263,6 +279,7 @@ function addSaveProps(extraProps, blockType, attributes) {
 		animationTriggerSelf,
 		animationDuration,
 		animationDelay,
+		animationTriggerPoint,
 		animateChildren,
 		childAnimationType,
 		childAnimationDuration,
@@ -277,6 +294,7 @@ function addSaveProps(extraProps, blockType, attributes) {
 			: "parent";
 		extraProps["data-animation-duration"] = animationDuration;
 		extraProps["data-animation-delay"] = animationDelay;
+		extraProps["data-animation-trigger-point"] = animationTriggerPoint;
 	}
 
 	if (animateChildren) {
