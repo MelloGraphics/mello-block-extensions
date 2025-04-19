@@ -43,7 +43,7 @@ function addAttributes(settings) {
 		animateChildren: { type: "boolean", default: false },
 		childAnimationType: { type: "string", default: "" },
 		childAnimationDuration: { type: "number", default: 600 },
-		childAnimationStagger: { type: "number", default: 100 },
+		childAnimationStaggerDelay: { type: "number", default: 100 },
 		animateSelf: { type: "boolean", default: false }, // New attribute
 	};
 
@@ -84,7 +84,7 @@ function addInspectorControls(BlockEdit) {
 			animateChildren,
 			childAnimationType,
 			childAnimationDuration,
-			childAnimationStagger,
+			childAnimationStaggerDelay,
 			animateSelf, // New attribute
 		} = attributes;
 
@@ -119,9 +119,12 @@ function addInspectorControls(BlockEdit) {
 									label={__("Animation Type", "mello-block-extensions")}
 									value={animationType}
 									options={[
-										{ label: "None", value: "" },
 										{ label: "Fade In", value: "fade-in" },
 										{ label: "Slide Up", value: "slide-up" },
+										{ label: "Slide Down", value: "slide-down" },
+										{ label: "Slide Left", value: "slide-left" },
+										{ label: "Slide Right", value: "slide-right" },
+										{ label: "Crazy Rotate", value: "rotate" },
 									]}
 									onChange={(value) => setAttributes({ animationType: value })}
 								/>
@@ -132,13 +135,20 @@ function addInspectorControls(BlockEdit) {
 									onChange={(value) =>
 										setAttributes({ animationTriggerSelf: value })
 									}
-									help={"By default the animation is triggerd by the parent <section>"}
+									help={
+										"By default the animation is triggerd by the parent <section>"
+									}
 								/>
 								<RangeControl
 									__next40pxDefaultSize
-									label={__("Animation Duration (ms)", "mello-block-extensions")}
+									label={__(
+										"Animation Duration (ms)",
+										"mello-block-extensions"
+									)}
 									value={animationDuration}
-									onChange={(value) => setAttributes({ animationDuration: value })}
+									onChange={(value) =>
+										setAttributes({ animationDuration: value })
+									}
 									min={100}
 									max={3000}
 									step={50}
@@ -183,6 +193,10 @@ function addInspectorControls(BlockEdit) {
 												options={[
 													{ label: "Fade In", value: "fade-in" },
 													{ label: "Slide Up", value: "slide-up" },
+													{ label: "Slide Down", value: "slide-down" },
+													{ label: "Slide Left", value: "slide-left" },
+													{ label: "Slide Right", value: "slide-right" },
+													{ label: "Crazy Rotate", value: "rotate" },
 												]}
 												onChange={(value) =>
 													setAttributes({ childAnimationType: value })
@@ -205,9 +219,9 @@ function addInspectorControls(BlockEdit) {
 											<RangeControl
 												__next40pxDefaultSize
 												label={__("Stagger Delay (ms)", "mello-block-extensions")}
-												value={childAnimationStagger}
+												value={childAnimationStaggerDelay}
 												onChange={(value) =>
-													setAttributes({ childAnimationStagger: value })
+													setAttributes({ childAnimationStaggerDelay: value })
 												}
 												min={0}
 												max={1000}
@@ -238,21 +252,33 @@ addFilter(
  * @param {Object} attributes Block attributes.
  */
 function addSaveProps(extraProps, blockType, attributes) {
-	const { animateSelf, animationTriggerSelf, animationDuration, animationDelay, animateChildren, childAnimationType, childAnimationDuration, childAnimationStagger } = attributes;
+	const {
+		animateSelf,
+		animationTriggerSelf,
+		animationDuration,
+		animationDelay,
+		animateChildren,
+		childAnimationType,
+		childAnimationDuration,
+		childAnimationStaggerDelay,
+	} = attributes;
 
 	if (animateSelf) {
-		extraProps["data-animate"] = true;
+		extraProps["data-animation"] = true;
 		extraProps["data-animation-type"] = attributes.animationType;
-		extraProps["data-animate-trigger"] = animationTriggerSelf ? "self" : "parent";
-		extraProps["data-animate-duration"] = animationDuration;
-		extraProps["data-animate-delay"] = animationDelay;
+		extraProps["data-animation-trigger"] = animationTriggerSelf
+			? "self"
+			: "parent";
+		extraProps["data-animation-duration"] = animationDuration;
+		extraProps["data-animation-delay"] = animationDelay;
 	}
 
 	if (animateChildren) {
-		extraProps["data-animate-children"] = true;
-		extraProps["data-child-animate"] = childAnimationType;
-		extraProps["data-child-duration"] = childAnimationDuration;
-		extraProps["data-child-stagger"] = childAnimationStagger;
+		extraProps["data-child-animation"] = true;
+		extraProps["data-child-animation-type"] = childAnimationType;
+		extraProps["data-child-animation-duration"] = childAnimationDuration;
+		extraProps["data-child-animation-stagger-delay"] =
+			childAnimationStaggerDelay;
 	}
 
 	return extraProps;

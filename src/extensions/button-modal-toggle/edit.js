@@ -1,4 +1,4 @@
-import { InspectorControls } from "@wordpress/block-editor";
+import { InspectorAdvancedControls } from "@wordpress/block-editor";
 import { ToggleControl } from "@wordpress/components";
 import { createHigherOrderComponent } from "@wordpress/compose";
 import { Fragment } from "@wordpress/element";
@@ -19,14 +19,13 @@ const addModalToggleControl = (BlockEdit) => {
       <Fragment>
         <BlockEdit {...props} />
         {isSelected && (
-          <InspectorControls>
+          <InspectorAdvancedControls>
             <ToggleControl
-              className="mello-additional-setting"
               label={__("Open Content in Modal", "mello-block-extensions")}
               checked={buttonOpenInModal}
               onChange={(value) => setAttributes({ buttonOpenInModal: value })}
             />
-          </InspectorControls>
+          </InspectorAdvancedControls>
         )}
       </Fragment>
     );
