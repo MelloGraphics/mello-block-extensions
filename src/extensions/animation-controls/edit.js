@@ -154,11 +154,12 @@ function addInspectorControls(BlockEdit) {
 									onChange={(value) => setAttributes({ animationTriggerPoint: value })}
 									min={-100}
 									max={0}
-									step={1}
+									step={5}
 									marks={[
 										{ value: -50, label: __("Center", "mello-block-extensions") },
+										{ value: -100, label: __("Top", "mello-block-extensions") },
+										{ value: 0, label: __("Bottom", "mello-block-extensions") }
 									]}
-									help={"Zero is the bottom, -100 is the top"}
 									className="mello-hide-range-input"
 								/>
 							</>

@@ -6,7 +6,11 @@ add_filter('render_block', function ($block_content, $block) {
 		$block['attrs']['animateSelf'] === true
 	) {
 		$type     = isset($block['attrs']['animationType']) ? esc_attr($block['attrs']['animationType']) : 'fade-in';
-		$trigger  = isset($block['attrs']['animationTriggerSelf']) && $block['attrs']['animationTriggerSelf'] ? 'self' : 'parent';
+		if (!empty($block['attrs']['animateChildren'])) {
+		    $trigger = 'parent';
+		} else {
+		    $trigger = isset($block['attrs']['animationTriggerSelf']) && $block['attrs']['animationTriggerSelf'] ? 'self' : 'parent';
+		}
 		$duration = isset($block['attrs']['animationDuration']) ? intval($block['attrs']['animationDuration']) : 600;
 		$delay    = isset($block['attrs']['animationDelay']) ? intval($block['attrs']['animationDelay']) : 0;
 		$point    = isset($block['attrs']['animationTriggerPoint']) ? esc_attr($block['attrs']['animationTriggerPoint']) : -25;
@@ -37,7 +41,7 @@ add_filter('render_block_core/post-template', function ($block_content, $block) 
 
 		$block_content = preg_replace(
 			'/^<ul([^>]*)>/',
-			'<ul$1 data-child-animation="true" data-child-animation-type="' . $child_type . '" data-child-animation-duration="' . $child_duration . '" data-child-animation-stagger-delay="' . $child_stagger_delay . '">',
+			'<ul$1 data-animation-trigger="parent" data-child-animation="true" data-child-animation-type="' . $child_type . '" data-child-animation-duration="' . $child_duration . '" data-child-animation-stagger-delay="' . $child_stagger_delay . '">',
 			$block_content
 		);
 	}
