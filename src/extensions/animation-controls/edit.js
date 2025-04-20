@@ -28,6 +28,8 @@ function addAttributes(settings) {
 			childAnimationType: { type: "string", default: "fade-in" },
 			childAnimationDuration: { type: "number", default: 500 },
 			childAnimationStaggerDelay: { type: "number", default: 100 },
+			animationTriggerPointParent: { type: "number", default: -25 }, // New attribute
+			useCustomParentTrigger: { type: "boolean", default: false }, // New attribute
 		};
 
 	const newSettings = {
@@ -67,7 +69,17 @@ function addInspectorControls(BlockEdit) {
 			childAnimationDuration,
 			childAnimationStaggerDelay,
 			animateSelf, // New attribute
+			animationTriggerPointParent, // New attribute
+			useCustomParentTrigger, // New attribute
 		} = attributes;
+
+		const allowedParentBlockTypes = [
+			'core/group',
+			'core/columns',
+			'core/column',
+			'core/cover',
+			'core/buttons',
+		];
 
 		return (
 			<>
@@ -112,21 +124,10 @@ function addInspectorControls(BlockEdit) {
 									]}
 									onChange={(value) => setAttributes({ animationType: value })}
 								/>
-								<ToggleControl
-									__next40pxDefaultSize
-									label={__("Trigger on self?", "mello-block-extensions")}
-									checked={!!animationTriggerSelf}
-									onChange={(value) =>
-										setAttributes({ animationTriggerSelf: value })
-									}
-									help={
-										"By default the animation is triggerd by the parent <section>"
-									}
-								/>
 								<RangeControl
 									__next40pxDefaultSize
 									label={__(
-										"Animation Duration (ms)",
+										"Duration (ms)",
 										"mello-block-extensions"
 									)}
 									value={animationDuration}
@@ -139,103 +140,130 @@ function addInspectorControls(BlockEdit) {
 								/>
 								<RangeControl
 									__next40pxDefaultSize
-									label={__("Animation Delay (ms)", "mello-block-extensions")}
+									label={__("Delay (ms)", "mello-block-extensions")}
 									value={animationDelay}
 									onChange={(value) => setAttributes({ animationDelay: value })}
 									min={0}
 									max={3000}
 									step={50}
-									help={"Adjust delays to chain a timeline style animation"}
 								/>
-								<RangeControl
+								<ToggleControl
 									__next40pxDefaultSize
-									label={__("Trigger Point (%)", "mello-block-extensions")}
-									value={animationTriggerPoint}
-									onChange={(value) => setAttributes({ animationTriggerPoint: value })}
-									min={-100}
-									max={0}
-									step={5}
-									marks={[
-										{ value: -50, label: __("Center", "mello-block-extensions") },
-										{ value: -100, label: __("Top", "mello-block-extensions") },
-										{ value: 0, label: __("Bottom", "mello-block-extensions") }
-									]}
-									className="mello-hide-range-input"
+									label={__("Trigger self?", "mello-block-extensions")}
+									checked={!!animationTriggerSelf}
+									onChange={(value) =>
+										setAttributes({ animationTriggerSelf: value })
+									}
 								/>
+								{animationTriggerSelf ? (
+									<RangeControl
+										__next40pxDefaultSize
+										label={__("Trigger Point", "mello-block-extensions")}
+										value={animationTriggerPoint}
+										onChange={(value) => setAttributes({ animationTriggerPoint: value })}
+										min={-100}
+										max={0}
+										step={5}
+										marks={[
+											{ value: -50, label: __("Center", "mello-block-extensions") },
+											{ value: -100, label: __("Top", "mello-block-extensions") },
+											{ value: 0, label: __("Bottom", "mello-block-extensions") }
+										]}
+										className="mello-hide-range-input"
+									/>
+								) : (
+									<p style={{ fontStyle: "italic", opacity: 0.7 }}>
+										{__("This block is synced with its parent section's animation trigger.", "mello-block-extensions")}
+									</p>
+								)}
 							</>
 						)}
-						{[
-							"core/group",
-							"core/columns",
-							"core/column",
-							"core/cover",
-							"core/buttons",
-							"core/list",
-							"core/post-template",
-							"core/query",
-						].includes(props.name) && (
-								<>
-									<ToggleControl
+						{allowedParentBlockTypes.includes(props.name) && (
+							<>
+								<ToggleControl
+									__next40pxDefaultSize
+									label={__("Animate Children", "mello-block-extensions")}
+									checked={!!animateChildren}
+									onChange={(value) =>
+										setAttributes({ animateChildren: value })
+									}
+								/>
+								{animateChildren && (
+									<>
+										<SelectControl
+											__next40pxDefaultSize
+											label={__(
+												"Child Animation Type",
+												"mello-block-extensions"
+											)}
+											value={childAnimationType}
+											options={[
+												{ label: "Fade In", value: "fade-in" },
+												{ label: "Slide Up", value: "slide-up" },
+												{ label: "Slide Down", value: "slide-down" },
+												{ label: "Slide Left", value: "slide-left" },
+												{ label: "Slide Right", value: "slide-right" },
+												{ label: "Clip From Top", value: "clip-from-top" },
+												{ label: "Clip From Bottom", value: "clip-from-bottom" },
+												{ label: "Clip From Left", value: "clip-from-left" },
+												{ label: "Clip From Right", value: "clip-from-right" },
+											]}
+											onChange={(value) =>
+												setAttributes({ childAnimationType: value })
+											}
+										/>
+										<RangeControl
+											__next40pxDefaultSize
+											label={__(
+												"Child Animation Duration (ms)",
+												"mello-block-extensions"
+											)}
+											value={childAnimationDuration}
+											onChange={(value) =>
+												setAttributes({ childAnimationDuration: value })
+											}
+											min={100}
+											max={3000}
+											step={50}
+										/>
+										<RangeControl
+											__next40pxDefaultSize
+											label={__("Stagger Delay (ms)", "mello-block-extensions")}
+											value={childAnimationStaggerDelay}
+											onChange={(value) =>
+												setAttributes({ childAnimationStaggerDelay: value })
+											}
+											min={0}
+											max={1000}
+											step={50}
+										/>
+									</>
+								)}
+								<ToggleControl
+									__next40pxDefaultSize
+									label={__("Custom Parent Trigger?", "mello-block-extensions")}
+									checked={!!useCustomParentTrigger}
+									onChange={(value) => setAttributes({ useCustomParentTrigger: value })}
+								/>
+								{useCustomParentTrigger && (
+									<RangeControl
 										__next40pxDefaultSize
-										label={__("Animate Children", "mello-block-extensions")}
-										checked={!!animateChildren}
-										onChange={(value) =>
-											setAttributes({ animateChildren: value })
-										}
+										label={__("Parent Trigger Point (%)", "mello-block-extensions")}
+										value={animationTriggerPointParent}
+										onChange={(value) => setAttributes({ animationTriggerPointParent: value })}
+										min={-100}
+										max={0}
+										step={5}
+										marks={[
+											{ value: -50, label: __("Center", "mello-block-extensions") },
+											{ value: -100, label: __("Top", "mello-block-extensions") },
+											{ value: 0, label: __("Bottom", "mello-block-extensions") }
+										]}
+										help={__("Overrides default <section> trigger point for child animations.", "mello-block-extensions")}
 									/>
-									{animateChildren && (
-										<>
-											<SelectControl
-												__next40pxDefaultSize
-												label={__(
-													"Child Animation Type",
-													"mello-block-extensions"
-												)}
-												value={childAnimationType}
-												options={[
-													{ label: "Fade In", value: "fade-in" },
-													{ label: "Slide Up", value: "slide-up" },
-													{ label: "Slide Down", value: "slide-down" },
-													{ label: "Slide Left", value: "slide-left" },
-													{ label: "Slide Right", value: "slide-right" },
-													{ label: "Clip From Top", value: "clip-from-top" },
-													{ label: "Clip From Bottom", value: "clip-from-bottom" },
-													{ label: "Clip From Left", value: "clip-from-left" },
-													{ label: "Clip From Right", value: "clip-from-right" },
-												]}
-												onChange={(value) =>
-													setAttributes({ childAnimationType: value })
-												}
-											/>
-											<RangeControl
-												__next40pxDefaultSize
-												label={__(
-													"Child Animation Duration (ms)",
-													"mello-block-extensions"
-												)}
-												value={childAnimationDuration}
-												onChange={(value) =>
-													setAttributes({ childAnimationDuration: value })
-												}
-												min={100}
-												max={3000}
-												step={50}
-											/>
-											<RangeControl
-												__next40pxDefaultSize
-												label={__("Stagger Delay (ms)", "mello-block-extensions")}
-												value={childAnimationStaggerDelay}
-												onChange={(value) =>
-													setAttributes({ childAnimationStaggerDelay: value })
-												}
-												min={0}
-												max={1000}
-												step={50}
-											/>
-										</>
-									)}
-								</>
-							)}
+								)}
+							</>
+						)}
 					</PanelBody>
 				</InspectorControls>
 			</>
