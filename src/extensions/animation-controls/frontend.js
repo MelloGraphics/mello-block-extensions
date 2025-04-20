@@ -1,4 +1,4 @@
-import { animate, inView, stagger } from 'motion';
+import { animate, easeOut, inView, stagger } from 'motion';
 
 const animationDefaults = {
     'fade-in': { opacity: [ 0 , 1 ] },
@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const animationTimeline = animate(element, animationDefaults[animationType], {
             duration: parseFloat(duration) / 1000,
             delay: parseFloat(delay) / 1000,
+            ease: easeOut
         });
         animationTimeline.cancel();
         animationTimeline.time = 0;
@@ -56,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const childAnimationTimeline = animate(children, animationDefaults[childAnimationType], {
             duration: childDuration,
             delay: stagger(childStagger),
+            ease: easeOut
         });
         childAnimationTimeline.pause();
         childAnimationTimeline.time = 0;
