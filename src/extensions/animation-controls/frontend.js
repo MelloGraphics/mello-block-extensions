@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             delay: parseFloat(delay) / 1000,
             ease: easeOut
         });
-        animationTimeline.cancel();
+        animationTimeline.pause();
         animationTimeline.time = 0;
 
         inView(triggerElement, () => {
