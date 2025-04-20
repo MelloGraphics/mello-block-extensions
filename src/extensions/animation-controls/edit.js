@@ -281,6 +281,7 @@ function addSaveProps(extraProps, blockType, attributes) {
 
 	if (animateChildren) {
 		extraProps["data-child-animation"] = true;
+		extraProps["data-animation-trigger"] = "parent";
 		extraProps["data-child-animation-type"] = childAnimationType;
 		extraProps["data-child-animation-duration"] = childAnimationDuration;
 		extraProps["data-child-animation-stagger-delay"] =

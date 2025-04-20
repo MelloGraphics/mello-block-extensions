@@ -25,7 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let triggerElement = element;
         if (trigger === 'parent') {
-            triggerElement = element.closest('section') || element;
+            let current = element;
+            while (current.parentElement) {
+                if (current.tagName.toLowerCase() === 'section') {
+                    triggerElement = current;
+                }
+                current = current.parentElement;
+            }
         } else if (trigger === 'self') {
             console.log('Trigger element set to self:', element);
         }
@@ -62,7 +68,18 @@ document.addEventListener('DOMContentLoaded', () => {
         childAnimationTimeline.pause();
         childAnimationTimeline.time = 0;
 
-        inView(parent, () => {
+        let triggerElement = parent;
+        if (parent.getAttribute('data-animation-trigger') === 'parent') {
+            let current = parent;
+            while (current.parentElement) {
+                if (current.tagName.toLowerCase() === 'section') {
+                    triggerElement = current;
+                }
+                current = current.parentElement;
+            }
+        }
+
+        inView(triggerElement, () => {
             childAnimationTimeline.play();
         }, {
             margin: '0% 0% -25% 0%',
