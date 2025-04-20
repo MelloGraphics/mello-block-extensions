@@ -8,31 +8,13 @@ import {
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
 
-// Define allowed blocks
-const allowedBlocks = [
-	"core/paragraph",
-	"core/heading",
-	"core/post-title",
-	"core/query-title",
-	"core/image",
-	"core/group",
-	"core/columns",
-	"core/column",
-	"core/cover",
-	"core/button",
-	"core/buttons",
-	"core/list",
-];
-
 /**
  * Add the attribute for custom data attributes to specified blocks.
  *
  * @param {Object} settings Block settings.
  */
 function addAttributes(settings) {
-	if (!allowedBlocks.includes(settings.name)) {
-		return settings;
-	}
+	
 
 	// Add the attributes.
 		const customAttributes = {
@@ -72,9 +54,6 @@ addFilter(
  */
 function addInspectorControls(BlockEdit) {
 	return (props) => {
-		if (!allowedBlocks.includes(props.name)) {
-			return <BlockEdit {...props} />;
-		}
 
 		const { attributes, setAttributes } = props;
 		const {
@@ -187,9 +166,12 @@ function addInspectorControls(BlockEdit) {
 						{[
 							"core/group",
 							"core/columns",
+							"core/column",
 							"core/cover",
 							"core/buttons",
 							"core/list",
+							"core/post-template",
+							"core/query",
 						].includes(props.name) && (
 								<>
 									<ToggleControl
