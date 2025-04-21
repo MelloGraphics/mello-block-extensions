@@ -127,6 +127,10 @@ mello-block-extensions/
       <td>Read Time</td>
       <td>Displays the read time of the current page</td>
     </tr>
+    <tr>
+      <td>Counter</td>
+      <td>Display stats and figures animated in on scroll</td>
+    </tr>
   </tbody>
 </table>
 

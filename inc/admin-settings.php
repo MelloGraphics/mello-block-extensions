@@ -125,7 +125,8 @@ function mello_register_settings() {
         'navigation-submenu-allowed-blocks' => 'Navigation Submenu: Extend allowed blocks',
         'query-exclude-current-post' => 'Query: Exclude current post',
         'query-render-featured-video' => 'Query: Render a featured video',
-        'render-svg' => 'Mixed: Render SVG'
+        'render-svg' => 'Mixed: Render SVG',
+        'animation-controls' => 'Global: Animation Controls'
     ];
     $descriptions = [
         'button-modal-toggle'       => 'Adds a toggle to buttons for opening link content in an iframe modal.',
@@ -147,7 +148,8 @@ function mello_register_settings() {
         'read-time'                 => 'Display the read time of the current page.',
         'post-type'                 => 'Display the post type for the page, or in a query.',
         'counter'                 => 'Display stats and figures animated in on scroll.',
-        'render-svg' => 'Renders an SVG inline on the frontend'
+        'render-svg' => 'Renders an SVG inline on the frontend',
+        'animation-controls' => 'Adds triggered animations to all blocks'
     ];
     
     // New array to manually define data attributes for each extension.
