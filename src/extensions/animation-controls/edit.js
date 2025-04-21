@@ -1,9 +1,11 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import {
+	ComboboxControl,
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	ToggleControl,
+	TextControl,
+	ToggleControl
 } from "@wordpress/components";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
@@ -19,17 +21,19 @@ function addAttributes(settings) {
 	// Add the attributes.
 		const customAttributes = {
 			animationType: { type: "string", default: "fade-in" },
-			animationTriggerSelf: { type: "boolean", default: false },
 			animationDuration: { type: "number", default: 500 },
 			animationDelay: { type: "number", default: 0 },
 			animateSelf: { type: "boolean", default: false }, // New attribute
-			animationTriggerPoint: { type: "number", default: -25 },
 			animateChildren: { type: "boolean", default: false },
+			animationTrigger: { type: "string", default: "section" },
+			animationTriggerCustomSelector: { type: "string", default: "" },
+			animationTriggerPoint: { type: "number", default: -25 },
 			childAnimationType: { type: "string", default: "fade-in" },
 			childAnimationDuration: { type: "number", default: 500 },
 			childAnimationStaggerDelay: { type: "number", default: 100 },
-			animationTriggerPointParent: { type: "number", default: -25 }, // New attribute
-			useCustomParentTrigger: { type: "boolean", default: false }, // New attribute
+			childAnimationTrigger: { type: "string", default: "section" },
+			childAnimationCustomSelector: { type: "string", default: "" },
+			childAnimationTriggerPoint: { type: "number", default: -25 },
 		};
 
 	const newSettings = {
@@ -60,17 +64,19 @@ function addInspectorControls(BlockEdit) {
 		const { attributes, setAttributes } = props;
 		const {
 			animationType,
-			animationTriggerSelf,
 			animationDuration,
 			animationDelay,
-			animationTriggerPoint,
+			animateSelf, // New attribute
+			animationTrigger, // New attribute
+			animationTriggerCustomSelector, // New attribute
+			animationTriggerPoint, // New attribute
 			animateChildren,
 			childAnimationType,
 			childAnimationDuration,
 			childAnimationStaggerDelay,
-			animateSelf, // New attribute
-			animationTriggerPointParent, // New attribute
-			useCustomParentTrigger, // New attribute
+			childAnimationTrigger, // New attribute
+			childAnimationCustomSelector, // New attribute
+			childAnimationTriggerPoint, // New attribute
 		} = attributes;
 
 		const allowedParentBlockTypes = [
@@ -79,6 +85,8 @@ function addInspectorControls(BlockEdit) {
 			'core/column',
 			'core/cover',
 			'core/buttons',
+			'core/list',
+			'core/post-template',
 		];
 
 		return (
@@ -98,7 +106,6 @@ function addInspectorControls(BlockEdit) {
 								if (!value) {
 									setAttributes({
 										animationType: "",
-										animationTriggerSelf: false,
 										animationDuration: 600,
 										animationDelay: 0,
 									});
@@ -107,7 +114,7 @@ function addInspectorControls(BlockEdit) {
 						/>
 						{animateSelf && ( // Wrap current controls in conditional
 							<>
-								<SelectControl
+								<ComboboxControl
 									__next40pxDefaultSize
 									label={__("Animation Type", "mello-block-extensions")}
 									value={animationType}
@@ -147,18 +154,21 @@ function addInspectorControls(BlockEdit) {
 									max={3000}
 									step={50}
 								/>
-								<ToggleControl
+								<SelectControl
+									label={__("Animation Trigger", "mello-block-extensions")}
+									value={animationTrigger}
+									options={[
+										{ label: "Section", value: "section" },
+										{ label: "Self", value: "self" },
+										{ label: "Custom", value: "custom" },
+									]}
+									onChange={(value) => setAttributes({ animationTrigger: value })}
 									__next40pxDefaultSize
-									label={__("Trigger self?", "mello-block-extensions")}
-									checked={!!animationTriggerSelf}
-									onChange={(value) =>
-										setAttributes({ animationTriggerSelf: value })
-									}
 								/>
-								{animationTriggerSelf ? (
+								{animationTrigger === "self" && (
 									<RangeControl
 										__next40pxDefaultSize
-										label={__("Trigger Point", "mello-block-extensions")}
+										label={__("Trigger Point (Self)", "mello-block-extensions")}
 										value={animationTriggerPoint}
 										onChange={(value) => setAttributes({ animationTriggerPoint: value })}
 										min={-100}
@@ -167,14 +177,33 @@ function addInspectorControls(BlockEdit) {
 										marks={[
 											{ value: -50, label: __("Center", "mello-block-extensions") },
 											{ value: -100, label: __("Top", "mello-block-extensions") },
-											{ value: 0, label: __("Bottom", "mello-block-extensions") }
+											{ value: 0, label: __("Bottom", "mello-block-extensions") },
 										]}
-										className="mello-hide-range-input"
 									/>
-								) : (
-									<p style={{ fontStyle: "italic", opacity: 0.7 }}>
-										{__("This block is synced with its parent section's animation trigger.", "mello-block-extensions")}
-									</p>
+								)}
+								{animationTrigger === "custom" && (
+									<>
+										<TextControl
+											label={__("Custom Trigger Selector", "mello-block-extensions")}
+											value={animationTriggerCustomSelector}
+											onChange={(value) => setAttributes({ animationTriggerCustomSelector: value })}
+											help={__("CSS selector for custom trigger element", "mello-block-extensions")}
+										/>
+										<RangeControl
+											__next40pxDefaultSize
+											label={__("Trigger Point (Custom)", "mello-block-extensions")}
+											value={animationTriggerPoint}
+											onChange={(value) => setAttributes({ animationTriggerPoint: value })}
+											min={-100}
+											max={0}
+											step={5}
+											marks={[
+												{ value: -50, label: __("Center", "mello-block-extensions") },
+												{ value: -100, label: __("Top", "mello-block-extensions") },
+												{ value: 0, label: __("Bottom", "mello-block-extensions") },
+											]}
+										/>
+									</>
 								)}
 							</>
 						)}
@@ -190,7 +219,7 @@ function addInspectorControls(BlockEdit) {
 								/>
 								{animateChildren && (
 									<>
-										<SelectControl
+										<ComboboxControl
 											__next40pxDefaultSize
 											label={__(
 												"Child Animation Type",
@@ -237,30 +266,58 @@ function addInspectorControls(BlockEdit) {
 											max={1000}
 											step={50}
 										/>
+										<SelectControl
+											label={__("Child Animation Trigger", "mello-block-extensions")}
+											value={childAnimationTrigger}
+											options={[
+												{ label: "Section", value: "section" },
+												{ label: "Self", value: "self" },
+												{ label: "Custom", value: "custom" },
+											]}
+											onChange={(value) => setAttributes({ childAnimationTrigger: value })}
+											__next40pxDefaultSize
+										/>
+										{childAnimationTrigger === "self" && (
+											<RangeControl
+												__next40pxDefaultSize
+												label={__("Child Trigger Point (Self)", "mello-block-extensions")}
+												value={childAnimationTriggerPoint}
+												onChange={(value) => setAttributes({ childAnimationTriggerPoint: value })}
+												min={-100}
+												max={0}
+												step={5}
+												marks={[
+													{ value: -50, label: __("Center", "mello-block-extensions") },
+													{ value: -100, label: __("Top", "mello-block-extensions") },
+													{ value: 0, label: __("Bottom", "mello-block-extensions") },
+												]}
+											/>
+										)}
+										{childAnimationTrigger === "custom" && (
+											<>
+												<TextControl
+													label={__("Custom Child Trigger Selector", "mello-block-extensions")}
+													value={childAnimationCustomSelector}
+													onChange={(value) => setAttributes({ childAnimationCustomSelector: value })}
+													help={__("CSS selector for custom child trigger", "mello-block-extensions")}
+												/>
+												<RangeControl
+													__next40pxDefaultSize
+													label={__("Child Trigger Point (Custom)", "mello-block-extensions")}
+													value={childAnimationTriggerPoint}
+													onChange={(value) => setAttributes({ childAnimationTriggerPoint: value })}
+													min={-100}
+													max={0}
+													step={5}
+													marks={[
+														{ value: -50, label: __("Center", "mello-block-extensions") },
+														{ value: -100, label: __("Top", "mello-block-extensions") },
+														{ value: 0, label: __("Bottom", "mello-block-extensions") },
+													]}
+												/>
+											</>
+										)}
 									</>
-								)}
-								<ToggleControl
-									__next40pxDefaultSize
-									label={__("Custom Parent Trigger?", "mello-block-extensions")}
-									checked={!!useCustomParentTrigger}
-									onChange={(value) => setAttributes({ useCustomParentTrigger: value })}
-								/>
-								{useCustomParentTrigger && (
-									<RangeControl
-										__next40pxDefaultSize
-										label={__("Parent Trigger Point (%)", "mello-block-extensions")}
-										value={animationTriggerPointParent}
-										onChange={(value) => setAttributes({ animationTriggerPointParent: value })}
-										min={-100}
-										max={0}
-										step={5}
-										marks={[
-											{ value: -50, label: __("Center", "mello-block-extensions") },
-											{ value: -100, label: __("Top", "mello-block-extensions") },
-											{ value: 0, label: __("Bottom", "mello-block-extensions") }
-										]}
-										help={__("Overrides default <section> trigger point for child animations.", "mello-block-extensions")}
-									/>
 								)}
 							</>
 						)}
@@ -287,34 +344,38 @@ addFilter(
 function addSaveProps(extraProps, blockType, attributes) {
 	const {
 		animateSelf,
-		animationTriggerSelf,
 		animationDuration,
 		animationDelay,
+		animationTrigger,
+		animationTriggerCustomSelector,
 		animationTriggerPoint,
 		animateChildren,
 		childAnimationType,
 		childAnimationDuration,
 		childAnimationStaggerDelay,
+		childAnimationTrigger,
+		childAnimationCustomSelector,
+		childAnimationTriggerPoint,
 	} = attributes;
 
 	if (animateSelf) {
 		extraProps["data-animation"] = true;
 		extraProps["data-animation-type"] = attributes.animationType;
-		extraProps["data-animation-trigger"] = animationTriggerSelf
-			? "self"
-			: "parent";
+		extraProps["data-animation-trigger"] = animationTrigger;
 		extraProps["data-animation-duration"] = animationDuration;
 		extraProps["data-animation-delay"] = animationDelay;
 		extraProps["data-animation-trigger-point"] = animationTriggerPoint;
+		extraProps["data-animation-trigger-custom-selector"] = animationTriggerCustomSelector;
 	}
 
 	if (animateChildren) {
 		extraProps["data-child-animation"] = true;
-		extraProps["data-animation-trigger"] = "parent";
 		extraProps["data-child-animation-type"] = childAnimationType;
 		extraProps["data-child-animation-duration"] = childAnimationDuration;
-		extraProps["data-child-animation-stagger-delay"] =
-			childAnimationStaggerDelay;
+		extraProps["data-child-animation-stagger-delay"] = childAnimationStaggerDelay;
+		extraProps["data-child-animation-trigger"] = childAnimationTrigger;
+		extraProps["data-child-animation-trigger-point"] = childAnimationTriggerPoint;
+		extraProps["data-child-animation-custom-selector"] = childAnimationCustomSelector;
 	}
 
 	return extraProps;
