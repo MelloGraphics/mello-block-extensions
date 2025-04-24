@@ -16,31 +16,38 @@ import { __ } from "@wordpress/i18n";
  * @param {Object} settings Block settings.
  */
 function addAttributes(settings) {
-	
+	if (!settings.name || !settings.name.startsWith('core/')) {
+		return settings;
+	}
 
-	// Add the attributes.
-		const customAttributes = {
-			animationType: { type: "string", default: "fade-in" },
-			animationDuration: { type: "number", default: 500 },
-			animationDelay: { type: "number", default: 0 },
-			animateSelf: { type: "boolean", default: false }, // New attribute
-			animateChildren: { type: "boolean", default: false },
-			animationTrigger: { type: "string", default: "section" },
-			animationTriggerCustomSelector: { type: "string", default: "" },
-			animationTriggerPoint: { type: "number", default: -25 },
-			childAnimationType: { type: "string", default: "fade-in" },
-			childAnimationDuration: { type: "number", default: 500 },
-			childAnimationStaggerDelay: { type: "number", default: 100 },
-			childAnimationTrigger: { type: "string", default: "section" },
-			childAnimationCustomSelector: { type: "string", default: "" },
-			childAnimationTriggerPoint: { type: "number", default: -25 },
-		};
+	// Base animation attributes with defaults only where needed.
+	const animationAttributes = {
+		animationType: { type: "string", default: "fade-in" },
+		animationDuration: { type: "number", default: 500 },
+		animationDelay: { type: "number", default: 0 },
+		animateSelf: { type: "boolean", default: false },
+		animateChildren: { type: "boolean", default: false },
+		animationTrigger: { type: "string", default: "section" },
+		animationTriggerPoint: { type: "number", default: -25 },
+		childAnimationType: { type: "string", default: "fade-in" },
+		childAnimationDuration: { type: "number", default: 500 },
+		childAnimationStaggerDelay: { type: "number", default: 100 },
+		childAnimationTrigger: { type: "string", default: "section" },
+		childAnimationTriggerPoint: { type: "number", default: -25 }
+	};
+
+	// Optional attributes, no defaults, so they are only saved if set.
+	const optionalAttributes = {
+		animationTriggerCustomSelector: { type: "string" },
+		childAnimationCustomSelector: { type: "string" }
+	};
 
 	const newSettings = {
 		...settings,
 		attributes: {
 			...settings.attributes,
-			...customAttributes,
+			...animationAttributes,
+			...optionalAttributes
 		},
 	};
 
@@ -60,6 +67,9 @@ addFilter(
  */
 function addInspectorControls(BlockEdit) {
 	return (props) => {
+		if (!props.name || !props.name.startsWith('core/')) {
+			return <BlockEdit {...props} />;
+		}
 
 		const { attributes, setAttributes } = props;
 		const {
@@ -88,6 +98,28 @@ function addInspectorControls(BlockEdit) {
 			'core/list',
 			'core/post-template',
 		];
+
+		const handleAnimationTriggerChange = (value) => {
+			if (value !== 'custom') {
+				setAttributes({
+					animationTrigger: value,
+					animationTriggerCustomSelector: undefined
+				});
+			} else {
+				setAttributes({ animationTrigger: value });
+			}
+		};
+
+		const handleChildAnimationTriggerChange = (value) => {
+			if (value !== 'custom') {
+				setAttributes({
+					childAnimationTrigger: value,
+					childAnimationCustomSelector: undefined
+				});
+			} else {
+				setAttributes({ childAnimationTrigger: value });
+			}
+		};
 
 		return (
 			<>
@@ -162,7 +194,7 @@ function addInspectorControls(BlockEdit) {
 										{ label: "Self", value: "self" },
 										{ label: "Custom", value: "custom" },
 									]}
-									onChange={(value) => setAttributes({ animationTrigger: value })}
+									onChange={handleAnimationTriggerChange}
 									__next40pxDefaultSize
 								/>
 								{animationTrigger === "self" && (
@@ -274,7 +306,7 @@ function addInspectorControls(BlockEdit) {
 												{ label: "Self", value: "self" },
 												{ label: "Custom", value: "custom" },
 											]}
-											onChange={(value) => setAttributes({ childAnimationTrigger: value })}
+											onChange={handleChildAnimationTriggerChange}
 											__next40pxDefaultSize
 										/>
 										{childAnimationTrigger === "self" && (
@@ -344,6 +376,7 @@ addFilter(
 function addSaveProps(extraProps, blockType, attributes) {
 	const {
 		animateSelf,
+		animationType,
 		animationDuration,
 		animationDelay,
 		animationTrigger,
@@ -360,12 +393,25 @@ function addSaveProps(extraProps, blockType, attributes) {
 
 	if (animateSelf) {
 		extraProps["data-animation"] = true;
-		extraProps["data-animation-type"] = attributes.animationType;
+		extraProps["data-animation-type"] = animationType;
 		extraProps["data-animation-trigger"] = animationTrigger;
 		extraProps["data-animation-duration"] = animationDuration;
 		extraProps["data-animation-delay"] = animationDelay;
 		extraProps["data-animation-trigger-point"] = animationTriggerPoint;
-		extraProps["data-animation-trigger-custom-selector"] = animationTriggerCustomSelector;
+
+		if (typeof animationTriggerCustomSelector === 'string' &&
+			animationTriggerCustomSelector.trim() !== '' &&
+			animationTrigger === 'custom') {
+			extraProps["data-animation-trigger-custom-selector"] = animationTriggerCustomSelector;
+		}
+	} else {
+		delete extraProps["data-animation"];
+		delete extraProps["data-animation-type"];
+		delete extraProps["data-animation-trigger"];
+		delete extraProps["data-animation-duration"];
+		delete extraProps["data-animation-delay"];
+		delete extraProps["data-animation-trigger-point"];
+		delete extraProps["data-animation-trigger-custom-selector"];
 	}
 
 	if (animateChildren) {
@@ -375,7 +421,20 @@ function addSaveProps(extraProps, blockType, attributes) {
 		extraProps["data-child-animation-stagger-delay"] = childAnimationStaggerDelay;
 		extraProps["data-child-animation-trigger"] = childAnimationTrigger;
 		extraProps["data-child-animation-trigger-point"] = childAnimationTriggerPoint;
-		extraProps["data-child-animation-custom-selector"] = childAnimationCustomSelector;
+
+		if (typeof childAnimationCustomSelector === 'string' &&
+			childAnimationCustomSelector.trim() !== '' &&
+			childAnimationTrigger === 'custom') {
+			extraProps["data-child-animation-custom-selector"] = childAnimationCustomSelector;
+		}
+	} else {
+		delete extraProps["data-child-animation"];
+		delete extraProps["data-child-animation-type"];
+		delete extraProps["data-child-animation-duration"];
+		delete extraProps["data-child-animation-stagger-delay"];
+		delete extraProps["data-child-animation-trigger"];
+		delete extraProps["data-child-animation-trigger-point"];
+		delete extraProps["data-child-animation-custom-selector"];
 	}
 
 	return extraProps;
