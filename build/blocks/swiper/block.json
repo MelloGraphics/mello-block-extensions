@@ -1,0 +1,149 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "mello-block/swiper",
+  "version": "0.1.0",
+  "title": "Swiper",
+  "category": "design",
+  "icon": "slides",
+  "description": "Swiper block for content and query elements",
+  "attributes": {
+    "slidesPerView": {
+      "type": "number",
+      "default": 3
+    },
+    "spaceBetween": {
+      "type": "number"
+    },
+    "direction": {
+      "type": "string",
+      "default": "horizontal"
+    },
+    "loop": {
+      "type": "boolean",
+      "default": false
+    },
+    "speed": {
+      "type": "number"
+    },
+    "centeredSlides": {
+      "type": "boolean"
+    },
+    "freeMode": {
+      "type": "boolean"
+    },
+    "freeModeMomentum": {
+      "type": "boolean"
+    },
+    "freeModeMomentumRatio": {
+      "type": "number"
+    },
+    "freeModeMomentumVelocityRatio": {
+      "type": "number"
+    },
+    "freeModeSticky": {
+      "type": "boolean"
+    },
+    "autoplay": {
+      "type": "boolean"
+    },
+    "autoplayDelay": {
+      "type": "number",
+      "default": "3000"
+    },
+    "autoplayDisableOnInteraction": {
+      "type": "boolean"
+    },
+    "navigation": {
+      "type": "boolean"
+    },
+    "pagination": {
+      "type": "boolean"
+    },
+    "paginationClickable": {
+      "type": "boolean"
+    },
+    "paginationType": {
+      "type": "string"
+    },
+    "scrollbar": {
+      "type": "boolean"
+    },
+    "scrollbarHide": {
+      "type": "boolean"
+    },
+    "effect": {
+      "type": "string"
+    },
+    "mousewheel": {
+      "type": "boolean"
+    },
+    "mousewheelForceToAxis": {
+      "type": "boolean"
+    },
+    "mousewheelInvert": {
+      "type": "boolean"
+    },
+    "mousewheelReleaseOnEdges": {
+      "type": "boolean"
+    },
+    "mousewheelSensitivity": {
+      "type": "number"
+    },
+    "mousewheelEventsTarget": {
+      "type": "string"
+    },
+    "a11y": {
+      "type": "boolean"
+    },
+    "lazy": {
+      "type": "boolean"
+    },
+    "loopFillGroupWithBlank": {
+      "type": "boolean"
+    },
+    "simulateTouch": {
+      "type": "boolean"
+    },
+    "touchRatio": {
+      "type": "number"
+    },
+    "grabCursor": {
+      "type": "boolean"
+    },
+    "slideToClickedSlide": {
+      "type": "boolean"
+    }
+  },
+  "example": {},
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "spacing": {
+      "margin": [
+        "top",
+        "bottom"
+      ],
+      "padding": true,
+      "blockGap": true,
+      "__experimentalDefaultControls": {
+        "padding": true,
+        "blockGap": true
+      }
+    },
+    "layout": {
+      "allowSizingOnChildren": true
+    },
+    "dimensions": {
+      "minHeight": true
+    }
+  },
+  "textdomain": "swiper",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js"
+}

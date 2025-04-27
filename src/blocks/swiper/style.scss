@@ -1,0 +1,82 @@
+// Import Swiper core and all component styles
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/pagination';
+@import 'swiper/css/scrollbar';
+@import 'swiper/css/autoplay';
+@import 'swiper/css/effect-fade';
+@import 'swiper/css/free-mode';
+@import 'swiper/css/mousewheel';
+
+.wp-block-mello-block-swiper {
+    --swiper-navigation-size: var(--wp--preset--font-size--medium);
+    --swiper-navigation-top-offset: 50%;
+    --swiper-navigation-sides-offset: 10px;
+    --swiper-navigation-color: var(--wp--preset--color--primary);
+
+    --swiper-pagination-color: var(--wp--preset--color--primary);
+    --swiper-pagination-left: auto;
+    --swiper-pagination-right: 8px;
+    --swiper-pagination-bottom: 8px;
+    --swiper-pagination-top: auto;
+    --swiper-pagination-fraction-color: inherit;
+    --swiper-pagination-progressbar-bg-color: var(--wp--preset--color--tertiary);
+    --swiper-pagination-progressbar-size: 4px;
+    --swiper-pagination-bullet-size: 8px;
+    --swiper-pagination-bullet-width: 8px;
+    --swiper-pagination-bullet-height: 8px;
+    --swiper-pagination-bullet-inactive-color: var(--wp--preset--color--tertiary);
+    --swiper-pagination-bullet-inactive-opacity: 1;
+    --swiper-pagination-bullet-opacity: 1;
+    --swiper-pagination-bullet-horizontal-gap: 0;
+    --swiper-pagination-bullet-vertical-gap: 0;
+
+    &.swiper.is-style-ticker-left, &.swiper.is-style-ticker-right{
+        .swiper-wrapper{
+            transition-timing-function: linear;
+        }
+        .swiper-slide{
+            flex-shrink: 1;
+            min-width: max-content;
+        }
+    }
+    
+    .wp-block-button__link{
+        height: auto;
+    }
+
+    .swiper-button-next, .swiper-button-prev{
+        display: inline-flex;
+        margin-block-start: unset;
+        position: unset;
+        inset: 0;
+        min-height: fit-content;
+        min-width: fit-content;
+        font-family: swiper-icons;
+
+        &::after{ // hide swiper JS icons. Content is set in the editor.
+            display: none;
+            visibility: hidden;
+            font-size: inherit;
+        }
+    }
+
+    .swiper-scrollbar{
+        position: relative;
+        inset: 0;
+        width: 100%;
+        margin: var(--wp--preset--spacing--large) auto;
+
+        .swiper-scrollbar-drag{
+            margin: unset!important;
+        }
+    }
+
+    .swiper-pagination{
+        display: inline-flex;
+        gap: var(--wp--preset--spacing--small);
+        position: unset;
+    }
+
+
+}
