@@ -36,6 +36,7 @@ export default function Edit({ attributes, setAttributes }) {
     const {
         slidesPerView,
         loop,
+        centeredSlides,
         autoplay,
         autoplayDelay,
         autoplayDisableOnInteraction,
@@ -75,6 +76,7 @@ export default function Edit({ attributes, setAttributes }) {
         'data-swiper': true,
         'data-swiper-slides-per-view': slidesPerView,
         'data-swiper-loop': loop,
+        'data-swiper-centered-slides': centeredSlides,
         'data-swiper-autoplay': autoplay,
         ...(autoplayDelay !== undefined && { 'data-swiper-autoplay-delay': autoplayDelay }),
         ...(autoplayDisableOnInteraction !== undefined && { 'data-swiper-autoplay-disable-on-interaction': autoplayDisableOnInteraction }),
@@ -105,7 +107,7 @@ export default function Edit({ attributes, setAttributes }) {
     return (
         <div {...blockProps}>
             <InspectorControls>
-                <PanelBody title={__('Core Settings', 'mellobase')} initialOpen={true}>
+                <PanelBody title={__('Slide Settings', 'mellobase')} initialOpen={false}>
                     <RangeControl
                         label={__('Slides Per View', 'mellobase')}
                         value={slidesPerView !== undefined ? slidesPerView : 3}
@@ -118,6 +120,11 @@ export default function Edit({ attributes, setAttributes }) {
                         label={__('Loop Slides', 'mellobase')}
                         checked={loop}
                         onChange={(value) => setAttributes({ loop: value !== undefined ? value : undefined })}
+                    />
+                    <ToggleControl
+                        label={__('Center Slides', 'mellobase')}
+                        checked={centeredSlides}
+                        onChange={(value) => setAttributes({ centeredSlides	: value !== undefined ? value : undefined })}
                     />
                     <RangeControl
                         label={__('Space Between Slides (px)', 'mellobase')}
@@ -137,7 +144,7 @@ export default function Edit({ attributes, setAttributes }) {
                     />
                 </PanelBody>
 
-                <PanelBody title={__('Behaviour Settings', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Behaviour', 'mellobase')} initialOpen={false}>
                     <ToggleControl
                         label={__('Grab Cursor', 'mellobase')}
                         checked={grabCursor}
@@ -150,7 +157,7 @@ export default function Edit({ attributes, setAttributes }) {
                     />
                 </PanelBody>
 
-                <PanelBody title={__('Autoplay Settings', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Autoplay', 'mellobase')} initialOpen={false}>
                     <ToggleControl
                         label={__('Autoplay', 'mellobase')}
                         checked={autoplay}
@@ -181,7 +188,7 @@ export default function Edit({ attributes, setAttributes }) {
                     )}
                 </PanelBody>
 
-                <PanelBody title={__('Navigation Settings', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Navigation', 'mellobase')} initialOpen={false}>
                     {/* Navigation Toggle */}
                     <ToggleControl
                         label={__('Enable Navigation', 'mellobase')}
@@ -230,7 +237,7 @@ export default function Edit({ attributes, setAttributes }) {
                     )}
                 </PanelBody>
 
-                <PanelBody title={__('Effects Settings', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Effects', 'mellobase')} initialOpen={false}>
                     <SelectControl
                         label={__('Effect', 'mellobase')}
                         value={effect || 'slide'}
@@ -242,7 +249,7 @@ export default function Edit({ attributes, setAttributes }) {
                     />
                 </PanelBody>
 
-                <PanelBody title={__('Mousewheel Settings', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Mousewheel', 'mellobase')} initialOpen={false}>
                     <ToggleControl
                         label={__('Enable Mousewheel', 'mellobase')}
                         checked={mousewheel}
@@ -286,7 +293,7 @@ export default function Edit({ attributes, setAttributes }) {
                     )}
                 </PanelBody>
 
-                <PanelBody title={__('Advanced Settings', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Advanced', 'mellobase')} initialOpen={false}>
                     <ToggleControl
                         label={__('Free Mode', 'mellobase')}
                         checked={freeMode}

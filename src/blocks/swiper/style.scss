@@ -31,22 +31,25 @@
     --swiper-pagination-bullet-horizontal-gap: 0;
     --swiper-pagination-bullet-vertical-gap: 0;
 
-    &.swiper.is-style-ticker-left, &.swiper.is-style-ticker-right{
-        .swiper-wrapper{
-            transition-timing-function: linear;
-        }
-        .swiper-slide{
-            flex-shrink: 1;
-            min-width: max-content;
-        }
-    }
+    // &.swiper.is-style-ticker-left, &.swiper.is-style-ticker-right{
+    //     .swiper-wrapper{
+    //         transition-timing-function: linear;
+    //     }
+    //     .swiper-slide{
+    //         flex-shrink: 1;
+    //         min-width: max-content;
+    //     }
+    // }
     
     .wp-block-button__link{
         height: auto;
     }
 
+    // Navigation - buttons
+
     .swiper-button-next, .swiper-button-prev{
-        display: inline-flex;
+        display: none;
+        visibility: hidden;
         margin-block-start: unset;
         position: unset;
         inset: 0;
@@ -60,22 +63,42 @@
             font-size: inherit;
         }
     }
+    &[data-swiper-navigation="true"]{
+        .swiper-button-next, .swiper-button-prev{
+            display: inline;
+            visibility: visible;
+        }
+    }
+
+    // Navigation - Scrollbar
 
     .swiper-scrollbar{
-        position: relative;
-        inset: 0;
-        width: 100%;
-        margin: var(--wp--preset--spacing--large) auto;
+        display: none;
+        visibility: hidden;
 
         .swiper-scrollbar-drag{
             margin: unset!important;
         }
     }
+    &[data-swiper-scrollbar="true"] .swiper-scrollbar{
+        display: inline-block;
+        visibility: visible;
+        position: relative;
+        inset: 0;
+        width: 100%;
+    }
+
+    // Navigation - Pagination
 
     .swiper-pagination{
-        display: inline-flex;
+        display: none;
+        visibility: hidden;
         gap: var(--wp--preset--spacing--small);
         position: unset;
+    }
+    &[data-swiper-pagination="true"] .swiper-pagination{
+        display: inline-block;
+        visibility: visible;
     }
 
 
