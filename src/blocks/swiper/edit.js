@@ -155,9 +155,6 @@ export default function Edit({ attributes, setAttributes }) {
                         checked={slideToClickedSlide}
                         onChange={(value) => setAttributes({ slideToClickedSlide: value !== undefined ? value : undefined })}
                     />
-                </PanelBody>
-
-                <PanelBody title={__('Autoplay', 'mellobase')} initialOpen={false}>
                     <ToggleControl
                         label={__('Autoplay', 'mellobase')}
                         checked={autoplay}
