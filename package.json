@@ -34,6 +34,7 @@
     "webpack-remove-empty-scripts": "^1.0.4"
   },
   "sideEffects": [
+    "./src/blocks/swiper/variations.js",
     "./src/extensions/cover-ext-video/edit.js",
     "./src/extensions/**/*",
     "**/*.css",

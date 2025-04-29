@@ -19,7 +19,7 @@
 		width: 100%;
 		
 		&::before {
-			content: "Toggle pagination on the front end in navigation settings";
+			content: "Toggle pagination on / off the front end in navigation settings";
 			background-color: #f1f1f1;
 			color: black;
 			min-width: 100%;
@@ -39,7 +39,7 @@
 
 	.swiper-scrollbar {
 		&::before {
-			content: "Toggle scrollbar on the front end in navigation settings";
+			content: "Toggle scrollbar on / off the front end in navigation settings";
 			background-color: #f1f1f1;
 			color: black;
 			min-width: 100%;

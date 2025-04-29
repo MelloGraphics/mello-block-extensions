@@ -2,7 +2,7 @@
 import Swiper from 'swiper';
 
 // Import Swiper core CSS
-import 'swiper/css';
+// import 'swiper/css';
 
 // We'll import module CSS and the modules themselves dynamically based on attributes
 
@@ -34,43 +34,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modulesToLoad = [];
     
     if (needsNavigation) {
-        await import('swiper/css/navigation');
+        // await import('swiper/css/navigation');
         const { Navigation } = await import('swiper/modules');
         modulesToLoad.push({ module: Navigation, name: 'Navigation' });
     }
     
     if (needsPagination) {
-        await import('swiper/css/pagination');
+        // await import('swiper/css/pagination');
         const { Pagination } = await import('swiper/modules');
         modulesToLoad.push({ module: Pagination, name: 'Pagination' });
     }
     
     if (needsScrollbar) {
-        await import('swiper/css/scrollbar');
+        // await import('swiper/css/scrollbar');
         const { Scrollbar } = await import('swiper/modules');
         modulesToLoad.push({ module: Scrollbar, name: 'Scrollbar' });
     }
     
     if (needsMousewheel) {
-        await import('swiper/css/mousewheel');
+        // await import('swiper/css/mousewheel');
         const { Mousewheel } = await import('swiper/modules');
         modulesToLoad.push({ module: Mousewheel, name: 'Mousewheel' });
     }
     
     if (needsAutoplay) {
-        await import('swiper/css/autoplay');
+        // await import('swiper/css/autoplay');
         const { Autoplay } = await import('swiper/modules');
         modulesToLoad.push({ module: Autoplay, name: 'Autoplay' });
     }
     
     if (needsEffectFade) {
-        await import('swiper/css/effect-fade');
+        // await import('swiper/css/effect-fade');
         const { EffectFade } = await import('swiper/modules');
         modulesToLoad.push({ module: EffectFade, name: 'EffectFade' });
     }
     
     if (needsFreeMode) {
-        await import('swiper/css/free-mode');
+        // await import('swiper/css/free-mode');
         // Free Mode is a parameter, not a module
     }
     

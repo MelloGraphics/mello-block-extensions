@@ -1,5 +1,6 @@
 import { registerBlockVariation } from '@wordpress/blocks';
 import domReady from '@wordpress/dom-ready';
+import { __ } from '@wordpress/i18n';
 
 //
 // Query swiper
@@ -7,11 +8,11 @@ import domReady from '@wordpress/dom-ready';
 
 const registerBlockVariations = {
     "core/query": {
-        name: "query-swiper-variation",
+        name: "query-swiper",
         title: "Query Swiper",
         description: "A carousel-style query block powered by Swiper JS.",
-		textdomain: "swiper",
-		attributes: {
+        textdomain: "swiper",
+        attributes: {
             query: {
                 perPage: 10,
                 pages: 0,
@@ -19,9 +20,9 @@ const registerBlockVariations = {
                 postType: "page",
                 order: "desc",
                 orderBy: "date",
-                inherit: false,
+                inherit: true,
             },
-			metadata: { name: 'Query Swiper Variation' },
+            metadata: { name: 'Query Swiper' },
         },
         innerBlocks: [
             [
@@ -31,7 +32,7 @@ const registerBlockVariations = {
                     [
                         "core/post-template",
                         {
-							metadata: { name: 'Swiper Wrapper' },
+                            metadata: { name: 'Swiper Wrapper' },
                             className: "swiper-wrapper"
                         },
                         [
@@ -41,32 +42,14 @@ const registerBlockVariations = {
                             ["core/read-more", { content: "Learn more", fontSize: "small" }],
                         ],
                     ],
+                    ['core/group', { lock: { remove: true }, metadata: { name: 'Pagination Wrapper' }, className: 'swiper-pagination', layout: { type: 'constrained' } }],
+                    ['core/group', { lock: { remove: true }, metadata: { name: 'Scrollbar Wrapper' }, className: 'swiper-scrollbar', layout: { type: 'constrained' } }],
                     [
-                        "core/group",
-                        { 
-							metadata: { name: 'Pagination Wrapper' },
-                            className: "swiper-pagination",
-                            layout: { type: "constrained" }
-                        },
-                    ],
-                    [
-                        "core/group",
-                        { 
-							metadata: { name: 'Scrollbar Wrapper' },
-                            className: "swiper-scrollbar",
-                            layout: { type: "constrained" }
-                        },
-                    ],
-                    [
-                        "core/buttons",
-                        {
-							metadata: { name: 'Prev / Next buttons' },
-                            className: "swiper-navigation",
-                            style: { spacing: { blockGap: { left: "var:preset|spacing|small" } } },
-                        },
+                        'core/buttons',
+                        { lock: { remove: true }, metadata: { name: 'Prev / Next Buttons' }, style: { spacing: { blockGap: { left: 'var:preset|spacing|small' } } } },
                         [
-                            ["core/button", { className: "swiper-button-prev", text: "Prev" }],
-                            ["core/button", { className: "swiper-button-next", text: "Next" }],
+                            ['core/button', { className: 'swiper-button-prev', text: __('prev', 'mello-block-extensions') }],
+                            ['core/button', { className: 'swiper-button-next', text: __('next', 'mello-block-extensions') }],
                         ],
                     ],
                 ],
