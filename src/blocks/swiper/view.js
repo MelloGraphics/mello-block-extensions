@@ -9,71 +9,71 @@ import Swiper from 'swiper';
 document.addEventListener('DOMContentLoaded', async () => {
     // Collect all swiper elements first
     const swiperElements = document.querySelectorAll('.wp-block-mello-block-swiper[data-swiper]');
-    
+
     // Early exit if no swiper elements found
     if (swiperElements.length === 0) return;
-    
+
     // Determine which modules to load across all swipers
-    const needsNavigation = Array.from(swiperElements).some(el => 
+    const needsNavigation = Array.from(swiperElements).some(el =>
         el.hasAttribute('data-swiper-navigation') && el.getAttribute('data-swiper-navigation') === 'true');
-    const needsPagination = Array.from(swiperElements).some(el => 
+    const needsPagination = Array.from(swiperElements).some(el =>
         el.hasAttribute('data-swiper-pagination') && el.getAttribute('data-swiper-pagination') === 'true');
-    const needsScrollbar = Array.from(swiperElements).some(el => 
+    const needsScrollbar = Array.from(swiperElements).some(el =>
         el.hasAttribute('data-swiper-scrollbar') && el.getAttribute('data-swiper-scrollbar') === 'true');
-    const needsMousewheel = Array.from(swiperElements).some(el => 
+    const needsMousewheel = Array.from(swiperElements).some(el =>
         el.hasAttribute('data-swiper-mousewheel') && el.getAttribute('data-swiper-mousewheel') === 'true');
-    const needsAutoplay = Array.from(swiperElements).some(el => 
-        el.hasAttribute('data-swiper-autoplay') && 
+    const needsAutoplay = Array.from(swiperElements).some(el =>
+        el.hasAttribute('data-swiper-autoplay') &&
         (el.getAttribute('data-swiper-autoplay') === 'true' || !isNaN(el.getAttribute('data-swiper-autoplay'))));
-    const needsEffectFade = Array.from(swiperElements).some(el => 
+    const needsEffectFade = Array.from(swiperElements).some(el =>
         el.hasAttribute('data-swiper-effect') && el.getAttribute('data-swiper-effect') === 'fade');
-    const needsFreeMode = Array.from(swiperElements).some(el => 
+    const needsFreeMode = Array.from(swiperElements).some(el =>
         el.hasAttribute('data-swiper-free-mode') && el.getAttribute('data-swiper-free-mode') === 'true');
-    
+
     // Import required modules and CSS dynamically
     const modulesToLoad = [];
-    
+
     if (needsNavigation) {
         // await import('swiper/css/navigation');
         const { Navigation } = await import('swiper/modules');
         modulesToLoad.push({ module: Navigation, name: 'Navigation' });
     }
-    
+
     if (needsPagination) {
         // await import('swiper/css/pagination');
         const { Pagination } = await import('swiper/modules');
         modulesToLoad.push({ module: Pagination, name: 'Pagination' });
     }
-    
+
     if (needsScrollbar) {
         // await import('swiper/css/scrollbar');
         const { Scrollbar } = await import('swiper/modules');
         modulesToLoad.push({ module: Scrollbar, name: 'Scrollbar' });
     }
-    
+
     if (needsMousewheel) {
         // await import('swiper/css/mousewheel');
         const { Mousewheel } = await import('swiper/modules');
         modulesToLoad.push({ module: Mousewheel, name: 'Mousewheel' });
     }
-    
+
     if (needsAutoplay) {
         // await import('swiper/css/autoplay');
         const { Autoplay } = await import('swiper/modules');
         modulesToLoad.push({ module: Autoplay, name: 'Autoplay' });
     }
-    
+
     if (needsEffectFade) {
         // await import('swiper/css/effect-fade');
         const { EffectFade } = await import('swiper/modules');
         modulesToLoad.push({ module: EffectFade, name: 'EffectFade' });
     }
-    
+
     if (needsFreeMode) {
         // await import('swiper/css/free-mode');
         // Free Mode is a parameter, not a module
     }
-    
+
     // Now initialize each swiper with its specific configuration
     swiperElements.forEach((swiperElement) => {
         // Add `swiper-slide` class to each child
@@ -93,13 +93,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Read all data attributes and build configuration
         const dataAttributes = Array.from(swiperElement.attributes)
             .filter(attr => attr.name.startsWith('data-swiper-'));
-        
+
         // First check which modules need to be activated for this specific swiper
         const hasNavigation = dataAttributes.some(attr => attr.name === 'data-swiper-navigation' && attr.value === 'true');
         const hasPagination = dataAttributes.some(attr => attr.name === 'data-swiper-pagination' && attr.value === 'true');
         const hasScrollbar = dataAttributes.some(attr => attr.name === 'data-swiper-scrollbar' && attr.value === 'true');
         const hasMousewheel = dataAttributes.some(attr => attr.name === 'data-swiper-mousewheel' && attr.value === 'true');
-        const hasAutoplay = dataAttributes.some(attr => 
+        const hasAutoplay = dataAttributes.some(attr =>
             attr.name === 'data-swiper-autoplay' && (attr.value === 'true' || !isNaN(attr.value))
         );
         const hasEffectFade = dataAttributes.some(attr => attr.name === 'data-swiper-effect' && attr.value === 'fade');
@@ -127,29 +127,35 @@ document.addEventListener('DOMContentLoaded', async () => {
                 prevEl: swiperElement.querySelector('.swiper-button-prev')
             };
         }
-        
+
         if (hasPagination) {
             options.pagination = {
                 enabled: true,
                 el: swiperElement.querySelector('.swiper-pagination')
             };
         }
-        
+
         if (hasScrollbar) {
             options.scrollbar = {
                 enabled: true,
                 el: swiperElement.querySelector('.swiper-scrollbar')
             };
         }
-        
+
         if (hasMousewheel) {
             options.mousewheel = { enabled: true };
         }
-        
+
         if (hasAutoplay) {
             options.autoplay = { delay: 3000, disableOnInteraction: false };
+
+            // Check for autoplay reverse direction
+            if (swiperElement.hasAttribute('data-swiper-autoplay-reverse-direction') &&
+                swiperElement.getAttribute('data-swiper-autoplay-reverse-direction') === 'true') {
+                options.autoplay.reverseDirection = true;
+            }
         }
-        
+
         if (hasEffectFade) {
             options.effect = 'fade';
         }
@@ -197,6 +203,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'mousewheelEventsTarget':
                     if (options.mousewheel) options.mousewheel.eventsTarget = value;
                     break;
+                case 'autoplayReverseDirection':
+                    if (options.autoplay) options.autoplay.reverseDirection = value;
+                    break;
                 // Skip the main module flags we already processed
                 case 'navigation':
                 case 'pagination':
@@ -214,8 +223,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Handle responsive breakpoints
         const slidesPerView = options.slidesPerView || 1;
         const spaceBetween = options.spaceBetween || 0;
-        const slidesPerViewMobile = swiperElement.hasAttribute('data-swiper-slides-per-view-mobile') 
-            ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-mobile')) 
+        const slidesPerViewMobile = swiperElement.hasAttribute('data-swiper-slides-per-view-mobile')
+            ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-mobile'))
             : slidesPerView;
         const spaceBetweenMobile = swiperElement.hasAttribute('data-swiper-space-between-mobile')
             ? Number(swiperElement.getAttribute('data-swiper-space-between-mobile'))
@@ -226,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const spaceBetweenTablet = swiperElement.hasAttribute('data-swiper-space-between-tablet')
             ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
             : spaceBetweenMobile;
-        
+
         // Set direction if provided
         if (swiperElement.hasAttribute('data-swiper-direction')) {
             options.direction = swiperElement.getAttribute('data-swiper-direction');

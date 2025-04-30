@@ -42,6 +42,7 @@ export default function Edit({ attributes, setAttributes }) {
         autoplay,
         autoplayDelay,
         autoplayDisableOnInteraction,
+        autoplayReverseDirection,
         spaceBetween,
         spaceBetweenTablet,
         spaceBetweenMobile,
@@ -69,7 +70,7 @@ export default function Edit({ attributes, setAttributes }) {
         freeModeSticky,
     } = attributes;
 
-    const blockProps = useBlockProps({
+const blockProps = useBlockProps({
         style: {
             ...(spaceBetween !== undefined
                 ? { '--swiper-space-between': `${spaceBetween}px` }
@@ -99,6 +100,7 @@ export default function Edit({ attributes, setAttributes }) {
         'data-swiper-autoplay': autoplay,
         ...(autoplayDelay !== undefined && { 'data-swiper-autoplay-delay': autoplayDelay }),
         ...(autoplayDisableOnInteraction !== undefined && { 'data-swiper-autoplay-disable-on-interaction': autoplayDisableOnInteraction }),
+        ...(autoplayReverseDirection !== undefined && { 'data-swiper-autoplay-reverse-direction': autoplayReverseDirection }),
         ...(spaceBetween !== undefined && { 'data-swiper-space-between': spaceBetween }),
         ...(spaceBetweenTablet !== undefined && { 'data-swiper-space-between-tablet': spaceBetweenTablet }),
         ...(spaceBetweenMobile !== undefined && { 'data-swiper-space-between-mobile': spaceBetweenMobile }),
@@ -241,7 +243,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 label={__('Autoplay Delay (ms)', 'mellobase')}
                                 value={autoplayDelay}
                                 onChange={(value) => setAttributes({ autoplayDelay: value !== undefined ? value : undefined })}
-                                min={100}
+                                min={0}
                                 max={10000}
                                 step={100}
                                 defaultValue={3000}
@@ -250,6 +252,11 @@ export default function Edit({ attributes, setAttributes }) {
                                 label={__('Disable on Interaction', 'mellobase')}
                                 checked={autoplayDisableOnInteraction}
                                 onChange={(value) => setAttributes({ autoplayDisableOnInteraction: value !== undefined ? value : undefined })}
+                            />
+                            <ToggleControl
+                                label={__('Reverse Direction', 'mellobase')}
+                                checked={autoplayReverseDirection}
+                                onChange={(value) => setAttributes({ autoplayReverseDirection: value !== undefined ? value : undefined })}
                             />
                         </>
                     )}

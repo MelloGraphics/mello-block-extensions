@@ -101,5 +101,9 @@
         visibility: visible;
     }
 
+    //remove transition for autoplay delay 0
 
+    &[data-swiper-autoplay-delay="0"] .swiper-wrapper{
+        transition-timing-function: linear;
+    }
 }

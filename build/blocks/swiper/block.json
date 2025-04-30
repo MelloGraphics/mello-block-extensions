@@ -72,6 +72,9 @@
     "autoplayDisableOnInteraction": {
       "type": "boolean"
     },
+    "autoplayReverseDirection": {
+      "type": "boolean"
+    },
     "navigation": {
       "type": "boolean"
     },
