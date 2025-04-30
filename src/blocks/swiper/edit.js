@@ -1,5 +1,5 @@
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { PanelBody, RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
+import { __experimentalDivider as Divider, PanelBody, RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 import './style.scss';
@@ -35,12 +35,16 @@ const TEMPLATE = [
 export default function Edit({ attributes, setAttributes }) {
     const {
         slidesPerView,
+        slidesPerViewTablet,
+        slidesPerViewMobile,
         loop,
         centeredSlides,
         autoplay,
         autoplayDelay,
         autoplayDisableOnInteraction,
         spaceBetween,
+        spaceBetweenTablet,
+        spaceBetweenMobile,
         speed,
         navigation,
         pagination,
@@ -49,6 +53,7 @@ export default function Edit({ attributes, setAttributes }) {
         scrollbar,
         scrollbarHide,
         effect,
+        direction,
         mousewheel,
         mousewheelForceToAxis,
         mousewheelInvert,
@@ -69,19 +74,36 @@ export default function Edit({ attributes, setAttributes }) {
             ...(spaceBetween !== undefined
                 ? { '--swiper-space-between': `${spaceBetween}px` }
                 : {}),
+            ...(spaceBetweenTablet !== undefined
+                ? { '--swiper-space-between-tablet': `${spaceBetweenTablet}px` }
+                : {}),
+            ...(spaceBetweenMobile !== undefined
+                ? { '--swiper-space-between-mobile': `${spaceBetweenMobile}px` }
+                : {}),
             ...(slidesPerView !== undefined
                 ? { '--swiper-spv': slidesPerView }
+                : {}),
+            ...(slidesPerViewTablet !== undefined
+                ? { '--swiper-spv-tablet': slidesPerViewTablet }
+                : {}),
+            ...(slidesPerViewMobile !== undefined
+                ? { '--swiper-spv-mobile': slidesPerViewMobile }
                 : {}),
         },
         'data-swiper': true,
         'data-swiper-slides-per-view': slidesPerView,
+        'data-swiper-slides-per-view-tablet': slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2,
+        'data-swiper-slides-per-view-mobile': slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1,
         'data-swiper-loop': loop,
         'data-swiper-centered-slides': centeredSlides,
         'data-swiper-autoplay': autoplay,
         ...(autoplayDelay !== undefined && { 'data-swiper-autoplay-delay': autoplayDelay }),
         ...(autoplayDisableOnInteraction !== undefined && { 'data-swiper-autoplay-disable-on-interaction': autoplayDisableOnInteraction }),
         ...(spaceBetween !== undefined && { 'data-swiper-space-between': spaceBetween }),
+        ...(spaceBetweenTablet !== undefined && { 'data-swiper-space-between-tablet': spaceBetweenTablet }),
+        ...(spaceBetweenMobile !== undefined && { 'data-swiper-space-between-mobile': spaceBetweenMobile }),
         ...(speed !== undefined && { 'data-swiper-speed': speed }),
+        ...(direction !== undefined && { 'data-swiper-direction': direction }),
         ...(navigation !== undefined && { 'data-swiper-navigation': navigation }),
         ...(pagination !== undefined && { 'data-swiper-pagination': pagination }),
         ...(paginationType !== undefined && { 'data-swiper-pagination-type': paginationType }),
@@ -108,14 +130,51 @@ export default function Edit({ attributes, setAttributes }) {
         <div {...blockProps}>
             <InspectorControls>
                 <PanelBody title={__('Slide Settings', 'mellobase')} initialOpen={false}>
+                    <SelectControl
+                        __next40pxDefaultSize
+                        label={__('Direction', 'mellobase')}
+                        value={direction || 'horizontal'}
+                        options={[
+                            { label: __('Horizontal', 'mellobase'), value: 'horizontal' },
+                            { label: __('Vertical', 'mellobase'), value: 'vertical' },
+                        ]}
+                        onChange={(value) => setAttributes({ direction: value !== undefined ? value : undefined })}
+                    />
+                    <Divider />
                     <RangeControl
-                        label={__('Slides Per View', 'mellobase')}
+                        label={__('Slides Per View (Desktop)', 'mellobase')}
                         value={slidesPerView !== undefined ? slidesPerView : 3}
                         onChange={(value) => setAttributes({ slidesPerView: value !== undefined ? value : undefined })}
                         min={1}
                         max={6}
                         step={0.25}
                     />
+                    <RangeControl
+                        label={__('Slides Per View (Tablet)', 'mellobase')}
+                        value={slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2}
+                        onChange={(value) => setAttributes({ slidesPerViewTablet: value !== undefined ? value : undefined })}
+                        min={1}
+                        max={6}
+                        step={0.25}
+                    />
+                    <RangeControl
+                        label={__('Slides Per View (Mobile)', 'mellobase')}
+                        value={slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1}
+                        onChange={(value) => setAttributes({ slidesPerViewMobile: value !== undefined ? value : undefined })}
+                        min={1}
+                        max={6}
+                        step={0.25}
+                    />
+                    <Divider />
+                    <RangeControl
+                        label={__('Speed (ms)', 'mellobase')}
+                        value={speed}
+                        onChange={(value) => setAttributes({ speed: value !== undefined ? value : undefined })}
+                        min={0}
+                        max={5000}
+                        step={100}
+                    />
+                    <Divider />
                     <ToggleControl
                         label={__('Loop Slides', 'mellobase')}
                         checked={loop}
@@ -126,8 +185,10 @@ export default function Edit({ attributes, setAttributes }) {
                         checked={centeredSlides}
                         onChange={(value) => setAttributes({ centeredSlides	: value !== undefined ? value : undefined })}
                     />
+                    </PanelBody>
+                    <PanelBody title={__('Slide Spacing', 'mellobase')} initialOpen={false}>
                     <RangeControl
-                        label={__('Space Between Slides (px)', 'mellobase')}
+                        label={__('Space Between Slides (Desktop, px)', 'mellobase')}
                         value={spaceBetween}
                         onChange={(value) => setAttributes({ spaceBetween: value !== undefined ? value : undefined })}
                         min={0}
@@ -135,12 +196,20 @@ export default function Edit({ attributes, setAttributes }) {
                         step={1}
                     />
                     <RangeControl
-                        label={__('Speed (ms)', 'mellobase')}
-                        value={speed}
-                        onChange={(value) => setAttributes({ speed: value !== undefined ? value : undefined })}
-                        min={100}
-                        max={5000}
-                        step={100}
+                        label={__('Space Between Slides (Tablet, px)', 'mellobase')}
+                        value={spaceBetweenTablet !== undefined ? spaceBetweenTablet : 50}
+                        onChange={(value) => setAttributes({ spaceBetweenTablet: value !== undefined ? value : undefined })}
+                        min={0}
+                        max={200}
+                        step={1}
+                    />
+                    <RangeControl
+                        label={__('Space Between Slides (Mobile, px)', 'mellobase')}
+                        value={spaceBetweenMobile !== undefined ? spaceBetweenMobile : 25}
+                        onChange={(value) => setAttributes({ spaceBetweenMobile: value !== undefined ? value : undefined })}
+                        min={0}
+                        max={200}
+                        step={1}
                     />
                 </PanelBody>
 
@@ -155,6 +224,7 @@ export default function Edit({ attributes, setAttributes }) {
                         checked={slideToClickedSlide}
                         onChange={(value) => setAttributes({ slideToClickedSlide: value !== undefined ? value : undefined })}
                     />
+                    <Divider />
                     <ToggleControl
                         label={__('Autoplay', 'mellobase')}
                         checked={autoplay}
@@ -183,6 +253,42 @@ export default function Edit({ attributes, setAttributes }) {
                             />
                         </>
                     )}
+                    <Divider />
+                    <ToggleControl
+                        label={__('Free Mode', 'mellobase')}
+                        checked={freeMode}
+                        onChange={(value) => setAttributes({ freeMode: value !== undefined ? value : undefined })}
+                    />
+                    {freeMode && (
+                        <>
+                            <ToggleControl
+                                label={__('Momentum', 'mellobase')}
+                                checked={freeModeMomentum}
+                                onChange={(value) => setAttributes({ freeModeMomentum: value !== undefined ? value : undefined })}
+                            />
+                            <RangeControl
+                                label={__('Momentum Ratio', 'mellobase')}
+                                value={freeModeMomentumRatio}
+                                onChange={(value) => setAttributes({ freeModeMomentumRatio: value !== undefined ? value : undefined })}
+                                min={0}
+                                max={10}
+                                step={0.1}
+                            />
+                            <RangeControl
+                                label={__('Momentum Velocity Ratio', 'mellobase')}
+                                value={freeModeMomentumVelocityRatio}
+                                onChange={(value) => setAttributes({ freeModeMomentumVelocityRatio: value !== undefined ? value : undefined })}
+                                min={0}
+                                max={10}
+                                step={0.1}
+                            />
+                            <ToggleControl
+                                label={__('Sticky', 'mellobase')}
+                                checked={freeModeSticky}
+                                onChange={(value) => setAttributes({ freeModeSticky: value !== undefined ? value : undefined })}
+                            />
+                        </>
+                    )}
                 </PanelBody>
 
                 <PanelBody title={__('Navigation', 'mellobase')} initialOpen={false}>
@@ -192,6 +298,7 @@ export default function Edit({ attributes, setAttributes }) {
                         checked={navigation}
                         onChange={(value) => setAttributes({ navigation: value !== undefined ? value : undefined })}
                     />
+                    <Divider />
                     {/* Pagination Toggle and controls */}
                     <ToggleControl
                         label={__('Enable Pagination', 'mellobase')}
@@ -201,6 +308,7 @@ export default function Edit({ attributes, setAttributes }) {
                     {pagination && (
                         <>
                             <SelectControl
+                                __next40pxDefaultSize
                                 label={__('Pagination Type', 'mellobase')}
                                 value={paginationType || 'bullets'}
                                 options={[
@@ -219,6 +327,7 @@ export default function Edit({ attributes, setAttributes }) {
                             )}
                         </>
                     )}
+                    <Divider />
                     {/* Scrollbar Toggle and controls */}
                     <ToggleControl
                         label={__('Enable Scrollbar', 'mellobase')}
@@ -236,6 +345,7 @@ export default function Edit({ attributes, setAttributes }) {
 
                 <PanelBody title={__('Effects', 'mellobase')} initialOpen={false}>
                     <SelectControl
+                        __next40pxDefaultSize
                         label={__('Effect', 'mellobase')}
                         value={effect || 'slide'}
                         options={[
@@ -278,6 +388,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 step={0.1}
                             />
                             <SelectControl
+                                __next40pxDefaultSize
                                 label={__('Events Target', 'mellobase')}
                                 value={mousewheelEventsTarget || 'container'}
                                 options={[
@@ -285,44 +396,6 @@ export default function Edit({ attributes, setAttributes }) {
                                     { label: __('Wrapper', 'mellobase'), value: 'wrapper' },
                                 ]}
                                 onChange={(value) => setAttributes({ mousewheelEventsTarget: value !== undefined ? value : undefined })}
-                            />
-                        </>
-                    )}
-                </PanelBody>
-
-                <PanelBody title={__('Advanced', 'mellobase')} initialOpen={false}>
-                    <ToggleControl
-                        label={__('Free Mode', 'mellobase')}
-                        checked={freeMode}
-                        onChange={(value) => setAttributes({ freeMode: value !== undefined ? value : undefined })}
-                    />
-                    {freeMode && (
-                        <>
-                            <ToggleControl
-                                label={__('Momentum', 'mellobase')}
-                                checked={freeModeMomentum}
-                                onChange={(value) => setAttributes({ freeModeMomentum: value !== undefined ? value : undefined })}
-                            />
-                            <RangeControl
-                                label={__('Momentum Ratio', 'mellobase')}
-                                value={freeModeMomentumRatio}
-                                onChange={(value) => setAttributes({ freeModeMomentumRatio: value !== undefined ? value : undefined })}
-                                min={0}
-                                max={10}
-                                step={0.1}
-                            />
-                            <RangeControl
-                                label={__('Momentum Velocity Ratio', 'mellobase')}
-                                value={freeModeMomentumVelocityRatio}
-                                onChange={(value) => setAttributes({ freeModeMomentumVelocityRatio: value !== undefined ? value : undefined })}
-                                min={0}
-                                max={10}
-                                step={0.1}
-                            />
-                            <ToggleControl
-                                label={__('Sticky', 'mellobase')}
-                                checked={freeModeSticky}
-                                onChange={(value) => setAttributes({ freeModeSticky: value !== undefined ? value : undefined })}
                             />
                         </>
                     )}

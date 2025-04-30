@@ -211,6 +211,46 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
+        // Handle responsive breakpoints
+        const slidesPerView = options.slidesPerView || 1;
+        const spaceBetween = options.spaceBetween || 0;
+        const slidesPerViewMobile = swiperElement.hasAttribute('data-swiper-slides-per-view-mobile') 
+            ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-mobile')) 
+            : slidesPerView;
+        const spaceBetweenMobile = swiperElement.hasAttribute('data-swiper-space-between-mobile')
+            ? Number(swiperElement.getAttribute('data-swiper-space-between-mobile'))
+            : spaceBetween;
+        const slidesPerViewTablet = swiperElement.hasAttribute('data-swiper-slides-per-view-tablet')
+            ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-tablet'))
+            : slidesPerViewMobile;
+        const spaceBetweenTablet = swiperElement.hasAttribute('data-swiper-space-between-tablet')
+            ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
+            : spaceBetweenMobile;
+        
+        // Set direction if provided
+        if (swiperElement.hasAttribute('data-swiper-direction')) {
+            options.direction = swiperElement.getAttribute('data-swiper-direction');
+        }
+
+        // Set up breakpoints
+        options.breakpoints = {
+            // when window width is >= 0px (mobile same as MelloBase phone-only)
+            0: {
+                slidesPerView: slidesPerViewMobile,
+                spaceBetween: spaceBetweenMobile
+            },
+            // when window width is >= 782px (tablet same as MelloBase tablet-portrait)
+            782: {
+                slidesPerView: slidesPerViewTablet,
+                spaceBetween: spaceBetweenTablet
+            },
+            // when window width is >= 1200px (desktop same as MelloBase desktop-up)
+            1200: {
+                slidesPerView: slidesPerView,
+                spaceBetween: spaceBetween
+            }
+        };
+
         // Initialize Swiper with configured options
         new Swiper(swiperElement, options);
     });

@@ -12,19 +12,37 @@
 			"type": "number",
 			"default": 3
 		},
-		"spaceBetween": {
-			"type": "number"
+		"slidesPerViewTAblet": {
+			"type": "number",
+			"default": 2
 		},
-		"direction": {
-			"type": "string",
-			"default": "horizontal"
+		"slidesPerViewMobile": {
+			"type": "number",
+			"default": 1
+		},
+		"spaceBetween": {
+			"type": "number",
+			"default": 75
+		},
+		"spaceBetweenTablet": {
+			"type": "number",
+			"default": 50
+		},
+		"spaceBetweenMobile": {
+			"type": "number",
+			"default": 25
 		},
 		"loop": {
 			"type": "boolean",
 			"default": false
 		},
+		"direction": {
+			"type": "array",
+			"default": "horizontal"
+		},
 		"speed": {
-			"type": "number"
+			"type": "number",
+			"default": 1000
 		},
 		"centeredSlides": {
 			"type": "boolean"
@@ -49,7 +67,7 @@
 		},
 		"autoplayDelay": {
 			"type": "number",
-			"default": "3000"
+			"default": 3000
 		},
 		"autoplayDisableOnInteraction": {
 			"type": "boolean"
@@ -67,7 +85,8 @@
 			"type": "string"
 		},
 		"scrollbar": {
-			"type": "boolean"
+			"type": "boolean",
+			"default": true
 		},
 		"scrollbarHide": {
 			"type": "boolean"
@@ -88,7 +107,8 @@
 			"type": "boolean"
 		},
 		"mousewheelSensitivity": {
-			"type": "number"
+			"type": "number",
+			"default": 1
 		},
 		"mousewheelEventsTarget": {
 			"type": "string"

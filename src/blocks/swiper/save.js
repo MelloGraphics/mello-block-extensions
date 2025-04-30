@@ -3,12 +3,17 @@ import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 export default function save({ attributes }) {
     const {
         slidesPerView,
+        slidesPerViewTablet,
+        slidesPerViewMobile,
         loop,
         autoplay,
         autoplayDelay,
         autoplayDisableOnInteraction,
         spaceBetween,
+        spaceBetweenTablet,
+        spaceBetweenMobile,
         speed,
+        direction,
         navigation,
         pagination,
         paginationType,
@@ -47,13 +52,18 @@ export default function save({ attributes }) {
     const blockProps = useBlockProps.save({
         'data-swiper': true,
         ...addAttributeIfTruthy('slides-per-view', slidesPerView),
+        ...addAttributeIfTruthy('slides-per-view-tablet', slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2),
+        ...addAttributeIfTruthy('slides-per-view-mobile', slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1),
         ...addAttributeIfTruthy('loop', loop),
         ...addAttributeIfTruthy('autoplay', autoplay),
         // Only add autoplay-related attributes if autoplay is true
         ...(autoplay === true ? addAttributeIfTruthy('autoplay-delay', autoplayDelay) : {}),
         ...(autoplay === true ? addAttributeIfTruthy('autoplay-disable-on-interaction', autoplayDisableOnInteraction) : {}),
         ...addAttributeIfTruthy('space-between', spaceBetween),
+        ...addAttributeIfTruthy('space-between-tablet', spaceBetweenTablet !== undefined ? spaceBetweenTablet : 50),
+        ...addAttributeIfTruthy('space-between-mobile', spaceBetweenMobile !== undefined ? spaceBetweenMobile : 50),
         ...addAttributeIfTruthy('speed', speed),
+        ...addAttributeIfTruthy('direction', direction || 'horizontal'),
         ...addAttributeIfTruthy('navigation', navigation),
         ...addAttributeIfTruthy('pagination', pagination),
         // Only add pagination-related attributes if pagination is true
