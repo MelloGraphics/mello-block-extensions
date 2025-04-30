@@ -1,6 +1,6 @@
 <?php
 /**
- * Mello Block Extensions – Modal Integration.
+ * Mello Block Extensions – Modal Integration with Custom Taxonomy/Post Type Support.
  */
 
 // Global flag to determine if any block on the page has the openInModal attribute enabled.
@@ -21,6 +21,9 @@ function mello_render_content_modal_global( $block_content, $block ) {
         // Mark that we found a block with openInModal enabled
         $mello_openinmodal_found = true;
         
+        // Get the content selector if specified
+        $content_selector = ! empty( $block['attrs']['modalContentSelector'] ) ? $block['attrs']['modalContentSelector'] : '.entry-content';
+        
         // Use DOMDocument to safely add the class and data attribute to the first <a> element within the block.
         libxml_use_internal_errors( true );
         $dom = new DOMDocument();
@@ -38,6 +41,60 @@ function mello_render_content_modal_global( $block_content, $block ) {
         // Find the first <a> element within the block.
         $a = $xpath->query( '//a' )->item( 0 );
         if ( $a ) {
+            // Extract post ID from the href attribute (if it's a local URL)
+            $href = $a->getAttribute('href');
+            $post_id = url_to_postid($href);
+            
+            // Get post taxonomy and post type data
+            if ($post_id) {
+                // Initialize class strings
+                $category_classes = '';
+                $custom_tax_classes = '';
+                
+                // Get standard categories 
+                $categories = get_the_category($post_id);
+                if (!empty($categories)) {
+                    foreach ($categories as $category) {
+                        $category_classes .= ' category-' . sanitize_html_class($category->slug);
+                    }
+                }
+                
+                // Get post format
+                $format = get_post_format($post_id) ?: 'standard';
+                $format_class = ' format-' . sanitize_html_class($format);
+                
+                // Get post type
+                $post_type = get_post_type($post_id);
+                $post_type_class = 'type-' . sanitize_html_class($post_type);
+                
+                // Get ALL taxonomies registered for this post type
+                $taxonomies = get_object_taxonomies($post_type);
+                
+                // For each taxonomy, get the terms and add them as classes
+                if (!empty($taxonomies)) {
+                    foreach ($taxonomies as $taxonomy) {
+                        // Skip standard categories as we already processed them
+                        if ($taxonomy === 'category') {
+                            continue;
+                        }
+                        
+                        $terms = get_the_terms($post_id, $taxonomy);
+                        if (!empty($terms) && !is_wp_error($terms)) {
+                            foreach ($terms as $term) {
+                                $tax_slug = sanitize_html_class($taxonomy);
+                                $custom_tax_classes .= ' ' . $tax_slug . '-' . sanitize_html_class($term->slug);
+                            }
+                        }
+                    }
+                }
+                
+                // Add all data attributes
+                $a->setAttribute('data-post-categories', trim($category_classes));
+                $a->setAttribute('data-post-custom-taxonomies', trim($custom_tax_classes));
+                $a->setAttribute('data-post-format', $format_class);
+                $a->setAttribute('data-post-type', $post_type_class);
+            }
+            
             // Append the class is-open-mello-modal while preserving any existing classes.
             $existing_class = $a->getAttribute( 'class' );
             $new_class = trim( $existing_class . ' is-open-mello-modal' );
@@ -45,6 +102,9 @@ function mello_render_content_modal_global( $block_content, $block ) {
             
             // Add the data attribute for MicroModal trigger
             $a->setAttribute( 'data-micromodal-trigger', 'modal-identifier' );
+            
+            // Add the content selector as a data attribute
+            $a->setAttribute( 'data-content-selector', $content_selector );
             
             // Retrieve the updated HTML from the <body> element.
             $body = $dom->getElementsByTagName( 'body' )->item( 0 );

@@ -23,8 +23,7 @@ const addModalToggleControl = (BlockEdit) => {
 
     const { 
       openInModal = false, 
-      modalContentSelector = ".entry-content", 
-      renderAsIframe = false 
+      modalContentSelector = ".entry-content" 
     } = attributes;
 
     return (
@@ -44,7 +43,7 @@ const addModalToggleControl = (BlockEdit) => {
                   "mello-block-extensions"
                 )}
                 checked={openInModal}
-                onChange={(value) => setAttributes({ openInModal: value, renderAsIframe: value ? false : renderAsIframe })}
+                onChange={(value) => setAttributes({ openInModal: value })}
               />
               {openInModal && (
                 <TextControl
@@ -60,16 +59,6 @@ const addModalToggleControl = (BlockEdit) => {
                   }
                 />
               )}
-              <ToggleControl
-                __next40pxDefaultSize
-                label={__("Open Iframe in Modal", "mello-block-extensions")}
-                help={__(
-                  "Enable this if the linked content should be rendered as an iframe (e.g. for Vimeo or video content).",
-                  "mello-block-extensions"
-                )}
-                checked={renderAsIframe}
-                onChange={(value) => setAttributes({ renderAsIframe: value, openInModal: value ? false : openInModal })}
-              />
             </PanelBody>
           </InspectorControls>
         )}
@@ -107,11 +96,7 @@ const addModalAttributes = (settings, name) => {
     modalContentSelector: {
       type: "string",
       default: ".entry-content",
-    },
-    renderAsIframe: {
-      type: "boolean",
-      default: false,
-    },
+    }
   };
   return settings;
 };
