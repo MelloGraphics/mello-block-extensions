@@ -81,3 +81,12 @@
 		overflow-x: auto;
 	}
 }
+
+.wp-block-mello-block-swiper[data-swiper-slides-per-view-auto="true"] .swiper-wrapper{
+	display: flex;
+	
+	> *{
+		width: fit-content;
+	}
+
+}

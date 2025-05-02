@@ -106,4 +106,10 @@
     &[data-swiper-autoplay-delay="0"] .swiper-wrapper{
         transition-timing-function: linear;
     }
+
+    // //shrink slides to fit content of auto-fit slides
+
+    // &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper > * {
+    //     flex-shrink: 1;
+    // }
 }
