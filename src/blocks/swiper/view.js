@@ -103,6 +103,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             attr.name === 'data-swiper-autoplay' && (attr.value === 'true' || !isNaN(attr.value))
         );
         const hasEffectFade = dataAttributes.some(attr => attr.name === 'data-swiper-effect' && attr.value === 'fade');
+        
+        // Check for slidesPerViewAuto mode
+        const hasSlidesPerViewAuto = dataAttributes.some(attr => 
+            attr.name === 'data-swiper-slides-per-view-auto' && attr.value === 'true');
 
         // Add only the modules that this specific swiper needs
         // Using the pre-loaded modules from our dynamic imports
@@ -212,7 +216,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'scrollbar':
                 case 'mousewheel':
                 case 'autoplay':
-                    // Already handled above
+                case 'slidesPerViewAuto':
+                    // Already handled above or will be handled separately
                     break;
                 default:
                     options[key] = value;
@@ -220,45 +225,76 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // Handle responsive breakpoints
-        const slidesPerView = options.slidesPerView || 1;
-        const spaceBetween = options.spaceBetween || 0;
-        const slidesPerViewMobile = swiperElement.hasAttribute('data-swiper-slides-per-view-mobile')
-            ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-mobile'))
-            : slidesPerView;
-        const spaceBetweenMobile = swiperElement.hasAttribute('data-swiper-space-between-mobile')
-            ? Number(swiperElement.getAttribute('data-swiper-space-between-mobile'))
-            : spaceBetween;
-        const slidesPerViewTablet = swiperElement.hasAttribute('data-swiper-slides-per-view-tablet')
-            ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-tablet'))
-            : slidesPerViewMobile;
-        const spaceBetweenTablet = swiperElement.hasAttribute('data-swiper-space-between-tablet')
-            ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
-            : spaceBetweenMobile;
+        // Handle slidesPerViewAuto if enabled
+        if (hasSlidesPerViewAuto) {
+            options.slidesPerView = 'auto';
+            
+            // When in auto mode, we don't need the breakpoints for slidesPerView
+            // but we still want to maintain the spaceBetween values
+            const spaceBetween = options.spaceBetween || 0;
+            const spaceBetweenMobile = swiperElement.hasAttribute('data-swiper-space-between-mobile')
+                ? Number(swiperElement.getAttribute('data-swiper-space-between-mobile'))
+                : spaceBetween;
+            const spaceBetweenTablet = swiperElement.hasAttribute('data-swiper-space-between-tablet')
+                ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
+                : spaceBetweenMobile;
+                
+            // Set up breakpoints just for spaceBetween when in auto mode
+            options.breakpoints = {
+                0: {
+                    slidesPerView: 'auto',
+                    spaceBetween: spaceBetweenMobile
+                },
+                782: {
+                    slidesPerView: 'auto',
+                    spaceBetween: spaceBetweenTablet
+                },
+                1200: {
+                    slidesPerView: 'auto',
+                    spaceBetween: spaceBetween
+                }
+            };
+        } else {
+            // Original responsive breakpoints logic when not in auto mode
+            const slidesPerView = options.slidesPerView || 1;
+            const spaceBetween = options.spaceBetween || 0;
+            const slidesPerViewMobile = swiperElement.hasAttribute('data-swiper-slides-per-view-mobile')
+                ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-mobile'))
+                : slidesPerView;
+            const spaceBetweenMobile = swiperElement.hasAttribute('data-swiper-space-between-mobile')
+                ? Number(swiperElement.getAttribute('data-swiper-space-between-mobile'))
+                : spaceBetween;
+            const slidesPerViewTablet = swiperElement.hasAttribute('data-swiper-slides-per-view-tablet')
+                ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-tablet'))
+                : slidesPerViewMobile;
+            const spaceBetweenTablet = swiperElement.hasAttribute('data-swiper-space-between-tablet')
+                ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
+                : spaceBetweenMobile;
+
+            // Set up breakpoints for standard fixed-width slides mode
+            options.breakpoints = {
+                // when window width is >= 0px (mobile same as MelloBase phone-only)
+                0: {
+                    slidesPerView: slidesPerViewMobile,
+                    spaceBetween: spaceBetweenMobile
+                },
+                // when window width is >= 782px (tablet same as MelloBase tablet-portrait)
+                782: {
+                    slidesPerView: slidesPerViewTablet,
+                    spaceBetween: spaceBetweenTablet
+                },
+                // when window width is >= 1200px (desktop same as MelloBase desktop-up)
+                1200: {
+                    slidesPerView: slidesPerView,
+                    spaceBetween: spaceBetween
+                }
+            };
+        }
 
         // Set direction if provided
         if (swiperElement.hasAttribute('data-swiper-direction')) {
             options.direction = swiperElement.getAttribute('data-swiper-direction');
         }
-
-        // Set up breakpoints
-        options.breakpoints = {
-            // when window width is >= 0px (mobile same as MelloBase phone-only)
-            0: {
-                slidesPerView: slidesPerViewMobile,
-                spaceBetween: spaceBetweenMobile
-            },
-            // when window width is >= 782px (tablet same as MelloBase tablet-portrait)
-            782: {
-                slidesPerView: slidesPerViewTablet,
-                spaceBetween: spaceBetweenTablet
-            },
-            // when window width is >= 1200px (desktop same as MelloBase desktop-up)
-            1200: {
-                slidesPerView: slidesPerView,
-                spaceBetween: spaceBetween
-            }
-        };
 
         // Initialize Swiper with configured options
         new Swiper(swiperElement, options);

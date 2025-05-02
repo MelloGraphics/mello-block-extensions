@@ -37,6 +37,7 @@ export default function Edit({ attributes, setAttributes }) {
         slidesPerView,
         slidesPerViewTablet,
         slidesPerViewMobile,
+        slidesPerViewAuto,
         loop,
         centeredSlides,
         autoplay,
@@ -81,20 +82,24 @@ const blockProps = useBlockProps({
             ...(spaceBetweenMobile !== undefined
                 ? { '--swiper-space-between-mobile': `${spaceBetweenMobile}px` }
                 : {}),
-            ...(slidesPerView !== undefined
+            ...(!slidesPerViewAuto && slidesPerView !== undefined
                 ? { '--swiper-spv': slidesPerView }
                 : {}),
-            ...(slidesPerViewTablet !== undefined
+            ...(!slidesPerViewAuto && slidesPerViewTablet !== undefined
                 ? { '--swiper-spv-tablet': slidesPerViewTablet }
                 : {}),
-            ...(slidesPerViewMobile !== undefined
+            ...(!slidesPerViewAuto && slidesPerViewMobile !== undefined
                 ? { '--swiper-spv-mobile': slidesPerViewMobile }
                 : {}),
         },
         'data-swiper': true,
-        'data-swiper-slides-per-view': slidesPerView,
-        'data-swiper-slides-per-view-tablet': slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2,
-        'data-swiper-slides-per-view-mobile': slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1,
+        ...(slidesPerViewAuto
+            ? { 'data-swiper-slides-per-view-auto': true }
+            : {
+                'data-swiper-slides-per-view': slidesPerView,
+                'data-swiper-slides-per-view-tablet': slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2,
+                'data-swiper-slides-per-view-mobile': slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1,
+            }),
         'data-swiper-loop': loop,
         'data-swiper-centered-slides': centeredSlides,
         'data-swiper-autoplay': autoplay,
@@ -143,40 +148,6 @@ const blockProps = useBlockProps({
                         onChange={(value) => setAttributes({ direction: value !== undefined ? value : undefined })}
                     />
                     <Divider />
-                    <RangeControl
-                        label={__('Slides Per View (Desktop)', 'mellobase')}
-                        value={slidesPerView !== undefined ? slidesPerView : 3}
-                        onChange={(value) => setAttributes({ slidesPerView: value !== undefined ? value : undefined })}
-                        min={1}
-                        max={6}
-                        step={0.25}
-                    />
-                    <RangeControl
-                        label={__('Slides Per View (Tablet)', 'mellobase')}
-                        value={slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2}
-                        onChange={(value) => setAttributes({ slidesPerViewTablet: value !== undefined ? value : undefined })}
-                        min={1}
-                        max={6}
-                        step={0.25}
-                    />
-                    <RangeControl
-                        label={__('Slides Per View (Mobile)', 'mellobase')}
-                        value={slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1}
-                        onChange={(value) => setAttributes({ slidesPerViewMobile: value !== undefined ? value : undefined })}
-                        min={1}
-                        max={6}
-                        step={0.25}
-                    />
-                    <Divider />
-                    <RangeControl
-                        label={__('Speed (ms)', 'mellobase')}
-                        value={speed}
-                        onChange={(value) => setAttributes({ speed: value !== undefined ? value : undefined })}
-                        min={0}
-                        max={5000}
-                        step={100}
-                    />
-                    <Divider />
                     <ToggleControl
                         label={__('Loop Slides', 'mellobase')}
                         checked={loop}
@@ -185,10 +156,54 @@ const blockProps = useBlockProps({
                     <ToggleControl
                         label={__('Center Slides', 'mellobase')}
                         checked={centeredSlides}
-                        onChange={(value) => setAttributes({ centeredSlides	: value !== undefined ? value : undefined })}
+                        onChange={(value) => setAttributes({ centeredSlides: value !== undefined ? value : undefined })}
                     />
-                    </PanelBody>
-                    <PanelBody title={__('Slide Spacing', 'mellobase')} initialOpen={false}>
+                    <ToggleControl
+                        label={__('Auto Width Slides', 'mellobase')}
+                        checked={slidesPerViewAuto}
+                        onChange={(value) => setAttributes({ slidesPerViewAuto: value !== undefined ? value : undefined })}
+                        help={__('When enabled, slides will adjust to their natural width', 'mellobase')}
+                    />
+                    <Divider />
+                    {!slidesPerViewAuto && (
+                        <>
+                            <RangeControl
+                                label={__('Slides Per View (Desktop)', 'mellobase')}
+                                value={slidesPerView !== undefined ? slidesPerView : 3}
+                                onChange={(value) => setAttributes({ slidesPerView: value !== undefined ? value : undefined })}
+                                min={1}
+                                max={6}
+                                step={0.25}
+                            />
+                            <RangeControl
+                                label={__('Slides Per View (Tablet)', 'mellobase')}
+                                value={slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2}
+                                onChange={(value) => setAttributes({ slidesPerViewTablet: value !== undefined ? value : undefined })}
+                                min={1}
+                                max={6}
+                                step={0.25}
+                            />
+                            <RangeControl
+                                label={__('Slides Per View (Mobile)', 'mellobase')}
+                                value={slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1}
+                                onChange={(value) => setAttributes({ slidesPerViewMobile: value !== undefined ? value : undefined })}
+                                min={1}
+                                max={6}
+                                step={0.25}
+                            />
+                            <Divider />
+                        </>
+                    )}
+                    <RangeControl
+                        label={__('Speed (ms)', 'mellobase')}
+                        value={speed}
+                        onChange={(value) => setAttributes({ speed: value !== undefined ? value : undefined })}
+                        min={0}
+                        max={5000}
+                        step={100}
+                    />
+                </PanelBody>
+                <PanelBody title={__('Slide Spacing', 'mellobase')} initialOpen={false}>
                     <RangeControl
                         label={__('Space Between Slides (Desktop, px)', 'mellobase')}
                         value={spaceBetween}

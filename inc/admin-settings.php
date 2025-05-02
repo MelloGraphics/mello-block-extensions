@@ -162,7 +162,7 @@ function mello_register_settings() {
         'details-heading-level'     => 'details',
         'details-name-attribute'    => 'details',
         'add-data-attributes'       => 'mixed',
-        'add-smooth-scroll'           => 'mixed',
+        'add-smooth-scroll'           => 'animation',
         'group-tag-name'            => 'group',
         'group-link-wrapper'        => 'group',
         'navigation-allowed-blocks' => 'navigation',
@@ -170,7 +170,9 @@ function mello_register_settings() {
         'navigation-submenu-allowed-blocks' => 'navigation',
         'query-exclude-current-post' => 'query',
         'query-render-featured-video' => 'query',
-        'render-svg' => 'mixed'
+        'render-svg' => 'mixed',
+        'animation-controls' => 'animation',
+        'load-motion-library' => 'animation'
     ];
     
     register_setting('mello_block_extensions_group', 'mello_enabled_extensions');
@@ -212,6 +214,7 @@ function mello_register_settings() {
                     echo "<button type='button' data-filter='navigation' class='mello-filter'>Navigation</button>";
                     echo "<button type='button' data-filter='group' class='mello-filter'>Group</button>";
                     echo "<button type='button' data-filter='mixed' class='mello-filter'>Mixed</button>";
+                    echo "<button type='button' data-filter='animation' class='mello-filter'>Animation</button>";
                     echo "</div>";
                 }
                 echo "</div>";

@@ -12,13 +12,17 @@
 			"type": "number",
 			"default": 3
 		},
-		"slidesPerViewTAblet": {
+		"slidesPerViewTablet": {
 			"type": "number",
 			"default": 2
 		},
 		"slidesPerViewMobile": {
 			"type": "number",
 			"default": 1
+		},
+		"slidesPerViewAuto": {
+			"type": "boolean",
+			"default": false
 		},
 		"spaceBetween": {
 			"type": "number",

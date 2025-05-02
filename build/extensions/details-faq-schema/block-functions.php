@@ -10,7 +10,7 @@ $faq_data = array();
 
 // Collect FAQ data from blocks
 function collect_faq_data( $block_content, $block ) {
-    error_log( print_r( $block, true ) );
+    // error_log( print_r( $block, true ) );
     global $faq_data;
 
     // Check if it's the 'core/details' block and if it has the 'mello-has-faq-schema' class

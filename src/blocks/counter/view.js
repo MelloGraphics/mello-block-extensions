@@ -1,33 +1,38 @@
-import { animate, easeOut, inView } from 'motion';
+// import { animate, easeOut, inView } from 'motion';
 
-const counterBlocks = document.querySelectorAll('.wp-block-mello-block-counter');
+document.addEventListener('mello-motion-ready', () => {
+  const { animate, inView, easeOut } = window.MelloMotion.library;
 
-counterBlocks.forEach((block, index) => {
-  const figureEl = block.querySelector('.wp-block-mello-block-counter__figure');
-  if (!figureEl) {
-    return;
-  }
+  const counterBlocks = document.querySelectorAll('.wp-block-mello-block-counter');
 
-  const starting = parseFloat(block.dataset.startingFigure || 0);
-  const duration = parseFloat(block.dataset.animationDuration || 2);
-  const final = parseFloat(figureEl.textContent.replace(/[^0-9.-]+/g, ''));
+  counterBlocks.forEach((block, index) => {
+    const figureEl = block.querySelector('.wp-block-mello-block-counter__figure');
+    if (!figureEl) {
+      return;
+    }
 
-  if (isNaN(final)) {
-    return;
-  }
+    const starting = parseFloat(block.dataset.startingFigure || 0);
+    const duration = parseFloat(block.dataset.animationDuration || 2);
+    const final = parseFloat(figureEl.textContent.replace(/[^0-9.-]+/g, ''));
 
-  const showDecimals = block.dataset.showDecimals === 'true';
+    if (isNaN(final)) {
+      return;
+    }
 
-  inView(block, () => {
-    animate(starting, final, {
-      duration,
-      ease: easeOut,
-      round: showDecimals ? 2 : 1,
-      onUpdate: (latest) => {
-        figureEl.textContent = showDecimals
-          ? latest.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })
-          : Math.round(latest).toLocaleString();
-      }
-    });
-  }, { once: true });
+    const showDecimals = block.dataset.showDecimals === 'true';
+
+    inView(block, () => {
+      animate(starting, final, {
+        duration,
+        ease: easeOut,
+        round: showDecimals ? 2 : 1,
+        onUpdate: (latest) => {
+          figureEl.textContent = showDecimals
+            ? latest.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })
+            : Math.round(latest).toLocaleString();
+        }
+      });
+    }, { once: true });
+  });
+
 });
