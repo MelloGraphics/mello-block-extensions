@@ -3,6 +3,7 @@
 .wp-block-cover__video-background__external {
     position: absolute;
     inset: 0;
+    pointer-events: none;
 
     iframe {
         box-sizing: border-box;
