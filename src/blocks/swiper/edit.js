@@ -199,8 +199,8 @@ const blockProps = useBlockProps({
                         value={speed}
                         onChange={(value) => setAttributes({ speed: value !== undefined ? value : undefined })}
                         min={0}
-                        max={10000}
-                        step={100}
+                        max={50000}
+                        step={250}
                     />
                 </PanelBody>
                 <PanelBody title={__('Slide Spacing', 'mellobase')} initialOpen={false}>
