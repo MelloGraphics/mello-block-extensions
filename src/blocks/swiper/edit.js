@@ -24,10 +24,10 @@ const TEMPLATE = [
     ['core/group', { lock: { remove: true }, metadata: { name: 'Scrollbar Wrapper' }, className: 'swiper-scrollbar', layout: { type: 'constrained' } }],
     [
         'core/buttons',
-        { lock: { remove: true }, metadata: { name: 'Prev / Next Buttons' }, style: { spacing: { blockGap: { left: 'var:preset|spacing|small' } } } },
+        { lock: { remove: true }, className: 'swiper-navigation', metadata: { name: 'Prev / Next Buttons' }, style: { spacing: { blockGap: { left: 'var:preset|spacing|small' } } } },
         [
-            ['core/button', { className: 'swiper-button-prev', text: __('prev', 'mellobase') }],
-            ['core/button', { className: 'swiper-button-next', text: __('next', 'mellobase') }],
+            ['core/button', { className: 'swiper-button-prev', "lock":{"move":true,"remove":true}, text: __('prev', 'mellobase') }],
+            ['core/button', { className: 'swiper-button-next', "lock":{"move":true,"remove":true}, text: __('next', 'mellobase') }],
         ],
     ],
 ];
