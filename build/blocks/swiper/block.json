@@ -46,7 +46,7 @@
     },
     "speed": {
       "type": "number",
-      "default": 1000
+      "default": 500
     },
     "centeredSlides": {
       "type": "boolean"

@@ -199,7 +199,7 @@ const blockProps = useBlockProps({
                         value={speed}
                         onChange={(value) => setAttributes({ speed: value !== undefined ? value : undefined })}
                         min={0}
-                        max={5000}
+                        max={10000}
                         step={100}
                     />
                 </PanelBody>
