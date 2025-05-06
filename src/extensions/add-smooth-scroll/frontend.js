@@ -1,36 +1,20 @@
 import Lenis from 'lenis';
 
-// Wait for both DOMContentLoaded and mello-motion-ready before initializing
-let _domReady = document.readyState !== 'loading';
-let _motionReady = false;
-function onBothReady(callback) {
-    // If both are already ready, call immediately
-    if (_domReady && _motionReady) {
-        callback();
-    } else {
-        // Listen for DOM ready
-        document.addEventListener('DOMContentLoaded', () => {
-            _domReady = true;
-            if (_domReady && _motionReady) {
-                callback();
-            }
-        });
-        // Listen for motion library ready
-        document.addEventListener('mello-motion-ready', () => {
-            _motionReady = true;
-            if (_domReady && _motionReady) {
-                callback();
-            }
-        });
-    }
-}
+// Store references
+let lenis = null;
+let isInitialized = false;
 
-// Kick off initialization when both prerequisites have fired
-onBothReady(() => {
-    const { scroll } = window.MelloMotion.library;
+/**
+ * Initialize the smooth scrolling functionality
+ * @param {Function} scrollFunction - The scroll function from the motion library
+ */
+function initSmoothScroll(scrollFunction) {
+    // Prevent double initialization
+    if (isInitialized) return;
+    isInitialized = true;
 
-    // Initialize Lenis for smooth scrolling
-    const lenis = new Lenis({
+    // Initialize Lenis with the same settings as your theme version
+    lenis = new Lenis({
         duration: 0.75,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
@@ -38,76 +22,167 @@ onBothReady(() => {
         autoResize: true,
         prevent: (node) => node.closest('.mello-modal') !== null,
     });
+
+    // Make lenis available globally
     window.lenis = lenis;
 
-    // Recalculate Lenis scroll bounds when any <details> element toggles
+    // Set up the animation frame loop - CRITICAL for smooth performance
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+
+    // Start the animation loop immediately
+    requestAnimationFrame(raf);
+
+    // Initialize scroll speed elements
+    initScrollSpeedElements(scrollFunction);
+
+    // Set up event listeners and observers
+    setupEventListeners(scrollFunction);
+    setupObservers(scrollFunction);
+}
+
+/**
+ * Initialize elements with scroll speed data attributes
+ * @param {Function} scrollFunction - The scroll function from the motion library
+ */
+function initScrollSpeedElements(scrollFunction) {
+    document.querySelectorAll('[data-scroll-speed]').forEach((el) => {
+        const speed = parseFloat(el.dataset.scrollSpeed) || 0;
+
+        scrollFunction(
+            (progress) => {
+                const offset = speed * 4;
+                const translateY = offset * (1 - 2 * progress);
+                el.style.transform = `translateY(${translateY}vmin)`;
+            },
+            {
+                target: el,
+                offset: ['start end', 'end start'],
+            }
+        );
+    });
+}
+
+/**
+ * Set up all event listeners
+ * @param {Function} scrollFunction - The scroll function from the motion library
+ */
+function setupEventListeners(scrollFunction) {
+    // Handle details elements toggling
     document.querySelectorAll('details').forEach((el) => {
         el.addEventListener('toggle', () => {
             setTimeout(() => lenis.resize(), 300);
         });
     });
 
-    // Function to handle the animation frame
-    function raf(time) {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    // Handle window resizing
+    window.addEventListener('resize', () => {
+        lenis.resize();
+    });
 
-    function initScrollSpeedElements() {
-        document.querySelectorAll('[data-scroll-speed]').forEach((el) => {
-            const speed = parseFloat(el.dataset.scrollSpeed) || 0;
-            scroll(
-                (progress) => {
-                    const offset = speed * 4;
-                    const translateY = offset * (1 - 2 * progress);
-                    el.style.transform = `translateY(${translateY}vmin)`;
-                },
-                {
-                    target: el,
-                    offset: ['start end', 'end start'],
-                }
-            );
+    // jQuery AJAX complete handler
+    if (window.jQuery) {
+        jQuery(document).ajaxComplete(() => {
+            lenis?.resize();
+            initScrollSpeedElements(scrollFunction);
         });
     }
+}
 
-    initScrollSpeedElements();
-
-    // Hook into native fetch to catch AJAX content loading
+/**
+ * Set up observers for dynamic content
+ * @param {Function} scrollFunction - The scroll function from the motion library
+ */
+function setupObservers(scrollFunction) {
+    // Override fetch to detect AJAX content loading
     const origFetch = window.fetch;
     window.fetch = function (...args) {
         return origFetch.apply(this, args).then((res) => {
             res.clone().text().then(() => {
-                window.lenis?.resize();
-                initScrollSpeedElements();
+                lenis?.resize();
+                initScrollSpeedElements(scrollFunction);
             });
             return res;
         });
     };
 
-    // Observe DOM changes to catch any content inserted by plugins
+    // Debounce helper to limit invocation frequency
+    function debounce(fn, delay = 500) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    }
+
+    // Observe additions of elements with [data-scroll-speed] and debounce reactions
+    const debouncedInit = debounce(() => {
+        lenis?.resize();
+        initScrollSpeedElements(scrollFunction);
+    }, 500);
+
     const observer = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
-            if (mutation.addedNodes.length) {
-                window.lenis?.resize();
-                initScrollSpeedElements();
-            }
+            mutation.addedNodes.forEach(node => {
+                if (
+                    node.nodeType === 1 &&
+                    (node.matches('[data-scroll-speed]') || node.querySelector('[data-scroll-speed]'))
+                ) {
+                    debouncedInit();
+                }
+            });
         }
     });
+
+    // Scope observation to body (or a specific container if known)
     observer.observe(document.body, {
         childList: true,
         subtree: true,
     });
+}
 
-    // Update Lenis on window resize
-    window.addEventListener('resize', () => {
-        lenis.resize();
-    });
+// Wait for both DOM and MelloMotion library to be ready
+let domReady = document.readyState !== 'loading';
 
-    if (window.jQuery) {
-        jQuery(document).ajaxComplete(function () {
-            window.lenis?.resize();
-            initScrollSpeedElements();
+// Function to check if MelloMotion is available and initialize if it is
+function checkMelloMotion() {
+    if (window.MelloMotion && window.MelloMotion.scroll) {
+        const { scroll } = window.MelloMotion;
+        // Now we have the shared scroll function, we can initialize
+        initSmoothScroll(scroll);
+        return true;
+    }
+    return false;
+}
+
+// If DOM is already ready, check for MelloMotion
+if (domReady) {
+    // Try to initialize immediately if MelloMotion is already available
+    if (!checkMelloMotion()) {
+        // If MelloMotion isn't available yet, wait for the event
+        document.addEventListener('mello-motion-ready', () => {
+            checkMelloMotion();
         });
     }
-});
+} else {
+    // Wait for DOM content to be loaded first
+    document.addEventListener('DOMContentLoaded', () => {
+        domReady = true;
+        if (!checkMelloMotion()) {
+            // If MelloMotion isn't available yet, wait for the event
+            document.addEventListener('mello-motion-ready', () => {
+                checkMelloMotion();
+            });
+        }
+    });
+}
+
+// Fallback in case the event never fires (5 second timeout)
+setTimeout(() => {
+    if (!isInitialized) {
+        console.warn('Trying to initialize Lenis as fallback');
+        checkMelloMotion();
+    }
+}, 5000);

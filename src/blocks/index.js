@@ -1,4 +1,4 @@
-import './table-of-contents';
+// import './table-of-contents';
 // import './example-static';
 // import './another';
 // import './cursor';

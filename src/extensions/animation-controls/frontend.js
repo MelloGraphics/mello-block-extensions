@@ -1,4 +1,4 @@
-import { animate, easeOut, inView, stagger } from "motion";
+// import { animate, easeOut, inView, stagger } from "motion";
 
 // Helper to find the closest ancestor of a given tag
 function findClosestByTag(element, tagName) {
@@ -36,7 +36,8 @@ const animationDefaults = {
     },
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('mello-motion-ready', () => {
+    const { animate, easeOut, inView, stagger } = window.MelloMotion;
     const animatedElements = document.querySelectorAll('[data-animation="true"]');
 
     animatedElements.forEach((element) => {
