@@ -53,6 +53,11 @@ function render_style_svg_as_inline($content) {
                 $svg_dom->loadXML($cached_svg);
                 $svg_node = $svg_dom->documentElement;
 
+                // Skip if no valid <svg> element was loaded
+                if (!$svg_node || $svg_node->nodeName !== 'svg') {
+                    continue;
+                }
+
                 // Retrieve the classes from the <img> tag
                 $img_classes = $img->getAttribute('class');
                 $existing_classes = $svg_node->getAttribute('class');
