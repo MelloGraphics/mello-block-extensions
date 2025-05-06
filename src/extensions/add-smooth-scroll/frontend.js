@@ -109,7 +109,7 @@ function setupObservers(scrollFunction) {
     };
 
     // Debounce helper to limit invocation frequency
-    function debounce(fn, delay = 500) {
+    function debounce(fn, delay = 1000) {
         let timer;
         return (...args) => {
             clearTimeout(timer);
@@ -121,7 +121,7 @@ function setupObservers(scrollFunction) {
     const debouncedInit = debounce(() => {
         lenis?.resize();
         initScrollSpeedElements(scrollFunction);
-    }, 500);
+    }, 1000);
 
     const observer = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
