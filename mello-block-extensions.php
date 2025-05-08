@@ -3,7 +3,7 @@
  * Plugin Name:       Mello Block Extensions
  * Plugin URI:        https://mellographics.com/
  * Description:       Custom block extensions and functionality for WordPress block themes.
- * Version:           2.1.0
+ * Version:           2.1.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Ashley Pickering
@@ -15,8 +15,6 @@
  */
 
 namespace Mello;
-use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\GitHubApi;
-use YahnisElsts\PluginUpdateChecker\v5p5\Vcs\PluginUpdateChecker;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -27,21 +25,25 @@ require_once plugin_dir_path(__FILE__) . 'inc/enqueue-assets.php';
 require_once plugin_dir_path(__FILE__) . 'inc/admin-settings.php';
 
 // Include the Plugin Update Checker library
-require __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
+require_once __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
 
-// Set up the GitHub API client for updates
-$githubApi = new GitHubApi(
+// Set up the update checker
+use YahnisElsts\PluginUpdateChecker\v5p5\PucFactory;
+
+$myUpdateChecker = PucFactory::buildUpdateChecker(
     'https://github.com/MelloGraphics/mello-block-extensions/',
-    '' // If private, put your personal access token here
-);
-$githubApi->enableReleaseAssets();
-
-// Create the update checker instance
-$updateChecker = new PluginUpdateChecker(
-    $githubApi,
     __FILE__,
     'mello-block-extensions'
 );
+
+// Set the branch that contains the stable release
+$myUpdateChecker->setBranch('main');
+
+// Optional: Add a GitHub access token for private repositories or to increase API rate limit
+$myUpdateChecker->setAuthentication('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');
+
+// Optional: If you're using release assets instead of the source code
+$myUpdateChecker->getVcsApi()->enableReleaseAssets();
 
 register_activation_hook(__FILE__, function () {
 	if (function_exists('Mello\\mello_initialize_enabled_extensions')) {
