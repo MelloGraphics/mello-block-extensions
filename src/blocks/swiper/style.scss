@@ -91,7 +91,7 @@
         position: unset;
     }
     &[data-swiper-pagination="true"] .swiper-pagination{
-        display: inline-block;
+        display: flex;
         visibility: visible;
     }
 
