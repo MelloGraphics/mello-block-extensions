@@ -145,15 +145,24 @@
 	"example": {},
 	"supports": {
 		"html": false,
-		"align": ["wide", "full"],
+		"align": [
+			"wide",
+			"full"
+		],
 		"spacing": {
-			"margin": [ "top", "bottom" ],
+			"margin": [
+				"top",
+				"bottom"
+			],
 			"padding": true,
 			"blockGap": true,
 			"__experimentalDefaultControls": {
 				"padding": true,
 				"blockGap": true
 			}
+		},
+		"color": {
+			"background": true
 		},
 		"layout": {
 			"allowSizingOnChildren": true
