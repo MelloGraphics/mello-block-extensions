@@ -86,7 +86,7 @@
 	display: flex;
 	
 	> *{
-		width: fit-content!important;
+		min-width: fit-content!important;
 	}
 
 }
