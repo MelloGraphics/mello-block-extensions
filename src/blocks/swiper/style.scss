@@ -105,7 +105,7 @@
 
     &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper > * {
         flex-shrink: 1;
-        min-width: fit-content;
+        min-width: max-content;
     }
 
 }
