@@ -1,0 +1,7 @@
+.mello-button-icon {
+  font-family: var(--wp--preset--font-family--icon);
+  font-weight: 900;
+  margin-right: 0.5em;
+  display: inline-block;
+  vertical-align: middle;
+}
