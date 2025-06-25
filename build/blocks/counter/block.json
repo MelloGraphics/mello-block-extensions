@@ -47,7 +47,7 @@
       "type": "number",
       "default": 0
     },
-    "animationDuration": {
+    "counterDuration": {
       "type": "number",
       "default": 2
     },
@@ -67,10 +67,6 @@
     "stats"
   ],
   "example": {
-    "attributes": {
-      "startingFigure": 0,
-      "animationDuration": 2
-    },
     "innerBlocks": [
       [
         "core/paragraph",

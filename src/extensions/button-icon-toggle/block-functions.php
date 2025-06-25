@@ -28,13 +28,13 @@ function mello_add_icon_to_button_block($block_content, $block) {
     if ($icon_type === 'fa' && !empty($icon_glyph)) {
         // Font Awesome icon - don't escape HTML entities for glyphs
         $icon_html = sprintf(
-            '<span class="mello-button-icon mello-fa-icon" aria-hidden="true" style="margin-right: 0.5em;">%s</span>',
+            '<span class="mello-button-icon mello-fa-icon" aria-hidden="true">%s</span>',
             $icon_glyph
         );
     } elseif ($icon_type === 'image' && !empty($icon_image_url)) {
         // Image icon
         $icon_html = sprintf(
-            '<img class="mello-button-icon mello-image-icon" src="%s" alt="" style="width: 1em; height: 1em; margin-right: 0.5em; vertical-align: middle;">',
+            '<img class="mello-button-icon mello-image-icon" src="%s" alt="">',
             esc_url($icon_image_url)
         );
     }

@@ -12,60 +12,61 @@
     "html": false,
     "reusable": false,
     "anchor": true,
-	"color": {
-		"text": true
-	},
-	"spacing": {
-		"margin": true,
-		"padding": true,
-		"blockGap": true
-	},
-	"layout": {
+    "color": {
+      "text": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "layout": {
       "default": {
         "type": "flex",
         "orientation": "vertical"
       }
     },
-	"dimensions": {
-		"minHeight": true
-	},
-	"__experimentalBorder": {
-		"color": true,
-		"radius": true,
-		"style": true,
-		"width": true,
-		"__experimentalDefaultControls": {
-			"color": true,
-			"radius": true,
-			"style": true,
-			"width": true
-		}
-	}
+    "dimensions": {
+      "minHeight": true
+    },
+    "__experimentalBorder": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true,
+      "__experimentalDefaultControls": {
+        "color": true,
+        "radius": true,
+        "style": true,
+        "width": true
+      }
+    }
   },
   "attributes": {
     "startingFigure": {
       "type": "number",
       "default": 0
     },
-    "animationDuration": {
+    "counterDuration": {
       "type": "number",
       "default": 2
     },
-	"showDecimals": {
-		"type": "boolean",
-		"default": false
-	}
+    "showDecimals": {
+      "type": "boolean",
+      "default": false
+    }
   },
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",
   "viewScript": "file:./view.js",
-  "keywords": ["counter", "figure", "number", "stats"],
+  "keywords": [
+    "counter",
+    "figure",
+    "number",
+    "stats"
+  ],
   "example": {
-    "attributes": {
-      "startingFigure": 0,
-      "animationDuration": 2
-    },
     "innerBlocks": [
       [
         "core/paragraph",

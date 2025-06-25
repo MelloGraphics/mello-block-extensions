@@ -10,7 +10,7 @@ document.addEventListener('mello-motion-ready', () => {
     if (!figureEl) return null;
     
     const starting = parseFloat(block.dataset.startingFigure || 0);
-    const duration = parseFloat(block.dataset.animationDuration || 2);
+    const duration = parseFloat(block.dataset.counterDuration || 2);
     const final = parseFloat(figureEl.textContent.replace(/[^0-9.-]+/g, ''));
     const showDecimals = block.dataset.showDecimals === 'true';
     

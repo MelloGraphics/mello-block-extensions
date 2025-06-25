@@ -7,7 +7,7 @@ import { PanelBody, RangeControl, TextControl, ToggleControl } from "@wordpress/
 import { __ } from "@wordpress/i18n";
 
 export default function Edit({ attributes, setAttributes }) {
-  const { startingFigure, animationDuration, showDecimals } = attributes;
+  const { startingFigure, counterDuration, showDecimals } = attributes;
 
   return (
     <>
@@ -26,8 +26,8 @@ export default function Edit({ attributes, setAttributes }) {
             min={0.5}
             max={10}
             step={0.1}
-            value={animationDuration}
-            onChange={(val) => setAttributes({ animationDuration: val })}
+            value={counterDuration}
+            onChange={(val) => setAttributes({ counterDuration: val })}
           />
           <ToggleControl
             label={__("Show Decimals", "counter")}
