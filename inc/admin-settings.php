@@ -126,7 +126,8 @@ function mello_register_settings() {
         'query-exclude-current-post' => 'Query: Exclude current post',
         'query-render-featured-video' => 'Query: Render a featured video',
         'render-svg' => 'Mixed: Render SVG',
-        'animation-controls' => 'Global: Animation Controls'
+        'animation-controls' => 'Global: Animation Controls',
+        'button-icon-toggle' => 'Button: Render inline icon'
     ];
     $descriptions = [
         'button-modal-toggle'       => 'Adds a toggle to buttons for opening link content in an iframe modal.',
@@ -149,7 +150,8 @@ function mello_register_settings() {
         'post-type'                 => 'Display the post type for the page, or in a query.',
         'counter'                 => 'Display stats and figures animated in on scroll.',
         'render-svg' => 'Renders an SVG inline on the frontend',
-        'animation-controls' => 'Adds triggered animations to all blocks'
+        'animation-controls' => 'Adds triggered animations to all blocks',
+        'button-icon-toggle' => 'Adds a toggle to render a FontAwesome icon or image in the button block.'
     ];
     
     // New array to manually define data attributes for each extension.
@@ -172,7 +174,8 @@ function mello_register_settings() {
         'query-render-featured-video' => 'query',
         'render-svg' => 'mixed',
         'animation-controls' => 'animation',
-        'load-motion-library' => 'animation'
+        'load-motion-library' => 'animation',
+        'button-icon-toggle' => 'button'
     ];
     
     register_setting('mello_block_extensions_group', 'mello_enabled_extensions');

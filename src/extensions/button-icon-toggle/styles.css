@@ -1,7 +1,19 @@
-.mello-button-icon {
-  font-family: var(--wp--preset--font-family--icon);
-  font-weight: 900;
-  margin-right: 0.5em;
-  display: inline-block;
-  vertical-align: middle;
+.wp-block-button.has-custom-icon{
+  display: flex;
+
+  .mello-button-icon__wrapper{
+    border: solid pink 1px;
+  }
+
+  .mello-button-icon__fa-icon {
+    font-family: var(--wp--preset--font-family--icon);
+    font-weight: inherit;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .mello-button-icon__img-icon{
+    max-width: 50px;
+  }
+
 }

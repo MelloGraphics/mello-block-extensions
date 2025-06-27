@@ -1,8 +1,22 @@
-.mello-button-icon {
-  font-family: var(--wp--preset--font-family--icon);
-  font-weight: 900;
-  margin-right: 0.5em;
-  display: inline-block;
-  height: 1em;
-  width: 1em;
+.wp-block-button.has-custom-icon{
+  .wp-block-button__link{
+    display: flex;
+    gap: .5em;
+    flex-wrap: nowrap;
+  }
+
+  .mello-button-icon__wrapper{
+    align-content: center;
+  }
+
+  .mello-button-icon__fa-icon {
+    font-family: var(--wp--preset--font-family--icon);
+    font-weight: inherit;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .mello-button-icon__img-icon{
+    max-width: 50px;
+  }
 }

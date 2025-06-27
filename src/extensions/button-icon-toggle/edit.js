@@ -136,3 +136,24 @@ addFilter(
     "mello-block-extensions/button-icon-attributes",
     addIconAttributes
 );
+
+// Add custom class to button wrapper when icon is enabled
+const addIconClass = (extraProps, blockType, attributes) => {
+    if (blockType.name !== "core/button") return extraProps;
+
+    const { iconEnabled } = attributes;
+
+    if (iconEnabled) {
+        extraProps.className = extraProps.className 
+            ? `${extraProps.className} has-custom-icon`
+            : "has-custom-icon";
+    }
+
+    return extraProps;
+};
+
+addFilter(
+    "blocks.getSaveContent.extraProps",
+    "mello-block-extensions/button-icon-class",
+    addIconClass
+);
