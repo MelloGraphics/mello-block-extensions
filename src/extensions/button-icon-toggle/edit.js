@@ -1,10 +1,11 @@
 import {
-    InspectorAdvancedControls,
+    InspectorControls,
     MediaUpload,
-    MediaUploadCheck,
+    MediaUploadCheck
 } from "@wordpress/block-editor";
 import {
     Button,
+    PanelBody,
     SelectControl,
     TextControl,
     ToggleControl,
@@ -38,58 +39,62 @@ const addIconControls = (BlockEdit) => {
             <Fragment>
                 <BlockEdit {...props} />
                 {isSelected && (
-                    <InspectorAdvancedControls>
-                        <ToggleControl
-                            __next40pxDefaultSize
-                            label={__("Enable Icon", "mello-block-extensions")}
-                            checked={iconEnabled}
-                            onChange={(value) => setAttributes({ iconEnabled: value })}
-                        />
-                        {iconEnabled && (
-                            <>
-                                <SelectControl
-                                    __next40pxDefaultSize
-                                    label={__("Icon Type", "mello-block-extensions")}
-                                    value={iconType}
-                                    options={ICON_TYPES}
-                                    onChange={(value) => setAttributes({ iconType: value })}
-                                />
-
-                                {iconType === "fa" && (
-                                    <TextControl
-                                        className="mello-font-awesome-input"
+                    <InspectorControls>
+                        <PanelBody title={__("Icon", "mello-block-extensions")} initialOpen={false}>
+                            <ToggleControl
+                                __next40pxDefaultSize
+                                __nextHasNoMarginBottom
+                                label={__("Enable Icon", "mello-block-extensions")}
+                                checked={iconEnabled}
+                                onChange={(value) => setAttributes({ iconEnabled: value })}
+                            />
+                            {iconEnabled && (
+                                <>
+                                    <SelectControl
                                         __next40pxDefaultSize
-                                        label={__("Font Awesome Glyph", "mello-block-extensions")}
-                                        value={iconGlyph}
-                                        onChange={(value) => setAttributes({ iconGlyph: value })}
-                                        help={__("Enter the glyph (e.g. \\f238) or paste the icon glyph", "mello-block-extensions")}
+                                        label={__("Icon Type", "mello-block-extensions")}
+                                        value={iconType}
+                                        options={ICON_TYPES}
+                                        onChange={(value) => setAttributes({ iconType: value })}
                                     />
-                                )}
 
-                                {iconType === "image" && (
-                                    <MediaUploadCheck>
-                                        <MediaUpload
-                                            onSelect={(media) =>
-                                                setAttributes({
-                                                    iconImageID: media.id,
-                                                    iconImageURL: media.url,
-                                                })
-                                            }
-                                            allowedTypes={["image"]}
-                                            value={iconImageID}
-                                            render={({ open }) => (
-                                                <Button onClick={open} isSecondary>
-                                                    {iconImageURL
-                                                        ? __("Replace image", "mello-block-extensions")
-                                                        : __("Select image", "mello-block-extensions")}
-                                                </Button>
-                                            )}
+                                    {iconType === "fa" && (
+                                        <TextControl
+                                            className="mello-font-awesome-input"
+                                            __next40pxDefaultSize
+                                            __nextHasNoMarginBottom
+                                            label={__("Font Awesome Glyph", "mello-block-extensions")}
+                                            value={iconGlyph}
+                                            onChange={(value) => setAttributes({ iconGlyph: value })}
+                                            help={__("Enter the glyph (e.g. \\f238) or paste the icon glyph. FA Font must be active in the theme.", "mello-block-extensions")}
                                         />
-                                    </MediaUploadCheck>
-                                )}
-                            </>
-                        )}
-                    </InspectorAdvancedControls>
+                                    )}
+
+                                    {iconType === "image" && (
+                                        <MediaUploadCheck>
+                                            <MediaUpload
+                                                onSelect={(media) =>
+                                                    setAttributes({
+                                                        iconImageID: media.id,
+                                                        iconImageURL: media.url,
+                                                    })
+                                                }
+                                                allowedTypes={["image"]}
+                                                value={iconImageID}
+                                                render={({ open }) => (
+                                                    <Button onClick={open} isSecondary>
+                                                        {iconImageURL
+                                                            ? __("Replace image", "mello-block-extensions")
+                                                            : __("Select image", "mello-block-extensions")}
+                                                    </Button>
+                                                )}
+                                            />
+                                        </MediaUploadCheck>
+                                    )}
+                                </>
+                            )}
+                        </PanelBody>
+                    </InspectorControls>
                 )}
             </Fragment>
         );
@@ -144,7 +149,7 @@ const addIconClass = (extraProps, blockType, attributes) => {
     const { iconEnabled } = attributes;
 
     if (iconEnabled) {
-        extraProps.className = extraProps.className 
+        extraProps.className = extraProps.className
             ? `${extraProps.className} has-custom-icon`
             : "has-custom-icon";
     }

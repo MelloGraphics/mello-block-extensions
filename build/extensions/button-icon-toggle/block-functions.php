@@ -1,5 +1,4 @@
 <?php
-
 add_filter('render_block', function($block_content, $block) {
     // Only modify core/button blocks with icon enabled
     if ($block['blockName'] !== 'core/button' || !isset($block['attrs']['iconEnabled']) || !$block['attrs']['iconEnabled']) {
@@ -38,12 +37,16 @@ add_filter('render_block', function($block_content, $block) {
     // Build the icon HTML
     $iconHtml = '';
     if ($iconType === 'fa' && !empty($iconGlyph)) {
-        // Handle Font Awesome glyph - can be unicode (\f238) or CSS content
-        $glyphContent = $iconGlyph;
-        if (strpos($iconGlyph, '\\f') === 0) {
-            // Convert \f238 format to actual unicode character
-            $glyphContent = json_decode('"' . $iconGlyph . '"');
+        // Handle Font Awesome glyph - convert unicode escape sequences
+        $glyphContent = trim($iconGlyph); // Remove any leading/trailing spaces
+        
+        // Check for \\f followed by 3 or 4 hex digits (like \\f238 or \\f0238)
+        if (preg_match('/\\\\f([0-9a-fA-F]{3,4})/', $glyphContent, $matches)) {
+            // Convert \\f238 format to actual unicode character
+            $hex = 'f' . $matches[1]; // Keep the 'f' prefix - it's part of the unicode value
+            $glyphContent = html_entity_decode('&#x' . $hex . ';', ENT_QUOTES, 'UTF-8');
         }
+        
         $iconHtml = '<span class="mello-button-icon__fa-icon" aria-hidden="true" style="font-family: FontAwesome;">' . $glyphContent . '</span>';
     } elseif ($iconType === 'image' && !empty($iconImageURL)) {
         $iconHtml = '<img class="mello-button-icon__img-icon" src="' . esc_url($iconImageURL) . '" aria-hidden="true" />';
