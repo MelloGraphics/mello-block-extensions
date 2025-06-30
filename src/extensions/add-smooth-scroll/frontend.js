@@ -48,7 +48,9 @@ function initSmoothScroll(scrollFunction) {
  * @param {Function} scrollFunction - The scroll function from the motion library
  */
 function initScrollSpeedElements(scrollFunction) {
+    // Handle standard [data-scroll-speed] elements
     document.querySelectorAll('[data-scroll-speed]').forEach((el) => {
+        if (el.classList.contains('has-inner-scroll-speed')) return;
         const speed = parseFloat(el.dataset.scrollSpeed) || 0;
 
         scrollFunction(
@@ -62,6 +64,43 @@ function initScrollSpeedElements(scrollFunction) {
                 offset: ['start end', 'end start'],
             }
         );
+    });
+
+    // Handle blocks with `.has-inner-scroll-speed` class
+    document.querySelectorAll('.has-inner-scroll-speed').forEach((wrapper) => {
+        let target = null;
+        let speed = parseFloat(wrapper.dataset.scrollSpeed) || 0;
+
+        // Detect inner element based on block type or structure
+        if (wrapper.classList.contains('wp-block-image')) {
+            target = wrapper.querySelector('img');
+        } else if (wrapper.classList.contains('wp-block-cover')) {
+            target = wrapper.querySelector('img, video');
+        } else if (wrapper.classList.contains('wp-block-post-featured-image')) {
+            target = wrapper.querySelector('img');
+        }
+
+        if (!speed) {
+            const innerWithSpeed = wrapper.querySelector('[data-scroll-speed]');
+            if (innerWithSpeed) {
+                speed = parseFloat(innerWithSpeed.dataset.scrollSpeed) || 0;
+                target = innerWithSpeed;
+            }
+        }
+
+        if (target) {
+            scrollFunction(
+                (progress) => {
+                    const offset = speed * 4;
+                    const translateY = offset * (1 - 2 * progress);
+                    target.style.transform = `translateY(${translateY}vmin)`;
+                },
+                {
+                    target: wrapper,
+                    offset: ['start end', 'end start'],
+                }
+            );
+        }
     });
 }
 

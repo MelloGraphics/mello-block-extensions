@@ -1,5 +1,5 @@
-import { InspectorAdvancedControls } from '@wordpress/block-editor';
-import { RangeControl } from '@wordpress/components';
+import { InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
@@ -10,9 +10,18 @@ const allowedBlocks = [
 	'core/post-title',
 	'core/query-title',
 	'core/image',
+	'core/cover',
 	'core/group',
 	'core/columns',
-	'core/column'
+	'core/column',
+	'core/post-featured-image',
+];
+
+// Blocks that support inner parallax targeting
+const blocksWithInnerParallaxTarget = [
+	'core/image',
+	'core/cover',
+	'core/post-featured-image'
 ];
 
 /**
@@ -29,6 +38,10 @@ function addAttributes(settings) {
 	const customAttributes = {
 		scrollSpeed: {
 			type: 'number',
+		},
+		scrollSpeedTargetInner: {
+			type: 'boolean',
+			default: false,
 		},
 	};
 
@@ -61,21 +74,30 @@ function addInspectorControls(BlockEdit) {
 		}
 
 		const { attributes, setAttributes } = props;
-		const { scrollSpeed } = attributes;
+		const { scrollSpeed, scrollSpeedTargetInner } = attributes;
 
 		return (
 			<>
 				<BlockEdit {...props} />
-				<InspectorAdvancedControls>
-					<RangeControl
-						label={__('Scroll Speed', 'mello-block-extensions')}
-						value={ scrollSpeed !== undefined ? scrollSpeed : 0 }
-						onChange={(value) => setAttributes({ scrollSpeed: value === 0 ? undefined : value })}
-						min={-2}
-						max={2}
-						step={0.25}
-					/>
-				</InspectorAdvancedControls>
+				<InspectorControls>
+					<PanelBody title={__('Parallax', 'mello-block-extensions')} initialOpen={false}>
+						<RangeControl
+							label={__('Parallax Speed', 'mello-block-extensions')}
+							value={ scrollSpeed !== undefined ? scrollSpeed : 0 }
+							onChange={(value) => setAttributes({ scrollSpeed: value === 0 ? undefined : value })}
+							min={-10}
+							max={10}
+							step={0.25}
+						/>
+						{blocksWithInnerParallaxTarget.includes(props.name) && (
+							<ToggleControl
+								label={__('Target Inner Element', 'mello-block-extensions')}
+								checked={!!scrollSpeedTargetInner}
+								onChange={(value) => setAttributes({ scrollSpeedTargetInner: value })}
+							/>
+						)}
+					</PanelBody>
+				</InspectorControls>
 			</>
 		);
 	};
@@ -99,6 +121,12 @@ addFilter(
 function addSaveProps(extraProps, blockType, attributes) {
 	if (typeof attributes.scrollSpeed === 'number' && attributes.scrollSpeed !== 0) {
 		extraProps['data-scroll-speed'] = attributes.scrollSpeed.toString();
+
+		if (attributes.scrollSpeedTargetInner) {
+			extraProps.className = `${
+				extraProps.className || ''
+			} has-inner-scroll-speed`.trim();
+		}
 	}
 
 	return extraProps;

@@ -26,3 +26,7 @@ html.lenis body {
   transition-duration: 1ms;
   transition-behavior: allow-discrete;
 }
+
+.has-inner-scroll-speed{
+  overflow: clip;
+}
