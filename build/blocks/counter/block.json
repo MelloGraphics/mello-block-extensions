@@ -54,6 +54,10 @@
     "showDecimals": {
       "type": "boolean",
       "default": false
+    },
+    "counterTriggerPoint": {
+      "type": "number",
+      "default": -25
     }
   },
   "editorScript": "file:./index.js",

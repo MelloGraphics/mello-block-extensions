@@ -7,13 +7,15 @@ import { PanelBody, RangeControl, TextControl, ToggleControl } from "@wordpress/
 import { __ } from "@wordpress/i18n";
 
 export default function Edit({ attributes, setAttributes }) {
-  const { startingFigure, counterDuration, showDecimals } = attributes;
+  const { startingFigure, counterDuration, showDecimals, counterTriggerPoint } = attributes;
 
   return (
     <>
       <InspectorControls>
         <PanelBody title={__("Settings", "counter")}>
           <TextControl
+            __next40pxDefaultSize={true}
+            __nextHasNoMarginBottom={true}
             label={__("Starting Figure", "counter")}
             type="number"
             value={startingFigure}
@@ -21,7 +23,16 @@ export default function Edit({ attributes, setAttributes }) {
               setAttributes({ startingFigure: parseFloat(val) })
             }
           />
+          <ToggleControl
+          __next40pxDefaultSize={true}
+            __nextHasNoMarginBottom={true}
+            label={__("Show Decimals", "counter")}
+            checked={showDecimals}
+            onChange={(val) => setAttributes({ showDecimals: val })}
+          />
           <RangeControl
+          __next40pxDefaultSize={true}
+            __nextHasNoMarginBottom={true}
             label={__("Animation Duration (s)", "counter")}
             min={0.5}
             max={10}
@@ -29,10 +40,20 @@ export default function Edit({ attributes, setAttributes }) {
             value={counterDuration}
             onChange={(val) => setAttributes({ counterDuration: val })}
           />
-          <ToggleControl
-            label={__("Show Decimals", "counter")}
-            checked={showDecimals}
-            onChange={(val) => setAttributes({ showDecimals: val })}
+          <RangeControl
+          __next40pxDefaultSize={true}
+            __nextHasNoMarginBottom={true}
+            label={__("Trigger Point", "counter")}
+            value={counterTriggerPoint}
+            onChange={(value) => setAttributes({ counterTriggerPoint: value })}
+            min={-100}
+            max={0}
+            step={5}
+            marks={[
+              { value: -50, label: __("Center", "counter") },
+              { value: -100, label: __("Top", "counter") },
+              { value: 0, label: __("Bottom", "counter") },
+            ]}
           />
         </PanelBody>
       </InspectorControls>
