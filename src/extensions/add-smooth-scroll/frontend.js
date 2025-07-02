@@ -20,7 +20,9 @@ function initSmoothScroll(scrollFunction) {
         smoothWheel: true,
         smoothTouch: false,
         autoResize: true,
-        prevent: (node) => node.closest('.mello-modal') !== null,
+        prevent: (node) =>
+            node.closest('.mello-modal') !== null ||
+            node.closest('header') !== null,
     });
 
     // Make lenis available globally
@@ -28,8 +30,12 @@ function initSmoothScroll(scrollFunction) {
 
     // Set up the animation frame loop - CRITICAL for smooth performance
     function raf(time) {
-        // Only update if modal is NOT open
-        if (!document.documentElement.classList.contains('has-modal-open')) {
+        // Allow scroll only if modal is *not open*,
+        // OR the user is interacting with the menu container
+        const isModalOpen = document.documentElement.classList.contains('has-modal-open');
+        const isScrollingMenu = document.querySelector(':hover')?.closest('.wp-block-navigation__responsive-container');
+
+        if (!isModalOpen || isScrollingMenu) {
             lenis.raf(time);
         }
         requestAnimationFrame(raf);
