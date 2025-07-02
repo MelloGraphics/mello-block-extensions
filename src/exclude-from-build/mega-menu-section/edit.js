@@ -1,3 +1,6 @@
+// for mega-menu-section block
+
+
 /**
  * Retrieves the translation of text.
  *
@@ -32,7 +35,7 @@ import './editor.scss';
 export default function Edit() {
 	return (
 		<p { ...useBlockProps() }>
-			{ __( 'Example Static – hello from the editor!', 'example-static' ) }
+			{ __( 'Mega Menu Section – hello from the editor!', 'mega-menu-section' ) }
 		</p>
 	);
 }

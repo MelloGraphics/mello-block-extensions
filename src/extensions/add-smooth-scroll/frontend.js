@@ -28,7 +28,10 @@ function initSmoothScroll(scrollFunction) {
 
     // Set up the animation frame loop - CRITICAL for smooth performance
     function raf(time) {
-        lenis.raf(time);
+        // Only update if modal is NOT open
+        if (!document.documentElement.classList.contains('has-modal-open')) {
+            lenis.raf(time);
+        }
         requestAnimationFrame(raf);
     }
 
