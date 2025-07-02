@@ -3,7 +3,7 @@
  * Plugin Name:       Mello Block Extensions
  * Plugin URI:        https://mellographics.com/
  * Description:       Custom block extensions and functionality for WordPress block themes.
- * Version: 2.1.18
+ * Version: 2.1.19
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Ashley Pickering
