@@ -1,7 +1,7 @@
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl } from '@wordpress/components';
+import { SelectControl } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { Fragment } from '@wordpress/element';
+import { Fragment, useEffect } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
@@ -81,23 +81,32 @@ const withCustomElementOptions = createHigherOrderComponent((BlockEdit) => {
             value: element
         }));
 
+        useEffect(() => {
+            const interval = setInterval(() => {
+                const labels = Array.from(document.querySelectorAll('label[for^="inspector-select-control"]'));
+                labels.forEach((label) => {
+                    if (label.textContent.trim() === 'HTML element') {
+                        const control = label.closest('.components-base-control');
+                        if (control) control.style.display = 'none';
+                    }
+                });
+            }, 300);
+
+            return () => clearInterval(interval);
+        }, []);
+
         return (
             <Fragment>
                 <BlockEdit {...props} />
-                <InspectorControls>
-                    <PanelBody
-                        title={__('HTML Tag')}
-                        initialOpen={false}
-                    >
-                        <SelectControl
-                            __next40pxDefaultSize
-                            label={__('Select HTML element')}
-                            value={sanitizeGroupTagName(tagName)}
-                            options={elementOptions}
-                            onChange={(value) => setAttributes({ tagName: sanitizeGroupTagName(value) })}
-                            help={htmlElementMessages[tagName]}
-                        />
-                    </PanelBody>
+                <InspectorControls group="advanced">
+                    <SelectControl
+                        __next40pxDefaultSize
+                        label={__('HTML element tag')}
+                        value={sanitizeGroupTagName(tagName)}
+                        options={elementOptions}
+                        onChange={(value) => setAttributes({ tagName: sanitizeGroupTagName(value) })}
+                        help={htmlElementMessages[tagName]}
+                    />
                 </InspectorControls>
             </Fragment>
         );

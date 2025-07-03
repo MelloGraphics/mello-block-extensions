@@ -6,11 +6,10 @@ import classnames from "classnames";
 /**
  * WordPress dependencies
  */
-import { InspectorControls } from "@wordpress/block-editor";
+import { InspectorAdvancedControls } from "@wordpress/block-editor";
 import { ToggleControl } from "@wordpress/components";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
-import "./editor.scss";
 
 /**
  * Add the attribute needed for reversing column direction on mobile.
@@ -66,7 +65,7 @@ function addInspectorControls(BlockEdit) {
     return (
       <>
         <BlockEdit {...props} />
-        <InspectorControls>
+        <InspectorAdvancedControls>
           <ToggleControl
             className="mello-additional-setting"
             label={__("Reverse direction on mobile", "enable-column-direction")}
@@ -77,7 +76,7 @@ function addInspectorControls(BlockEdit) {
               });
             }}
           />
-        </InspectorControls>
+        </InspectorAdvancedControls>
       </>
     );
   };
