@@ -67,7 +67,6 @@ function addInspectorControls(BlockEdit) {
         <BlockEdit {...props} />
         <InspectorAdvancedControls>
           <ToggleControl
-            className="mello-additional-setting"
             label={__("Reverse direction on mobile", "enable-column-direction")}
             checked={isReversedDirectionOnMobile}
             onChange={() => {

@@ -1,6 +1,11 @@
 <?php
 
 function mello_render_aria_label($block_content, $block) {
+	// Only apply to core blocks
+	if (!isset($block['blockName']) || strpos($block['blockName'], 'core/') !== 0) {
+		return $block_content;
+	}
+
 	if (empty($block['attrs']['ariaLabel'])) {
 		return $block_content;
 	}
@@ -12,5 +17,3 @@ function mello_render_aria_label($block_content, $block) {
 
 	return $block_content;
 }
-
-add_filter('render_block', 'mello_render_aria_label', 10, 2);

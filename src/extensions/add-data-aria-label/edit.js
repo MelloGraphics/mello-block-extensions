@@ -8,8 +8,13 @@ import { __ } from '@wordpress/i18n';
  * Add the attribute for custom aria-label to all blocks.
  *
  * @param {Object} settings Block settings.
+ * @param {string} name Block name.
  */
-function addAttributes(settings) {
+function addAttributes(settings, name) {
+	if (!name.startsWith('core/')) {
+		return settings;
+	}
+
 	// Add the attribute.
 	const customAttributes = {
 		ariaLabel: {
