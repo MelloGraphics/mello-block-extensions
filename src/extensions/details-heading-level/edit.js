@@ -1,5 +1,4 @@
-import { InspectorAdvancedControls } from '@wordpress/block-editor';
-import { SelectControl } from '@wordpress/components';
+import { BlockControls, HeadingLevelDropdown } from '@wordpress/block-editor';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
@@ -17,7 +16,7 @@ function addHeadingLevelAttribute(settings) {
    const headingLevelAttribute = {
       level: {
          type: 'string',
-         default: 'Unset',
+         default: '0',
       },
    };
 
@@ -58,22 +57,16 @@ function addHeadingLevelInspectorControl(BlockEdit) {
       return (
          <>
 				<BlockEdit {...props} />
-				<InspectorAdvancedControls>
-					<SelectControl
-                  __next40pxDefaultSize
+				<BlockControls>
+					<HeadingLevelDropdown
 						label={__('Heading Level', 'heading-level')}
 						value={level}
-						options={[
-							{ label: __('Unset', 'heading-level'), value: 'Unset' },
-							{ label: __('H2', 'heading-level'), value: '2' },
-							{ label: __('H3', 'heading-level'), value: '3' },
-							{ label: __('H4', 'heading-level'), value: '4' },
-							{ label: __('H5', 'heading-level'), value: '5' },
-							{ label: __('H6', 'heading-level'), value: '6' },
-						]}
-						onChange={onLevelChange}
+						onChange={(newLevel) => setAttributes({ level: newLevel })}
+						allowedLevels={[0, 1, 2, 3, 4, 5, 6]}
+						isToolbar
+                  isClearable
 					/>
-            </InspectorAdvancedControls>
+				</BlockControls>
          </>
       );
    };
