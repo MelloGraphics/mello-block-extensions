@@ -5,6 +5,7 @@ import {
 	RangeControl,
 	SelectControl,
 	TextControl,
+	TextareaControl,
 	ToggleControl
 } from "@wordpress/components";
 import { addFilter } from "@wordpress/hooks";
@@ -33,7 +34,9 @@ function addAttributes(settings) {
 		childAnimationDuration: { type: "number", default: 500 },
 		childAnimationStaggerDelay: { type: "number", default: 100 },
 		childAnimationTrigger: { type: "string", default: "section" },
-		childAnimationTriggerPoint: { type: "number", default: -25 }
+		childAnimationTriggerPoint: { type: "number", default: -25 },
+		animationCustomConfig: { type: "string" },
+		childAnimationCustomConfig: { type: "string" }
 	};
 
 	// Optional attributes, no defaults, so they are only saved if set.
@@ -76,17 +79,19 @@ function addInspectorControls(BlockEdit) {
 			animationType,
 			animationDuration,
 			animationDelay,
-			animateSelf, // New attribute
-			animationTrigger, // New attribute
-			animationTriggerCustomSelector, // New attribute
-			animationTriggerPoint, // New attribute
+			animateSelf,
+			animationTrigger,
+			animationTriggerCustomSelector,
+			animationTriggerPoint,
 			animateChildren,
 			childAnimationType,
 			childAnimationDuration,
 			childAnimationStaggerDelay,
-			childAnimationTrigger, // New attribute
-			childAnimationCustomSelector, // New attribute
-			childAnimationTriggerPoint, // New attribute
+			childAnimationTrigger,
+			childAnimationCustomSelector,
+			childAnimationTriggerPoint,
+			animationCustomConfig,
+			childAnimationCustomConfig,
 		} = attributes;
 
 		const allowedParentBlockTypes = [
@@ -131,7 +136,7 @@ function addInspectorControls(BlockEdit) {
 					>
 						<ToggleControl
 							__next40pxDefaultSize
-							label={__("Animate block", "mello-block-extensions")} // New ToggleControl
+							label={__("Animate block", "mello-block-extensions")}
 							checked={!!animateSelf}
 							onChange={(value) => {
 								setAttributes({ animateSelf: value });
@@ -144,11 +149,11 @@ function addInspectorControls(BlockEdit) {
 								}
 							}}
 						/>
-						{animateSelf && ( // Wrap current controls in conditional
+						{animateSelf && (
 							<>
 								<ComboboxControl
 									__next40pxDefaultSize
-									label={__("Animation Type", "mello-block-extensions")}
+									label={__("Animation Preset", "mello-block-extensions")}
 									value={animationType}
 									options={[
 										{ label: "Fade In", value: "fade-in" },
@@ -160,22 +165,29 @@ function addInspectorControls(BlockEdit) {
 										{ label: "Clip From Bottom", value: "clip-from-bottom" },
 										{ label: "Clip From Left", value: "clip-from-left" },
 										{ label: "Clip From Right", value: "clip-from-right" },
+										{ label: "Custom", value: "custom" },
 									]}
 									onChange={(value) => setAttributes({ animationType: value })}
 								/>
+								{animationType === "custom" && (
+									<TextareaControl
+										__next40pxDefaultSize
+										label={__("Custom Animation Config", "mello-block-extensions")}
+										help={__("Provide Motion.js animation config as JSON. E.g. { \"opacity\": [0,1], \"scale\": [0,1] }", "mello-block-extensions")}
+										value={animationCustomConfig}
+										onChange={(value) => setAttributes({ animationCustomConfig: value })}
+										rows={10}
+									/>
+								)}
 								<RangeControl
 									__next40pxDefaultSize
-									label={__(
-										"Duration (ms)",
-										"mello-block-extensions"
-									)}
+									label={__("Duration (ms)", "mello-block-extensions")}
 									value={animationDuration}
-									onChange={(value) =>
-										setAttributes({ animationDuration: value })
-									}
+									onChange={(value) => setAttributes({ animationDuration: value })}
 									min={100}
 									max={3000}
 									step={50}
+									
 								/>
 								<RangeControl
 									__next40pxDefaultSize
@@ -185,6 +197,7 @@ function addInspectorControls(BlockEdit) {
 									min={0}
 									max={3000}
 									step={50}
+									
 								/>
 								<SelectControl
 									label={__("Animation Trigger", "mello-block-extensions")}
@@ -211,6 +224,7 @@ function addInspectorControls(BlockEdit) {
 											{ value: -100, label: __("Top", "mello-block-extensions") },
 											{ value: 0, label: __("Bottom", "mello-block-extensions") },
 										]}
+										
 									/>
 								)}
 								{animationTrigger === "custom" && (
@@ -234,6 +248,7 @@ function addInspectorControls(BlockEdit) {
 												{ value: -100, label: __("Top", "mello-block-extensions") },
 												{ value: 0, label: __("Bottom", "mello-block-extensions") },
 											]}
+											
 										/>
 									</>
 								)}
@@ -253,10 +268,7 @@ function addInspectorControls(BlockEdit) {
 									<>
 										<ComboboxControl
 											__next40pxDefaultSize
-											label={__(
-												"Child Animation Type",
-												"mello-block-extensions"
-											)}
+											label={__("Child Animation Type", "mello-block-extensions")}
 											value={childAnimationType}
 											options={[
 												{ label: "Fade In", value: "fade-in" },
@@ -268,17 +280,26 @@ function addInspectorControls(BlockEdit) {
 												{ label: "Clip From Bottom", value: "clip-from-bottom" },
 												{ label: "Clip From Left", value: "clip-from-left" },
 												{ label: "Clip From Right", value: "clip-from-right" },
+												{ label: "Custom", value: "custom" },
 											]}
 											onChange={(value) =>
 												setAttributes({ childAnimationType: value })
 											}
 										/>
+
+										{childAnimationType === "custom" && (
+											<TextareaControl
+												__next40pxDefaultSize
+												label={__("Custom Child Animation Config", "mello-block-extensions")}
+												help={__("Provide Motion.js animation config as JSON. E.g. { \"opacity\": [0,1], \"scale\": [0,1] }", "mello-block-extensions")}
+												value={childAnimationCustomConfig}
+												onChange={(value) => setAttributes({ childAnimationCustomConfig: value })}
+												rows={10}
+											/>
+										)}
 										<RangeControl
 											__next40pxDefaultSize
-											label={__(
-												"Child Animation Duration (ms)",
-												"mello-block-extensions"
-											)}
+											label={__("Child Animation Duration (ms)", "mello-block-extensions")}
 											value={childAnimationDuration}
 											onChange={(value) =>
 												setAttributes({ childAnimationDuration: value })
@@ -286,6 +307,7 @@ function addInspectorControls(BlockEdit) {
 											min={100}
 											max={3000}
 											step={50}
+											
 										/>
 										<RangeControl
 											__next40pxDefaultSize
@@ -297,6 +319,7 @@ function addInspectorControls(BlockEdit) {
 											min={0}
 											max={1000}
 											step={50}
+											
 										/>
 										<SelectControl
 											label={__("Child Animation Trigger", "mello-block-extensions")}
@@ -323,6 +346,7 @@ function addInspectorControls(BlockEdit) {
 													{ value: -100, label: __("Top", "mello-block-extensions") },
 													{ value: 0, label: __("Bottom", "mello-block-extensions") },
 												]}
+												
 											/>
 										)}
 										{childAnimationTrigger === "custom" && (
@@ -346,6 +370,7 @@ function addInspectorControls(BlockEdit) {
 														{ value: -100, label: __("Top", "mello-block-extensions") },
 														{ value: 0, label: __("Bottom", "mello-block-extensions") },
 													]}
+													
 												/>
 											</>
 										)}
@@ -389,6 +414,8 @@ function addSaveProps(extraProps, blockType, attributes) {
 		childAnimationTrigger,
 		childAnimationCustomSelector,
 		childAnimationTriggerPoint,
+		animationCustomConfig,
+		childAnimationCustomConfig,
 	} = attributes;
 
 	if (animateSelf) {
@@ -404,6 +431,23 @@ function addSaveProps(extraProps, blockType, attributes) {
 			animationTrigger === 'custom') {
 			extraProps["data-animation-trigger-custom-selector"] = animationTriggerCustomSelector;
 		}
+
+		if (animationType === 'custom' && animationCustomConfig) {
+			try {
+				let maybeJson = animationCustomConfig.trim();
+
+				// If it starts with a quote, assume escaped string and decode it
+				if (!maybeJson.startsWith('{')) {
+					const decoded = JSON.parse(`"${maybeJson}"`);
+					maybeJson = `{${decoded}}`;
+				}
+
+				JSON.parse(maybeJson); // validate
+				extraProps["data-animation-config"] = maybeJson;
+			} catch (err) {
+				console.warn("Invalid custom animation config", err);
+			}
+		}
 	} else {
 		delete extraProps["data-animation"];
 		delete extraProps["data-animation-type"];
@@ -412,6 +456,7 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-animation-delay"];
 		delete extraProps["data-animation-trigger-point"];
 		delete extraProps["data-animation-trigger-custom-selector"];
+		delete extraProps["data-animation-config"];
 	}
 
 	if (animateChildren) {
@@ -427,6 +472,23 @@ function addSaveProps(extraProps, blockType, attributes) {
 			childAnimationTrigger === 'custom') {
 			extraProps["data-child-animation-custom-selector"] = childAnimationCustomSelector;
 		}
+
+		if (childAnimationType === 'custom' && childAnimationCustomConfig) {
+			try {
+				let maybeJson = childAnimationCustomConfig.trim();
+
+				// If it starts with a quote, assume escaped string and decode it
+				if (!maybeJson.startsWith('{')) {
+					const decoded = JSON.parse(`"${maybeJson}"`);
+					maybeJson = `{${decoded}}`;
+				}
+
+				JSON.parse(maybeJson); // validate
+				extraProps["data-child-animation-config"] = maybeJson;
+			} catch (err) {
+				console.warn("Invalid custom child animation config", err);
+			}
+		}
 	} else {
 		delete extraProps["data-child-animation"];
 		delete extraProps["data-child-animation-type"];
@@ -435,6 +497,7 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-child-animation-trigger"];
 		delete extraProps["data-child-animation-trigger-point"];
 		delete extraProps["data-child-animation-custom-selector"];
+		delete extraProps["data-child-animation-config"];
 	}
 
 	return extraProps;
