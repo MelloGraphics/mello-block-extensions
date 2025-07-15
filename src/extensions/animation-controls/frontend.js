@@ -73,8 +73,6 @@ document.addEventListener('mello-motion-ready', () => {
 
         if (animationType === "custom") {
             const configRaw = element.getAttribute("data-animation-config");
-            console.log("Element with custom animation:", element);
-            console.log("Raw data-animation-config:", configRaw);
 
             if (!configRaw) {
                 console.warn("No data-animation-config attribute found on element:", element);
@@ -83,7 +81,6 @@ document.addEventListener('mello-motion-ready', () => {
 
             try {
                 const config = JSON.parse(configRaw);
-                console.log("Parsed custom animation config:", config);
                 animationProps = config;
 
                 // Set initial styles for custom animation
@@ -124,7 +121,6 @@ document.addEventListener('mello-motion-ready', () => {
         inView(
             triggerElement,
             () => {
-                console.log("Triggering animation for element:", element);
                 animationTimeline.play();
             },
             {

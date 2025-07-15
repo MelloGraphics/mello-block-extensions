@@ -1,12 +1,13 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import {
 	ComboboxControl,
+	__experimentalDivider as Divider,
 	PanelBody,
 	RangeControl,
 	SelectControl,
 	TextControl,
 	TextareaControl,
-	ToggleControl
+	ToggleControl,
 } from "@wordpress/components";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
@@ -149,8 +150,10 @@ function addInspectorControls(BlockEdit) {
 								}
 							}}
 						/>
+						
 						{animateSelf && (
 							<>
+							<Divider />
 								<ComboboxControl
 									__next40pxDefaultSize
 									label={__("Animation Preset", "mello-block-extensions")}
@@ -179,6 +182,7 @@ function addInspectorControls(BlockEdit) {
 										rows={10}
 									/>
 								)}
+								<Divider />
 								<RangeControl
 									__next40pxDefaultSize
 									label={__("Duration (ms)", "mello-block-extensions")}
@@ -199,6 +203,7 @@ function addInspectorControls(BlockEdit) {
 									step={50}
 									
 								/>
+								<Divider />
 								<SelectControl
 									label={__("Animation Trigger", "mello-block-extensions")}
 									value={animationTrigger}
@@ -230,6 +235,7 @@ function addInspectorControls(BlockEdit) {
 								{animationTrigger === "custom" && (
 									<>
 										<TextControl
+											__next40pxDefaultSize
 											label={__("Custom Trigger Selector", "mello-block-extensions")}
 											value={animationTriggerCustomSelector}
 											onChange={(value) => setAttributes({ animationTriggerCustomSelector: value })}
@@ -256,6 +262,7 @@ function addInspectorControls(BlockEdit) {
 						)}
 						{allowedParentBlockTypes.includes(props.name) && (
 							<>
+								<Divider />
 								<ToggleControl
 									__next40pxDefaultSize
 									label={__("Animate Children", "mello-block-extensions")}
@@ -266,6 +273,7 @@ function addInspectorControls(BlockEdit) {
 								/>
 								{animateChildren && (
 									<>
+									<Divider />
 										<ComboboxControl
 											__next40pxDefaultSize
 											label={__("Child Animation Type", "mello-block-extensions")}
@@ -287,6 +295,7 @@ function addInspectorControls(BlockEdit) {
 											}
 										/>
 
+
 										{childAnimationType === "custom" && (
 											<TextareaControl
 												__next40pxDefaultSize
@@ -296,7 +305,9 @@ function addInspectorControls(BlockEdit) {
 												onChange={(value) => setAttributes({ childAnimationCustomConfig: value })}
 												rows={10}
 											/>
+											
 										)}
+										<Divider />
 										<RangeControl
 											__next40pxDefaultSize
 											label={__("Child Animation Duration (ms)", "mello-block-extensions")}
@@ -321,6 +332,7 @@ function addInspectorControls(BlockEdit) {
 											step={50}
 											
 										/>
+										<Divider />
 										<SelectControl
 											label={__("Child Animation Trigger", "mello-block-extensions")}
 											value={childAnimationTrigger}
@@ -352,6 +364,7 @@ function addInspectorControls(BlockEdit) {
 										{childAnimationTrigger === "custom" && (
 											<>
 												<TextControl
+												__next40pxDefaultSize
 													label={__("Custom Child Trigger Selector", "mello-block-extensions")}
 													value={childAnimationCustomSelector}
 													onChange={(value) => setAttributes({ childAnimationCustomSelector: value })}
