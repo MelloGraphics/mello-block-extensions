@@ -1,7 +1,7 @@
 import { BlockControls, __experimentalLinkControl as LinkControl } from '@wordpress/block-editor';
 import { Dashicon, Popover, ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { Fragment, useState } from '@wordpress/element';
+import { Fragment, useRef, useState } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
@@ -33,6 +33,7 @@ const withGroupLinkToolbar = createHigherOrderComponent((BlockEdit) => {
 
 		const [isLinkUIVisible, setIsLinkUIVisible] = useState(false);
 		const { link = {} } = attributes;
+		const anchorRef = useRef();
 
 		return (
 			<Fragment>
@@ -41,6 +42,7 @@ const withGroupLinkToolbar = createHigherOrderComponent((BlockEdit) => {
 					<BlockControls>
 						<ToolbarGroup>
 							<ToolbarButton
+								ref={anchorRef}
 								icon={<Dashicon icon="admin-links" />}
 								label={link?.url ? __('Edit link') : __('Add link')}
 								onClick={() => setIsLinkUIVisible(!isLinkUIVisible)}
@@ -60,7 +62,7 @@ const withGroupLinkToolbar = createHigherOrderComponent((BlockEdit) => {
 					</BlockControls>
 				)}
 				{isLinkUIVisible && (
-					<Popover position="bottom center" onClose={() => setIsLinkUIVisible(false)}>
+					<Popover position="bottom center" anchor={anchorRef.current} onClose={() => setIsLinkUIVisible(false)}>
 						<LinkControl
 							searchInputPlaceholder="Search or paste URL"
 							value={link}
