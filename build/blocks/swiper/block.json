@@ -24,6 +24,10 @@
       "type": "boolean",
       "default": false
     },
+    "autoHeight": {
+      "type": "boolean",
+      "default": false
+    },
     "spaceBetween": {
       "type": "number",
       "default": 75

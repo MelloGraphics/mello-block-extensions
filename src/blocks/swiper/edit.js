@@ -26,8 +26,8 @@ const TEMPLATE = [
         'core/buttons',
         { lock: { remove: true }, className: 'swiper-navigation', metadata: { name: 'Prev / Next Buttons' }, style: { spacing: { blockGap: { left: 'var:preset|spacing|small' } } } },
         [
-            ['core/button', { className: 'swiper-button-prev', "lock":{"move":true,"remove":true}, text: __('prev', 'mellobase') }],
-            ['core/button', { className: 'swiper-button-next', "lock":{"move":true,"remove":true}, text: __('next', 'mellobase') }],
+            ['core/button', { className: 'swiper-button-prev', "lock": { "move": true, "remove": true }, text: __('prev', 'mellobase') }],
+            ['core/button', { className: 'swiper-button-next', "lock": { "move": true, "remove": true }, text: __('next', 'mellobase') }],
         ],
     ],
 ];
@@ -38,6 +38,7 @@ export default function Edit({ attributes, setAttributes }) {
         slidesPerViewTablet,
         slidesPerViewMobile,
         slidesPerViewAuto,
+        autoHeight,
         loop,
         centeredSlides,
         autoplay,
@@ -71,7 +72,7 @@ export default function Edit({ attributes, setAttributes }) {
         freeModeSticky,
     } = attributes;
 
-const blockProps = useBlockProps({
+    const blockProps = useBlockProps({
         style: {
             ...(spaceBetween !== undefined
                 ? { '--swiper-space-between': `${spaceBetween}px` }
@@ -103,6 +104,7 @@ const blockProps = useBlockProps({
         'data-swiper-loop': loop,
         'data-swiper-centered-slides': centeredSlides,
         'data-swiper-autoplay': autoplay,
+        ...(autoHeight !== undefined && { 'data-swiper-auto-height': autoHeight }),
         ...(autoplayDelay !== undefined && { 'data-swiper-autoplay-delay': autoplayDelay }),
         ...(autoplayDisableOnInteraction !== undefined && { 'data-swiper-autoplay-disable-on-interaction': autoplayDisableOnInteraction }),
         ...(autoplayReverseDirection !== undefined && { 'data-swiper-autoplay-reverse-direction': autoplayReverseDirection }),
@@ -162,7 +164,11 @@ const blockProps = useBlockProps({
                         label={__('Auto Width Slides', 'mellobase')}
                         checked={slidesPerViewAuto}
                         onChange={(value) => setAttributes({ slidesPerViewAuto: value !== undefined ? value : undefined })}
-                        help={__('When enabled, slides will adjust to their natural width', 'mellobase')}
+                    />
+                    <ToggleControl
+                        label={__('Auto Height Slider', 'mellobase')}
+                        checked={autoHeight}
+                        onChange={(value) => setAttributes({ autoHeight: value !== undefined ? value : undefined })}
                     />
                     <Divider />
                     {!slidesPerViewAuto && (

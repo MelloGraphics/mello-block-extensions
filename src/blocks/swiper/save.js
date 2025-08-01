@@ -6,6 +6,7 @@ export default function save({ attributes }) {
         slidesPerViewTablet,
         slidesPerViewMobile,
         slidesPerViewAuto,
+        autoHeight,
         loop,
         autoplay,
         autoplayDelay,
@@ -46,21 +47,21 @@ export default function save({ attributes }) {
         if (!value && value !== 0) {
             return {};
         }
-        
+
         // Only add attributes with truthy values
         return { [`data-swiper-${attributeName}`]: value };
     };
 
     const blockProps = useBlockProps.save({
         'data-swiper': true,
-        // Add slidesPerViewAuto if true, otherwise add the specific slides per view values
-        ...(slidesPerViewAuto 
-            ? addAttributeIfTruthy('slides-per-view-auto', true) 
+        ...(slidesPerViewAuto
+            ? addAttributeIfTruthy('slides-per-view-auto', true)
             : {
                 ...addAttributeIfTruthy('slides-per-view', slidesPerView),
                 ...addAttributeIfTruthy('slides-per-view-tablet', slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2),
                 ...addAttributeIfTruthy('slides-per-view-mobile', slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1),
             }),
+        ...addAttributeIfTruthy('auto-height', autoHeight),
         ...addAttributeIfTruthy('loop', loop),
         ...addAttributeIfTruthy('autoplay', autoplay),
         // Only add autoplay-related attributes if autoplay is true

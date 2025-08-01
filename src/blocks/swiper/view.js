@@ -1,11 +1,6 @@
 // Import Swiper core
 import Swiper from 'swiper';
 
-// Import Swiper core CSS
-// import 'swiper/css';
-
-// We'll import module CSS and the modules themselves dynamically based on attributes
-
 document.addEventListener('DOMContentLoaded', async () => {
     // Collect all swiper elements first
     const swiperElements = document.querySelectorAll('.wp-block-mello-block-swiper[data-swiper]');
@@ -103,9 +98,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             attr.name === 'data-swiper-autoplay' && (attr.value === 'true' || !isNaN(attr.value))
         );
         const hasEffectFade = dataAttributes.some(attr => attr.name === 'data-swiper-effect' && attr.value === 'fade');
-        
+
         // Check for slidesPerViewAuto mode
-        const hasSlidesPerViewAuto = dataAttributes.some(attr => 
+        const hasSlidesPerViewAuto = dataAttributes.some(attr =>
             attr.name === 'data-swiper-slides-per-view-auto' && attr.value === 'true');
 
         // Add only the modules that this specific swiper needs
@@ -192,6 +187,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'autoplayDisableOnInteraction':
                     if (options.autoplay) options.autoplay.disableOnInteraction = value;
                     break;
+                case 'autoHeight':
+                    options.autoHeight = value;
+                    break;
                 case 'mousewheelForceToAxis':
                     if (options.mousewheel) options.mousewheel.forceToAxis = value;
                     break;
@@ -228,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Handle slidesPerViewAuto if enabled
         if (hasSlidesPerViewAuto) {
             options.slidesPerView = 'auto';
-            
+
             // When in auto mode, we don't need the breakpoints for slidesPerView
             // but we still want to maintain the spaceBetween values
             const spaceBetween = options.spaceBetween || 0;
@@ -238,7 +236,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const spaceBetweenTablet = swiperElement.hasAttribute('data-swiper-space-between-tablet')
                 ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
                 : spaceBetweenMobile;
-                
+
             // Set up breakpoints just for spaceBetween when in auto mode
             options.breakpoints = {
                 0: {
