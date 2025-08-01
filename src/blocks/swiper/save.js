@@ -37,7 +37,9 @@ export default function save({ attributes }) {
         freeModeMomentum,
         freeModeMomentumRatio,
         freeModeMomentumVelocityRatio,
-        freeModeSticky
+        freeModeSticky,
+        enableThumbs,
+        thumbsTarget
     } = attributes;
 
     // Helper function to add attribute only if it has a valid and truthy value
@@ -72,7 +74,7 @@ export default function save({ attributes }) {
         ...addAttributeIfTruthy('space-between-tablet', spaceBetweenTablet !== undefined ? spaceBetweenTablet : 50),
         ...addAttributeIfTruthy('space-between-mobile', spaceBetweenMobile !== undefined ? spaceBetweenMobile : 50),
         ...addAttributeIfTruthy('speed', speed),
-        ...addAttributeIfTruthy('direction', direction || 'horizontal'),
+        ...addAttributeIfTruthy('direction', direction),
         ...addAttributeIfTruthy('navigation', navigation),
         ...addAttributeIfTruthy('pagination', pagination),
         // Only add pagination-related attributes if pagination is true
@@ -97,7 +99,9 @@ export default function save({ attributes }) {
         ...(freeMode === true ? addAttributeIfTruthy('free-mode-momentum', freeModeMomentum) : {}),
         ...(freeMode === true ? addAttributeIfTruthy('free-mode-momentum-ratio', freeModeMomentumRatio) : {}),
         ...(freeMode === true ? addAttributeIfTruthy('free-mode-momentum-velocity-ratio', freeModeMomentumVelocityRatio) : {}),
-        ...(freeMode === true ? addAttributeIfTruthy('free-mode-sticky', freeModeSticky) : {})
+        ...(freeMode === true ? addAttributeIfTruthy('free-mode-sticky', freeModeSticky) : {}),
+        ...addAttributeIfTruthy('enable-thumbs', enableThumbs),
+        ...(enableThumbs === true ? addAttributeIfTruthy('thumbs-target', thumbsTarget) : {}),
     });
 
     return (

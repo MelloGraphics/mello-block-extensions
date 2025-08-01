@@ -2,7 +2,7 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "mello-block/swiper",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "title": "Swiper",
   "category": "design",
   "icon": "slides",
@@ -45,7 +45,7 @@
       "default": false
     },
     "direction": {
-      "type": "array",
+      "type": "string",
       "default": "horizontal"
     },
     "speed": {
@@ -101,6 +101,12 @@
     },
     "scrollbarHide": {
       "type": "boolean"
+    },
+    "enableThumbs": {
+      "type": "boolean"
+    },
+    "thumbsTarget": {
+      "type": "string"
     },
     "effect": {
       "type": "string"

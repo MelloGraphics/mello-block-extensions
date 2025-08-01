@@ -1,5 +1,5 @@
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { __experimentalDivider as Divider, PanelBody, RangeControl, SelectControl, ToggleControl } from '@wordpress/components';
+import { __experimentalDivider as Divider, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 import './style.scss';
@@ -55,6 +55,8 @@ export default function Edit({ attributes, setAttributes }) {
         paginationClickable,
         scrollbar,
         scrollbarHide,
+        enableThumbs,
+        thumbsTarget,
         effect,
         direction,
         mousewheel,
@@ -133,6 +135,8 @@ export default function Edit({ attributes, setAttributes }) {
         ...(freeModeMomentumRatio !== undefined && { 'data-swiper-free-mode-momentum-ratio': freeModeMomentumRatio }),
         ...(freeModeMomentumVelocityRatio !== undefined && { 'data-swiper-free-mode-momentum-velocity-ratio': freeModeMomentumVelocityRatio }),
         ...(freeModeSticky !== undefined && { 'data-swiper-free-mode-sticky': freeModeSticky }),
+        ...(enableThumbs !== undefined && { 'data-swiper-enable-thumbs': enableThumbs }),
+        ...(thumbsTarget !== undefined && { 'data-swiper-thumbs-target': thumbsTarget }),
     });
 
     return (
@@ -147,7 +151,8 @@ export default function Edit({ attributes, setAttributes }) {
                             { label: __('Horizontal', 'mellobase'), value: 'horizontal' },
                             { label: __('Vertical', 'mellobase'), value: 'vertical' },
                         ]}
-                        onChange={(value) => setAttributes({ direction: value !== undefined ? value : undefined })}
+                        onChange={(value) => setAttributes({ direction: value })}
+
                     />
                     <Divider />
                     <ToggleControl
@@ -356,7 +361,6 @@ export default function Edit({ attributes, setAttributes }) {
                         </>
                     )}
                     <Divider />
-                    {/* Scrollbar Toggle and controls */}
                     <ToggleControl
                         label={__('Enable Scrollbar', 'mellobase')}
                         checked={scrollbar}
@@ -367,6 +371,25 @@ export default function Edit({ attributes, setAttributes }) {
                             label={__('Hide Scrollbar', 'mellobase')}
                             checked={scrollbarHide}
                             onChange={(value) => setAttributes({ scrollbarHide: value !== undefined ? value : undefined })}
+                        />
+                    )}
+                    <Divider />
+                    <ToggleControl
+                        label={__('Enable Thumbs', 'mellobase')}
+                        checked={!!enableThumbs}
+                        onChange={(value) =>
+                            setAttributes({
+                                enableThumbs: value !== undefined ? value : undefined,
+                            })
+                        }
+                    />
+                    {enableThumbs && (
+                        <TextControl
+                            __next40pxDefaultSize
+                            label={__('Thumbs Target', 'mellobase')}
+                            value={thumbsTarget || ''}
+                            onChange={(value) => setAttributes({ thumbsTarget: value !== '' ? value : undefined })}
+                            placeholder={__('CSS selector or ID of thumbs container', 'mellobase')}
                         />
                     )}
                 </PanelBody>
