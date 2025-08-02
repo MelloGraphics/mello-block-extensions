@@ -39,7 +39,8 @@ export default function save({ attributes }) {
         freeModeMomentumVelocityRatio,
         freeModeSticky,
         enableThumbs,
-        thumbsTarget
+        thumbsTarget,
+        overflowHidden
     } = attributes;
 
     // Helper function to add attribute only if it has a valid and truthy value
@@ -102,6 +103,7 @@ export default function save({ attributes }) {
         ...(freeMode === true ? addAttributeIfTruthy('free-mode-sticky', freeModeSticky) : {}),
         ...addAttributeIfTruthy('enable-thumbs', enableThumbs),
         ...(enableThumbs === true ? addAttributeIfTruthy('thumbs-target', thumbsTarget) : {}),
+        ...(overflowHidden === true ? addAttributeIfTruthy('overflow-hidden', overflowHidden) : {}),
     });
 
     return (

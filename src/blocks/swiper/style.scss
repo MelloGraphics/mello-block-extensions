@@ -30,19 +30,21 @@
     --swiper-pagination-bullet-opacity: 1;
     --swiper-pagination-bullet-horizontal-gap: 0;
     --swiper-pagination-bullet-vertical-gap: 0;
-    
+
     // Navigation - buttons
 
-    .swiper-navigation, .wp-block-buttons:has( > .swiper-button-next){
+    .swiper-navigation,
+    .wp-block-buttons:has(> .swiper-button-next) {
         display: none;
         visibility: hidden;
 
-        .wp-block-button__link{
+        .wp-block-button__link {
             height: auto;
         }
     }
 
-    .swiper-button-next, .swiper-button-prev{
+    .swiper-button-next,
+    .swiper-button-prev {
         display: inline;
         margin-block-start: unset;
         position: unset;
@@ -51,14 +53,18 @@
         min-width: fit-content;
         font-family: swiper-icons;
 
-        &::after{ // hide swiper JS icons. Content is set in the editor.
+        &::after {
+            // hide swiper JS icons. Content is set in the editor.
             display: none;
             visibility: hidden;
             font-size: inherit;
         }
     }
-    &[data-swiper-navigation="true"]{
-        .swiper-navigation, .wp-block-buttons:has( > .swiper-button-next){
+
+    &[data-swiper-navigation="true"] {
+
+        .swiper-navigation,
+        .wp-block-buttons:has(> .swiper-button-next) {
             display: flex;
             visibility: visible;
         }
@@ -66,15 +72,16 @@
 
     // Navigation - Scrollbar
 
-    .swiper-scrollbar{
+    .swiper-scrollbar {
         display: none;
         visibility: hidden;
 
-        .swiper-scrollbar-drag{
-            margin: unset!important;
+        .swiper-scrollbar-drag {
+            margin: unset !important;
         }
     }
-    &[data-swiper-scrollbar="true"] .swiper-scrollbar{
+
+    &[data-swiper-scrollbar="true"] .swiper-scrollbar {
         display: inline-block;
         visibility: visible;
         position: relative;
@@ -84,28 +91,45 @@
 
     // Navigation - Pagination
 
-    .swiper-pagination{
+    .swiper-pagination {
         display: none;
         visibility: hidden;
         gap: var(--wp--preset--spacing--small);
         position: unset;
     }
-    &[data-swiper-pagination="true"] .swiper-pagination{
+
+    &[data-swiper-pagination="true"] .swiper-pagination {
         display: flex;
         visibility: visible;
     }
 
-    //remove transition for autoplay delay 0
+    // Auto Play delay = 0 - remove transition for marquee effect
 
-    &[data-swiper-autoplay-delay="0"] .swiper-wrapper{
+    &[data-swiper-autoplay-delay="0"] .swiper-wrapper {
         transition-timing-function: linear;
     }
 
-    //shrink slides to fit content of auto-fit slides
+    // Auto fit slides - shrink slides to fit content
 
-    &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper > * {
+    &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper>* {
         flex-shrink: 1;
         min-width: max-content;
+    }
+
+    // Direction vertical
+
+    &[data-swiper-direction="vertical"] {
+        overflow: clip;
+
+        .swiper-wrapper {
+            height: 50svh;
+        }
+    }
+
+    // Overflow hidden
+
+    &[data-swiper-overflow-hidden="true"] {
+        overflow: clip;
     }
 
 }

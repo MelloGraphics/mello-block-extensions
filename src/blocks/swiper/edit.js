@@ -72,6 +72,7 @@ export default function Edit({ attributes, setAttributes }) {
         freeModeMomentumRatio,
         freeModeMomentumVelocityRatio,
         freeModeSticky,
+        overflowHidden
     } = attributes;
 
     const blockProps = useBlockProps({
@@ -137,6 +138,7 @@ export default function Edit({ attributes, setAttributes }) {
         ...(freeModeSticky !== undefined && { 'data-swiper-free-mode-sticky': freeModeSticky }),
         ...(enableThumbs !== undefined && { 'data-swiper-enable-thumbs': enableThumbs }),
         ...(thumbsTarget !== undefined && { 'data-swiper-thumbs-target': thumbsTarget }),
+        ...(overflowHidden !== undefined && { 'data-swiper-overflow-hidden': overflowHidden }),
     });
 
     return (
@@ -175,6 +177,11 @@ export default function Edit({ attributes, setAttributes }) {
                         checked={autoHeight}
                         onChange={(value) => setAttributes({ autoHeight: value !== undefined ? value : undefined })}
                     />
+                    <ToggleControl
+                        label={__('Overflow Hidden', 'mellobase')}
+                        checked={overflowHidden}
+                        onChange={(value) => setAttributes({ overflowHidden: value !== undefined ? value : undefined })}
+                    />
                     <Divider />
                     {!slidesPerViewAuto && (
                         <>
@@ -183,7 +190,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 value={slidesPerView !== undefined ? slidesPerView : 3}
                                 onChange={(value) => setAttributes({ slidesPerView: value !== undefined ? value : undefined })}
                                 min={1}
-                                max={6}
+                                max={12}
                                 step={0.25}
                             />
                             <RangeControl
@@ -191,7 +198,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 value={slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2}
                                 onChange={(value) => setAttributes({ slidesPerViewTablet: value !== undefined ? value : undefined })}
                                 min={1}
-                                max={6}
+                                max={12}
                                 step={0.25}
                             />
                             <RangeControl
@@ -199,7 +206,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 value={slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1}
                                 onChange={(value) => setAttributes({ slidesPerViewMobile: value !== undefined ? value : undefined })}
                                 min={1}
-                                max={6}
+                                max={12}
                                 step={0.25}
                             />
                             <Divider />

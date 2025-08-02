@@ -150,6 +150,9 @@
     },
     "slideToClickedSlide": {
       "type": "boolean"
+    },
+    "overflowHidden": {
+      "type": "boolean"
     }
   },
   "example": {},
