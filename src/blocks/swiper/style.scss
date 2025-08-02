@@ -109,11 +109,11 @@
         transition-timing-function: linear;
     }
 
-    // Auto fit slides - shrink slides to fit content
+    // Auto fit slides horizontal - shrink slides to fit content
 
-    &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper>* {
+    &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper > * {
         flex-shrink: 1;
-        min-width: max-content;
+        min-width: fit-content;
     }
 
     // Direction vertical
@@ -123,6 +123,13 @@
 
         .swiper-wrapper {
             height: 50svh;
+        }
+
+        // Auto fit slides horizontal - shrink slides to fit content
+
+        &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper > * {
+            flex-shrink: 1;
+            height: fit-content;
         }
     }
 

@@ -69,33 +69,50 @@
 	}
 }
 
-.wp-block-mello-block-swiper .swiper-wrapper {
-	display: grid;
-	grid-template-rows: 1fr;
-	grid-auto-flow: column;
-	/* each track = (100% – total gaps) ÷ number of slides */
-	grid-auto-columns: calc((100% - (var(--swiper-space-between, var(--wp--preset--spacing--large)) * (var(--swiper-spv, 1) - 1))) / var(--swiper-spv, 1));
-	row-gap: var(--swiper-space-between, var(--wp--preset--spacing--large));
-	overflow-x: auto;
-}
-
-.wp-block-mello-block-swiper[data-swiper-direction="vertical"] .swiper-wrapper {
-	display: grid!important;
-	grid-template-columns: 1fr;
-	grid-auto-flow: row;
-	/* each track = (100% – total gaps) ÷ number of slides */
-	grid-auto-rows: calc((100% - (var(--swiper-space-between, var(--wp--preset--spacing--large)) * (var(--swiper-spv, 1) - 1))) / var(--swiper-spv, 1));
-	column-gap: var(--swiper-space-between, var(--wp--preset--spacing--large));
-	overflow-y: auto;
-}
-
-.wp-block-mello-block-swiper[data-swiper-slides-per-view-auto="true"] .swiper-wrapper {
-	display: flex;
-
-	>* {
-		min-width: fit-content !important;
+.wp-block-mello-block-swiper:not([data-swiper-direction="vertical"]) {
+	.swiper-wrapper {
+		display: grid;
+		grid-template-rows: 1fr;
+		grid-auto-flow: column;
+		/* each track = (100% – total gaps) ÷ number of slides */
+		grid-auto-columns: calc((100% - (var(--swiper-space-between, var(--wp--preset--spacing--large)) * (var(--swiper-spv, 1) - 1))) / var(--swiper-spv, 1));
+		row-gap: var(--swiper-space-between, var(--wp--preset--spacing--large));
+		overflow-x: auto;
 	}
 
+	&[data-swiper-slides-per-view-auto="true"] {
+		.swiper-wrapper {
+			display: flex !important;
+
+			>* {
+				min-width: fit-content !important;
+			}
+
+		}
+	}
+}
+
+.wp-block-mello-block-swiper[data-swiper-direction="vertical"] {
+	.swiper-wrapper {
+		display: grid !important;
+		grid-template-columns: 1fr;
+		grid-auto-flow: row;
+		/* each track = (100% – total gaps) ÷ number of slides */
+		grid-auto-rows: calc((100% - (var(--swiper-space-between, var(--wp--preset--spacing--large)) * (var(--swiper-spv, 1) - 1))) / var(--swiper-spv, 1));
+		column-gap: var(--swiper-space-between, var(--wp--preset--spacing--large));
+		overflow-y: auto;
+	}
+
+	&[data-swiper-slides-per-view-auto="true"] {
+		.swiper-wrapper {
+			display: flex !important;
+
+			>* {
+				height: fit-content !important;
+			}
+
+		}
+	}
 }
 
 .wp-block-mello-block-swiper .wp-block-post-template .wp-block-post {

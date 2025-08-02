@@ -168,7 +168,7 @@ export default function Edit({ attributes, setAttributes }) {
                         onChange={(value) => setAttributes({ centeredSlides: value !== undefined ? value : undefined })}
                     />
                     <ToggleControl
-                        label={__('Auto Width Slides', 'mellobase')}
+                        label={__('Auto Fit Slides', 'mellobase')}
                         checked={slidesPerViewAuto}
                         onChange={(value) => setAttributes({ slidesPerViewAuto: value !== undefined ? value : undefined })}
                     />
