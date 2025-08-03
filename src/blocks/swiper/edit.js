@@ -15,9 +15,9 @@ const TEMPLATE = [
             style: { spacing: { blockGap: 'var:preset|spacing|none' } },
         },
         [
-            ['core/group', { metadata: { name: 'Swiper Slide' }, layout: { type: 'constrained' } }, [['core/paragraph', { placeholder: __('Add content to your slide.', 'mellobase') }]]],
-            ['core/group', { metadata: { name: 'Swiper Slide' }, layout: { type: 'constrained' } }, [['core/paragraph', { placeholder: __('Add content to your slide.', 'mellobase') }]]],
-            ['core/group', { metadata: { name: 'Swiper Slide' }, layout: { type: 'constrained' } }, [['core/paragraph', { placeholder: __('Add content to your slide.', 'mellobase') }]]],
+            ['core/group', { metadata: { name: 'Swiper Slide' }, layout: { type: 'constrained' } }, [['core/paragraph', { placeholder: __('Add content to your slide.', 'mello-block') }]]],
+            ['core/group', { metadata: { name: 'Swiper Slide' }, layout: { type: 'constrained' } }, [['core/paragraph', { placeholder: __('Add content to your slide.', 'mello-block') }]]],
+            ['core/group', { metadata: { name: 'Swiper Slide' }, layout: { type: 'constrained' } }, [['core/paragraph', { placeholder: __('Add content to your slide.', 'mello-block') }]]],
         ],
     ],
     ['core/group', { lock: { remove: true }, metadata: { name: 'Pagination Wrapper' }, className: 'swiper-pagination', layout: { type: 'constrained' } }],
@@ -26,8 +26,8 @@ const TEMPLATE = [
         'core/buttons',
         { lock: { remove: true }, className: 'swiper-navigation', metadata: { name: 'Prev / Next Buttons' }, style: { spacing: { blockGap: { left: 'var:preset|spacing|small' } } } },
         [
-            ['core/button', { className: 'swiper-button-prev', "lock": { "move": true, "remove": true }, text: __('prev', 'mellobase') }],
-            ['core/button', { className: 'swiper-button-next', "lock": { "move": true, "remove": true }, text: __('next', 'mellobase') }],
+            ['core/button', { className: 'swiper-button-prev', "lock": { "move": true, "remove": true }, text: __('prev', 'mello-block') }],
+            ['core/button', { className: 'swiper-button-next', "lock": { "move": true, "remove": true }, text: __('next', 'mello-block') }],
         ],
     ],
 ];
@@ -144,41 +144,41 @@ export default function Edit({ attributes, setAttributes }) {
     return (
         <div {...blockProps}>
             <InspectorControls>
-                <PanelBody title={__('Slide Settings', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Slide Settings', 'mello-block')} initialOpen={false}>
                     <SelectControl
                         __next40pxDefaultSize
-                        label={__('Direction', 'mellobase')}
+                        label={__('Direction', 'mello-block')}
                         value={direction || 'horizontal'}
                         options={[
-                            { label: __('Horizontal', 'mellobase'), value: 'horizontal' },
-                            { label: __('Vertical', 'mellobase'), value: 'vertical' },
+                            { label: __('Horizontal', 'mello-block'), value: 'horizontal' },
+                            { label: __('Vertical', 'mello-block'), value: 'vertical' },
                         ]}
                         onChange={(value) => setAttributes({ direction: value })}
 
                     />
                     <Divider />
                     <ToggleControl
-                        label={__('Loop Slides', 'mellobase')}
+                        label={__('Loop Slides', 'mello-block')}
                         checked={loop}
                         onChange={(value) => setAttributes({ loop: value !== undefined ? value : undefined })}
                     />
                     <ToggleControl
-                        label={__('Center Slides', 'mellobase')}
+                        label={__('Center Slides', 'mello-block')}
                         checked={centeredSlides}
                         onChange={(value) => setAttributes({ centeredSlides: value !== undefined ? value : undefined })}
                     />
                     <ToggleControl
-                        label={__('Auto Fit Slides', 'mellobase')}
+                        label={__('Auto Fit Slides', 'mello-block')}
                         checked={slidesPerViewAuto}
                         onChange={(value) => setAttributes({ slidesPerViewAuto: value !== undefined ? value : undefined })}
                     />
                     <ToggleControl
-                        label={__('Auto Height Slider', 'mellobase')}
+                        label={__('Auto Height Slider', 'mello-block')}
                         checked={autoHeight}
                         onChange={(value) => setAttributes({ autoHeight: value !== undefined ? value : undefined })}
                     />
                     <ToggleControl
-                        label={__('Overflow Hidden', 'mellobase')}
+                        label={__('Overflow Hidden', 'mello-block')}
                         checked={overflowHidden}
                         onChange={(value) => setAttributes({ overflowHidden: value !== undefined ? value : undefined })}
                     />
@@ -186,7 +186,7 @@ export default function Edit({ attributes, setAttributes }) {
                     {!slidesPerViewAuto && (
                         <>
                             <RangeControl
-                                label={__('Slides Per View (Desktop)', 'mellobase')}
+                                label={__('Slides Per View (Desktop)', 'mello-block')}
                                 value={slidesPerView !== undefined ? slidesPerView : 3}
                                 onChange={(value) => setAttributes({ slidesPerView: value !== undefined ? value : undefined })}
                                 min={1}
@@ -194,7 +194,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 step={0.25}
                             />
                             <RangeControl
-                                label={__('Slides Per View (Tablet)', 'mellobase')}
+                                label={__('Slides Per View (Tablet)', 'mello-block')}
                                 value={slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2}
                                 onChange={(value) => setAttributes({ slidesPerViewTablet: value !== undefined ? value : undefined })}
                                 min={1}
@@ -202,7 +202,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 step={0.25}
                             />
                             <RangeControl
-                                label={__('Slides Per View (Mobile)', 'mellobase')}
+                                label={__('Slides Per View (Mobile)', 'mello-block')}
                                 value={slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1}
                                 onChange={(value) => setAttributes({ slidesPerViewMobile: value !== undefined ? value : undefined })}
                                 min={1}
@@ -213,7 +213,7 @@ export default function Edit({ attributes, setAttributes }) {
                         </>
                     )}
                     <RangeControl
-                        label={__('Speed (ms)', 'mellobase')}
+                        label={__('Speed (ms)', 'mello-block')}
                         value={speed}
                         onChange={(value) => setAttributes({ speed: value !== undefined ? value : undefined })}
                         min={0}
@@ -221,9 +221,9 @@ export default function Edit({ attributes, setAttributes }) {
                         step={250}
                     />
                 </PanelBody>
-                <PanelBody title={__('Slide Spacing', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Slide Spacing', 'mello-block')} initialOpen={false}>
                     <RangeControl
-                        label={__('Space Between Slides (Desktop, px)', 'mellobase')}
+                        label={__('Space Between Slides (Desktop, px)', 'mello-block')}
                         value={spaceBetween}
                         onChange={(value) => setAttributes({ spaceBetween: value !== undefined ? value : undefined })}
                         min={0}
@@ -231,7 +231,7 @@ export default function Edit({ attributes, setAttributes }) {
                         step={1}
                     />
                     <RangeControl
-                        label={__('Space Between Slides (Tablet, px)', 'mellobase')}
+                        label={__('Space Between Slides (Tablet, px)', 'mello-block')}
                         value={spaceBetweenTablet !== undefined ? spaceBetweenTablet : 50}
                         onChange={(value) => setAttributes({ spaceBetweenTablet: value !== undefined ? value : undefined })}
                         min={0}
@@ -239,7 +239,7 @@ export default function Edit({ attributes, setAttributes }) {
                         step={1}
                     />
                     <RangeControl
-                        label={__('Space Between Slides (Mobile, px)', 'mellobase')}
+                        label={__('Space Between Slides (Mobile, px)', 'mello-block')}
                         value={spaceBetweenMobile !== undefined ? spaceBetweenMobile : 25}
                         onChange={(value) => setAttributes({ spaceBetweenMobile: value !== undefined ? value : undefined })}
                         min={0}
@@ -248,20 +248,20 @@ export default function Edit({ attributes, setAttributes }) {
                     />
                 </PanelBody>
 
-                <PanelBody title={__('Behaviour', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Behaviour', 'mello-block')} initialOpen={false}>
                     <ToggleControl
-                        label={__('Grab Cursor', 'mellobase')}
+                        label={__('Grab Cursor', 'mello-block')}
                         checked={grabCursor}
                         onChange={(value) => setAttributes({ grabCursor: value !== undefined ? value : undefined })}
                     />
                     <ToggleControl
-                        label={__('Slide to Clicked Slide', 'mellobase')}
+                        label={__('Slide to Clicked Slide', 'mello-block')}
                         checked={slideToClickedSlide}
                         onChange={(value) => setAttributes({ slideToClickedSlide: value !== undefined ? value : undefined })}
                     />
                     <Divider />
                     <ToggleControl
-                        label={__('Autoplay', 'mellobase')}
+                        label={__('Autoplay', 'mello-block')}
                         checked={autoplay}
                         onChange={(value) => {
                             setAttributes({
@@ -273,7 +273,7 @@ export default function Edit({ attributes, setAttributes }) {
                     {autoplay && (
                         <>
                             <RangeControl
-                                label={__('Autoplay Delay (ms)', 'mellobase')}
+                                label={__('Autoplay Delay (ms)', 'mello-block')}
                                 value={autoplayDelay}
                                 onChange={(value) => setAttributes({ autoplayDelay: value !== undefined ? value : undefined })}
                                 min={0}
@@ -282,12 +282,12 @@ export default function Edit({ attributes, setAttributes }) {
                                 defaultValue={3000}
                             />
                             <ToggleControl
-                                label={__('Disable on Interaction', 'mellobase')}
+                                label={__('Disable on Interaction', 'mello-block')}
                                 checked={autoplayDisableOnInteraction}
                                 onChange={(value) => setAttributes({ autoplayDisableOnInteraction: value !== undefined ? value : undefined })}
                             />
                             <ToggleControl
-                                label={__('Reverse Direction', 'mellobase')}
+                                label={__('Reverse Direction', 'mello-block')}
                                 checked={autoplayReverseDirection}
                                 onChange={(value) => setAttributes({ autoplayReverseDirection: value !== undefined ? value : undefined })}
                             />
@@ -295,19 +295,19 @@ export default function Edit({ attributes, setAttributes }) {
                     )}
                     <Divider />
                     <ToggleControl
-                        label={__('Free Mode', 'mellobase')}
+                        label={__('Free Mode', 'mello-block')}
                         checked={freeMode}
                         onChange={(value) => setAttributes({ freeMode: value !== undefined ? value : undefined })}
                     />
                     {freeMode && (
                         <>
                             <ToggleControl
-                                label={__('Momentum', 'mellobase')}
+                                label={__('Momentum', 'mello-block')}
                                 checked={freeModeMomentum}
                                 onChange={(value) => setAttributes({ freeModeMomentum: value !== undefined ? value : undefined })}
                             />
                             <RangeControl
-                                label={__('Momentum Ratio', 'mellobase')}
+                                label={__('Momentum Ratio', 'mello-block')}
                                 value={freeModeMomentumRatio}
                                 onChange={(value) => setAttributes({ freeModeMomentumRatio: value !== undefined ? value : undefined })}
                                 min={0}
@@ -315,7 +315,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 step={0.1}
                             />
                             <RangeControl
-                                label={__('Momentum Velocity Ratio', 'mellobase')}
+                                label={__('Momentum Velocity Ratio', 'mello-block')}
                                 value={freeModeMomentumVelocityRatio}
                                 onChange={(value) => setAttributes({ freeModeMomentumVelocityRatio: value !== undefined ? value : undefined })}
                                 min={0}
@@ -323,7 +323,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 step={0.1}
                             />
                             <ToggleControl
-                                label={__('Sticky', 'mellobase')}
+                                label={__('Sticky', 'mello-block')}
                                 checked={freeModeSticky}
                                 onChange={(value) => setAttributes({ freeModeSticky: value !== undefined ? value : undefined })}
                             />
@@ -331,17 +331,17 @@ export default function Edit({ attributes, setAttributes }) {
                     )}
                 </PanelBody>
 
-                <PanelBody title={__('Navigation', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Navigation', 'mello-block')} initialOpen={false}>
                     {/* Navigation Toggle */}
                     <ToggleControl
-                        label={__('Enable Navigation', 'mellobase')}
+                        label={__('Enable Navigation', 'mello-block')}
                         checked={navigation}
                         onChange={(value) => setAttributes({ navigation: value !== undefined ? value : undefined })}
                     />
                     <Divider />
                     {/* Pagination Toggle and controls */}
                     <ToggleControl
-                        label={__('Enable Pagination', 'mellobase')}
+                        label={__('Enable Pagination', 'mello-block')}
                         checked={pagination}
                         onChange={(value) => setAttributes({ pagination: value !== undefined ? value : undefined })}
                     />
@@ -349,18 +349,18 @@ export default function Edit({ attributes, setAttributes }) {
                         <>
                             <SelectControl
                                 __next40pxDefaultSize
-                                label={__('Pagination Type', 'mellobase')}
+                                label={__('Pagination Type', 'mello-block')}
                                 value={paginationType || 'bullets'}
                                 options={[
-                                    { label: __('Bullets', 'mellobase'), value: 'bullets' },
-                                    { label: __('Fraction', 'mellobase'), value: 'fraction' },
-                                    { label: __('Progressbar', 'mellobase'), value: 'progressbar' },
+                                    { label: __('Bullets', 'mello-block'), value: 'bullets' },
+                                    { label: __('Fraction', 'mello-block'), value: 'fraction' },
+                                    { label: __('Progressbar', 'mello-block'), value: 'progressbar' },
                                 ]}
                                 onChange={(value) => setAttributes({ paginationType: value !== undefined ? value : undefined })}
                             />
                             {paginationType === 'bullets' && (
                                 <ToggleControl
-                                    label={__('Clickable', 'mellobase')}
+                                    label={__('Clickable', 'mello-block')}
                                     checked={paginationClickable}
                                     onChange={(value) => setAttributes({ paginationClickable: value !== undefined ? value : undefined })}
                                 />
@@ -369,20 +369,20 @@ export default function Edit({ attributes, setAttributes }) {
                     )}
                     <Divider />
                     <ToggleControl
-                        label={__('Enable Scrollbar', 'mellobase')}
+                        label={__('Enable Scrollbar', 'mello-block')}
                         checked={scrollbar}
                         onChange={(value) => setAttributes({ scrollbar: value !== undefined ? value : undefined })}
                     />
                     {scrollbar && (
                         <ToggleControl
-                            label={__('Hide Scrollbar', 'mellobase')}
+                            label={__('Hide Scrollbar', 'mello-block')}
                             checked={scrollbarHide}
                             onChange={(value) => setAttributes({ scrollbarHide: value !== undefined ? value : undefined })}
                         />
                     )}
                     <Divider />
                     <ToggleControl
-                        label={__('Enable Thumbs', 'mellobase')}
+                        label={__('Enable Thumbs', 'mello-block')}
                         checked={!!enableThumbs}
                         onChange={(value) =>
                             setAttributes({
@@ -393,52 +393,52 @@ export default function Edit({ attributes, setAttributes }) {
                     {enableThumbs && (
                         <TextControl
                             __next40pxDefaultSize
-                            label={__('Thumbs Target', 'mellobase')}
+                            label={__('Thumbs Target', 'mello-block')}
                             value={thumbsTarget || ''}
                             onChange={(value) => setAttributes({ thumbsTarget: value !== '' ? value : undefined })}
-                            placeholder={__('CSS selector or ID of thumbs container', 'mellobase')}
+                            placeholder={__('CSS selector or ID of thumbs container', 'mello-block')}
                         />
                     )}
                 </PanelBody>
 
-                <PanelBody title={__('Effects', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Effects', 'mello-block')} initialOpen={false}>
                     <SelectControl
                         __next40pxDefaultSize
-                        label={__('Effect', 'mellobase')}
+                        label={__('Effect', 'mello-block')}
                         value={effect || 'slide'}
                         options={[
-                            { label: __('Slide', 'mellobase'), value: 'slide' },
-                            { label: __('Fade', 'mellobase'), value: 'fade' },
+                            { label: __('Slide', 'mello-block'), value: 'slide' },
+                            { label: __('Fade', 'mello-block'), value: 'fade' },
                         ]}
                         onChange={(value) => setAttributes({ effect: value !== undefined ? value : undefined })}
                     />
                 </PanelBody>
 
-                <PanelBody title={__('Mousewheel', 'mellobase')} initialOpen={false}>
+                <PanelBody title={__('Mousewheel', 'mello-block')} initialOpen={false}>
                     <ToggleControl
-                        label={__('Enable Mousewheel', 'mellobase')}
+                        label={__('Enable Mousewheel', 'mello-block')}
                         checked={mousewheel}
                         onChange={(value) => setAttributes({ mousewheel: value !== undefined ? value : undefined })}
                     />
                     {mousewheel && (
                         <>
                             <ToggleControl
-                                label={__('Force To Axis', 'mellobase')}
+                                label={__('Force To Axis', 'mello-block')}
                                 checked={mousewheelForceToAxis}
                                 onChange={(value) => setAttributes({ mousewheelForceToAxis: value !== undefined ? value : undefined })}
                             />
                             <ToggleControl
-                                label={__('Invert', 'mellobase')}
+                                label={__('Invert', 'mello-block')}
                                 checked={mousewheelInvert}
                                 onChange={(value) => setAttributes({ mousewheelInvert: value !== undefined ? value : undefined })}
                             />
                             <ToggleControl
-                                label={__('Release On Edges', 'mellobase')}
+                                label={__('Release On Edges', 'mello-block')}
                                 checked={mousewheelReleaseOnEdges}
                                 onChange={(value) => setAttributes({ mousewheelReleaseOnEdges: value !== undefined ? value : undefined })}
                             />
                             <RangeControl
-                                label={__('Sensitivity', 'mellobase')}
+                                label={__('Sensitivity', 'mello-block')}
                                 value={mousewheelSensitivity}
                                 onChange={(value) => setAttributes({ mousewheelSensitivity: value !== undefined ? value : undefined })}
                                 min={0.1}
@@ -447,11 +447,11 @@ export default function Edit({ attributes, setAttributes }) {
                             />
                             <SelectControl
                                 __next40pxDefaultSize
-                                label={__('Events Target', 'mellobase')}
+                                label={__('Events Target', 'mello-block')}
                                 value={mousewheelEventsTarget || 'container'}
                                 options={[
-                                    { label: __('Container', 'mellobase'), value: 'container' },
-                                    { label: __('Wrapper', 'mellobase'), value: 'wrapper' },
+                                    { label: __('Container', 'mello-block'), value: 'container' },
+                                    { label: __('Wrapper', 'mello-block'), value: 'wrapper' },
                                 ]}
                                 onChange={(value) => setAttributes({ mousewheelEventsTarget: value !== undefined ? value : undefined })}
                             />
