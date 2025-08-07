@@ -18,7 +18,8 @@ import { __ } from "@wordpress/i18n";
  * @param {Object} settings Block settings.
  */
 function addAttributes(settings) {
-	if (!settings.name || !settings.name.startsWith('core/')) {
+	const unsupportedBlocks = ['core/calendar'];
+	if (!settings.name || !settings.name.startsWith('core/') || unsupportedBlocks.includes(settings.name)) {
 		return settings;
 	}
 
@@ -71,7 +72,8 @@ addFilter(
  */
 function addInspectorControls(BlockEdit) {
 	return (props) => {
-		if (!props.name || !props.name.startsWith('core/')) {
+		const unsupportedBlocks = ['core/calendar'];
+		if (!props.name || !props.name.startsWith('core/') || unsupportedBlocks.includes(props.name)) {
 			return <BlockEdit {...props} />;
 		}
 

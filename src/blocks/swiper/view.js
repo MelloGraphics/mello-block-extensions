@@ -303,125 +303,125 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Handle thumbs integration if enabled
         // Handle thumbs integration if enabled
-if (hasThumbs && hasThumbsTarget) {
-    const thumbsEl = document.querySelector(thumbsTargetSelector);
-    if (thumbsEl) {
-        const thumbModuleInfo = modulesToLoad.find(m => m.name === 'Thumbs');
-        if (thumbModuleInfo) {
-            // Initialize thumbs options
-            const thumbsOptions = {
-                modules: [thumbModuleInfo.module],
-                watchSlidesProgress: true,
-                slideToClickedSlide: true,
-            };
+        if (hasThumbs && hasThumbsTarget) {
+            const thumbsEl = document.querySelector(thumbsTargetSelector);
+            if (thumbsEl) {
+                const thumbModuleInfo = modulesToLoad.find(m => m.name === 'Thumbs');
+                if (thumbModuleInfo) {
+                    // Initialize thumbs options
+                    const thumbsOptions = {
+                        modules: [thumbModuleInfo.module],
+                        watchSlidesProgress: true,
+                        slideToClickedSlide: true,
+                    };
 
-            // Add `swiper-slide` class to each child of thumbs swiper
-            const thumbsWrapper = thumbsEl.querySelector('.swiper-wrapper');
-            if (thumbsWrapper) {
-                thumbsWrapper.querySelectorAll(':scope > *').forEach((child) => {
-                    if (!child.classList.contains('swiper-slide')) {
-                        child.classList.add('swiper-slide');
+                    // Add `swiper-slide` class to each child of thumbs swiper
+                    const thumbsWrapper = thumbsEl.querySelector('.swiper-wrapper');
+                    if (thumbsWrapper) {
+                        thumbsWrapper.querySelectorAll(':scope > *').forEach((child) => {
+                            if (!child.classList.contains('swiper-slide')) {
+                                child.classList.add('swiper-slide');
+                            }
+                        });
                     }
-                });
-            }
 
-            // Read thumbs swiper data attributes and build configuration
-            const thumbsDataAttributes = Array.from(thumbsEl.attributes)
-                .filter(attr => attr.name.startsWith('data-swiper-'));
+                    // Read thumbs swiper data attributes and build configuration
+                    const thumbsDataAttributes = Array.from(thumbsEl.attributes)
+                        .filter(attr => attr.name.startsWith('data-swiper-'));
 
-            // Check if thumbs swiper needs slidesPerViewAuto
-            const thumbsHasSlidesPerViewAuto = thumbsDataAttributes.some(attr =>
-                attr.name === 'data-swiper-slides-per-view-auto' && attr.value === 'true');
+                    // Check if thumbs swiper needs slidesPerViewAuto
+                    const thumbsHasSlidesPerViewAuto = thumbsDataAttributes.some(attr =>
+                        attr.name === 'data-swiper-slides-per-view-auto' && attr.value === 'true');
 
-            // Process thumbs data attributes
-            thumbsDataAttributes.forEach((attr) => {
-                const key = attr.name.replace('data-swiper-', '').replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-                let value = attr.value;
+                    // Process thumbs data attributes
+                    thumbsDataAttributes.forEach((attr) => {
+                        const key = attr.name.replace('data-swiper-', '').replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+                        let value = attr.value;
 
-                if (value === 'true') value = true;
-                else if (value === 'false') value = false;
-                else if (!isNaN(value)) value = Number(value);
+                        if (value === 'true') value = true;
+                        else if (value === 'false') value = false;
+                        else if (!isNaN(value)) value = Number(value);
 
-                // Skip certain attributes that don't apply to thumbs
-                if (['navigation', 'pagination', 'scrollbar', 'mousewheel', 'autoplay', 'slidesPerViewAuto'].includes(key)) {
-                    return;
+                        // Skip certain attributes that don't apply to thumbs
+                        if (['navigation', 'pagination', 'scrollbar', 'mousewheel', 'autoplay', 'slidesPerViewAuto'].includes(key)) {
+                            return;
+                        }
+
+                        thumbsOptions[key] = value;
+                    });
+
+                    // Handle responsive breakpoints for thumbs
+                    if (thumbsHasSlidesPerViewAuto) {
+                        thumbsOptions.slidesPerView = 'auto';
+
+                        const spaceBetween = thumbsOptions.spaceBetween || 0;
+                        const spaceBetweenMobile = thumbsEl.hasAttribute('data-swiper-space-between-mobile')
+                            ? Number(thumbsEl.getAttribute('data-swiper-space-between-mobile'))
+                            : spaceBetween;
+                        const spaceBetweenTablet = thumbsEl.hasAttribute('data-swiper-space-between-tablet')
+                            ? Number(thumbsEl.getAttribute('data-swiper-space-between-tablet'))
+                            : spaceBetweenMobile;
+
+                        thumbsOptions.breakpoints = {
+                            0: {
+                                slidesPerView: 'auto',
+                                spaceBetween: spaceBetweenMobile
+                            },
+                            782: {
+                                slidesPerView: 'auto',
+                                spaceBetween: spaceBetweenTablet
+                            },
+                            1200: {
+                                slidesPerView: 'auto',
+                                spaceBetween: spaceBetween
+                            }
+                        };
+                    } else {
+                        // Standard responsive breakpoints for thumbs
+                        const slidesPerView = thumbsOptions.slidesPerView || 1;
+                        const spaceBetween = thumbsOptions.spaceBetween || 0;
+                        const slidesPerViewMobile = thumbsEl.hasAttribute('data-swiper-slides-per-view-mobile')
+                            ? Number(thumbsEl.getAttribute('data-swiper-slides-per-view-mobile'))
+                            : slidesPerView;
+                        const spaceBetweenMobile = thumbsEl.hasAttribute('data-swiper-space-between-mobile')
+                            ? Number(thumbsEl.getAttribute('data-swiper-space-between-mobile'))
+                            : spaceBetween;
+                        const slidesPerViewTablet = thumbsEl.hasAttribute('data-swiper-slides-per-view-tablet')
+                            ? Number(thumbsEl.getAttribute('data-swiper-slides-per-view-tablet'))
+                            : slidesPerViewMobile;
+                        const spaceBetweenTablet = thumbsEl.hasAttribute('data-swiper-space-between-tablet')
+                            ? Number(thumbsEl.getAttribute('data-swiper-space-between-tablet'))
+                            : spaceBetweenMobile;
+
+                        thumbsOptions.breakpoints = {
+                            0: {
+                                slidesPerView: slidesPerViewMobile,
+                                spaceBetween: spaceBetweenMobile
+                            },
+                            782: {
+                                slidesPerView: slidesPerViewTablet,
+                                spaceBetween: spaceBetweenTablet
+                            },
+                            1200: {
+                                slidesPerView: slidesPerView,
+                                spaceBetween: spaceBetween
+                            }
+                        };
+                    }
+
+                    // Set direction if provided for thumbs
+                    if (thumbsEl.hasAttribute('data-swiper-direction')) {
+                        thumbsOptions.direction = thumbsEl.getAttribute('data-swiper-direction');
+                    }
+
+                    // Create the thumbs swiper with full configuration
+                    const thumbsSwiper = new Swiper(thumbsEl, thumbsOptions);
+                    options.thumbs = { swiper: thumbsSwiper };
                 }
-
-                thumbsOptions[key] = value;
-            });
-
-            // Handle responsive breakpoints for thumbs
-            if (thumbsHasSlidesPerViewAuto) {
-                thumbsOptions.slidesPerView = 'auto';
-
-                const spaceBetween = thumbsOptions.spaceBetween || 0;
-                const spaceBetweenMobile = thumbsEl.hasAttribute('data-swiper-space-between-mobile')
-                    ? Number(thumbsEl.getAttribute('data-swiper-space-between-mobile'))
-                    : spaceBetween;
-                const spaceBetweenTablet = thumbsEl.hasAttribute('data-swiper-space-between-tablet')
-                    ? Number(thumbsEl.getAttribute('data-swiper-space-between-tablet'))
-                    : spaceBetweenMobile;
-
-                thumbsOptions.breakpoints = {
-                    0: {
-                        slidesPerView: 'auto',
-                        spaceBetween: spaceBetweenMobile
-                    },
-                    782: {
-                        slidesPerView: 'auto',
-                        spaceBetween: spaceBetweenTablet
-                    },
-                    1200: {
-                        slidesPerView: 'auto',
-                        spaceBetween: spaceBetween
-                    }
-                };
             } else {
-                // Standard responsive breakpoints for thumbs
-                const slidesPerView = thumbsOptions.slidesPerView || 1;
-                const spaceBetween = thumbsOptions.spaceBetween || 0;
-                const slidesPerViewMobile = thumbsEl.hasAttribute('data-swiper-slides-per-view-mobile')
-                    ? Number(thumbsEl.getAttribute('data-swiper-slides-per-view-mobile'))
-                    : slidesPerView;
-                const spaceBetweenMobile = thumbsEl.hasAttribute('data-swiper-space-between-mobile')
-                    ? Number(thumbsEl.getAttribute('data-swiper-space-between-mobile'))
-                    : spaceBetween;
-                const slidesPerViewTablet = thumbsEl.hasAttribute('data-swiper-slides-per-view-tablet')
-                    ? Number(thumbsEl.getAttribute('data-swiper-slides-per-view-tablet'))
-                    : slidesPerViewMobile;
-                const spaceBetweenTablet = thumbsEl.hasAttribute('data-swiper-space-between-tablet')
-                    ? Number(thumbsEl.getAttribute('data-swiper-space-between-tablet'))
-                    : spaceBetweenMobile;
-
-                thumbsOptions.breakpoints = {
-                    0: {
-                        slidesPerView: slidesPerViewMobile,
-                        spaceBetween: spaceBetweenMobile
-                    },
-                    782: {
-                        slidesPerView: slidesPerViewTablet,
-                        spaceBetween: spaceBetweenTablet
-                    },
-                    1200: {
-                        slidesPerView: slidesPerView,
-                        spaceBetween: spaceBetween
-                    }
-                };
+                console.warn(`Thumbs target "${thumbsTargetSelector}" not found for swiper`, swiperElement);
             }
-
-            // Set direction if provided for thumbs
-            if (thumbsEl.hasAttribute('data-swiper-direction')) {
-                thumbsOptions.direction = thumbsEl.getAttribute('data-swiper-direction');
-            }
-
-            // Create the thumbs swiper with full configuration
-            const thumbsSwiper = new Swiper(thumbsEl, thumbsOptions);
-            options.thumbs = { swiper: thumbsSwiper };
         }
-    } else {
-        console.warn(`Thumbs target "${thumbsTargetSelector}" not found for swiper`, swiperElement);
-    }
-}
 
         // Set direction if provided
         if (swiperElement.hasAttribute('data-swiper-direction')) {
