@@ -16,7 +16,7 @@ function addAllowedBlocks(settings) {
         return settings;
     }
 
-    const newAllowedBlocks = ['core/paragraph', 'core/heading', 'core/group', 'core/columns'];
+    const newAllowedBlocks = ['core/paragraph', 'core/heading', 'core/group'];
 
     return {
         ...settings,
