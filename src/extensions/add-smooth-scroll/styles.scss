@@ -1,12 +1,12 @@
-[data-scroll-speed] {
-  will-change: transform;
-}
-
 // lenis CSS https://github.com/darkroomengineering/lenis/blob/main/packages/core/lenis.css
 
 html.lenis,
 html.lenis body {
   height: auto;
+
+  [data-scroll-speed] {
+    will-change: transform;
+  }
 }
 
 .lenis:not(.lenis-autoToggle).lenis-stopped {
@@ -27,6 +27,6 @@ html.lenis body {
   transition-behavior: allow-discrete;
 }
 
-.has-inner-scroll-speed{
+.has-inner-scroll-speed {
   overflow: clip;
 }

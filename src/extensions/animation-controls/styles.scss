@@ -1,0 +1,11 @@
+// Hide elements before motion.js takes over for animations
+
+html.js {
+    [data-animation="true"],
+    [data-child-animation="true"]>* {
+        opacity: 0;
+        will-change: opacity, transform;
+
+        border: solid pink 5px;
+    }
+}

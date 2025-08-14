@@ -5,6 +5,14 @@
  * This function adds animation attributes specifically to the post-template block
  * which is rendered server-side by WordPress.
  */
+
+// Add .js class to the html tag for animation-related styles
+add_action('wp_head', function () {
+    if ( ! is_admin() ) {
+        echo "<script>document.documentElement.classList.add('js');</script>";
+    }
+}, 0);
+
 add_filter('render_block_core/post-template', function ($block_content, $block) {
     // Only process if child animation is explicitly enabled
     if (empty($block['attrs']['animateChildren']) || $block['attrs']['animateChildren'] !== true) {
