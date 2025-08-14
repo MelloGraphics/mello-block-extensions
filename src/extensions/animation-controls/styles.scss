@@ -4,6 +4,6 @@ html.js {
     [data-animation="true"],
     [data-child-animation="true"]>* {
         opacity: 0;
-        will-change: opacity, transform;
+        will-change: opacity;
     }
 }
