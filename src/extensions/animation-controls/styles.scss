@@ -5,7 +5,5 @@ html.js {
     [data-child-animation="true"]>* {
         opacity: 0;
         will-change: opacity, transform;
-
-        border: solid pink 5px;
     }
 }
