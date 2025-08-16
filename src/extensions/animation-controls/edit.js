@@ -32,13 +32,26 @@ function addAttributes(settings) {
 		animateChildren: { type: "boolean", default: false },
 		animationTrigger: { type: "string", default: "section" },
 		animationTriggerPoint: { type: "number", default: -25 },
+
+		animationMethod: { type: "string" }, // No default, undefined unless set
+		animationEasing: { type: "string" }, // No default, undefined unless set
+		animationRepeat: { type: "number" }, // No default, undefined unless set
+		animationRepeatType: { type: "string" }, // No default, undefined unless set
+		animationRepeatDelay: { type: "number" }, // No default, undefined unless set
+
 		childAnimationType: { type: "string", default: "fade-in" },
 		childAnimationDuration: { type: "number", default: 500 },
 		childAnimationStaggerDelay: { type: "number", default: 100 },
 		childAnimationTrigger: { type: "string", default: "section" },
 		childAnimationTriggerPoint: { type: "number", default: -25 },
 		animationCustomConfig: { type: "string" },
-		childAnimationCustomConfig: { type: "string" }
+		childAnimationCustomConfig: { type: "string" },
+
+		childAnimationMethod: { type: "string" }, // No default, undefined unless set
+		childAnimationEasing: { type: "string" }, // No default, undefined unless set
+		childAnimationRepeat: { type: "number" }, // No default, undefined unless set
+		childAnimationRepeatType: { type: "string" }, // No default, undefined unless set
+		childAnimationRepeatDelay: { type: "number" }, // No default, undefined unless set
 	};
 
 	// Optional attributes, no defaults, so they are only saved if set.
@@ -95,6 +108,16 @@ function addInspectorControls(BlockEdit) {
 			childAnimationTriggerPoint,
 			animationCustomConfig,
 			childAnimationCustomConfig,
+			animationMethod,
+			animationEasing,
+			animationRepeat,
+			animationRepeatType,
+			animationRepeatDelay,
+			childAnimationMethod,
+			childAnimationEasing,
+			childAnimationRepeat,
+			childAnimationRepeatType,
+			childAnimationRepeatDelay,
 		} = attributes;
 
 		const allowedParentBlockTypes = [
@@ -105,6 +128,24 @@ function addInspectorControls(BlockEdit) {
 			'core/buttons',
 			'core/list',
 			'core/post-template',
+		];
+
+		const easingOptions = [
+			{ label: "Linear", value: "linear" },
+			{ label: "Ease", value: "ease" },
+			{ label: "Ease In", value: "easeIn" },
+			{ label: "Ease Out", value: "easeOut" },
+			{ label: "Ease In Out", value: "easeInOut" },
+			{ label: "Circ In", value: "circIn" },
+			{ label: "Circ Out", value: "circOut" },
+			{ label: "Circ In Out", value: "circInOut" },
+			{ label: "Back In", value: "backIn" },
+			{ label: "Back Out", value: "backOut" },
+			{ label: "Back In Out", value: "backInOut" },
+			{ label: "Anticipate", value: "anticipate" },
+			{ label: "Bounce In", value: "bounceIn" },
+			{ label: "Bounce Out", value: "bounceOut" },
+			{ label: "Bounce In Out", value: "bounceInOut" },
 		];
 
 		const handleAnimationTriggerChange = (value) => {
@@ -152,16 +193,16 @@ function addInspectorControls(BlockEdit) {
 								}
 							}}
 						/>
-						
+
 						{animateSelf && (
 							<>
-							<Divider />
+								<Divider />
 								<ComboboxControl
 									__next40pxDefaultSize
 									label={__("Animation Preset", "mello-block-extensions")}
-									value={animationType}
+									value={animationType || 'fade-in'}
 									options={[
-										{ label: "Fade In", value: "fade-in" },
+										{ label: "Fade In", value: "fade-in", default: true },
 										{ label: "Slide Up", value: "slide-up" },
 										{ label: "Slide Down", value: "slide-down" },
 										{ label: "Slide Left", value: "slide-left" },
@@ -193,7 +234,7 @@ function addInspectorControls(BlockEdit) {
 									min={100}
 									max={3000}
 									step={50}
-									
+
 								/>
 								<RangeControl
 									__next40pxDefaultSize
@@ -203,8 +244,77 @@ function addInspectorControls(BlockEdit) {
 									min={0}
 									max={3000}
 									step={50}
-									
+
 								/>
+								<Divider />
+								<SelectControl
+									label={__("Animation Method", "mello-block-extensions")}
+									value={animationMethod ?? 'tween'}
+									options={[
+										{ label: "Tween", value: "tween" },
+										{ label: "Spring", value: "spring" },
+										{ label: "Inertia", value: "inertia" },
+									]}
+									onChange={(value) => {
+										setAttributes({ animationMethod: value });
+										if (value !== 'tween') {
+											setAttributes({ animationEasing: undefined });
+										}
+									}}
+									__next40pxDefaultSize
+								/>
+								{(animationMethod ?? 'tween') === "tween" && (
+									<SelectControl
+										label={__("Animation Easing", "mello-block-extensions")}
+										value={animationEasing ?? 'circOut'}
+										options={easingOptions}
+										onChange={(value) => setAttributes({ animationEasing: value })}
+										__next40pxDefaultSize
+									/>
+								)}
+								<RangeControl
+									__next40pxDefaultSize
+									label={__("Repeat Count", "mello-block-extensions")}
+									value={Number.isFinite(animationRepeat) ? animationRepeat : 0}
+									onChange={(value) => {
+										setAttributes({ animationRepeat: value });
+										if (!Number.isFinite(value) || value === 0) {
+											setAttributes({ animationRepeatType: undefined, animationRepeatDelay: undefined });
+										}
+									}}
+									min={0}
+									max={10}
+									step={1}
+									marks={[
+										{ value: 0, label: __("0", "mello-block-extensions") },
+										{ value: 10, label: __("∞", "mello-block-extensions") },
+									]}
+									help={__("Set to 10 for infinite repeat", "mello-block-extensions")}
+								/>
+								{((Number.isFinite(animationRepeat) ? animationRepeat : 0) > 0 || animationRepeatType !== undefined || animationRepeatDelay !== undefined) && (
+									<>
+										<SelectControl
+											label={__("Repeat Type", "mello-block-extensions")}
+											value={animationRepeatType}
+											options={[
+												{ label: "Loop", value: "loop" },
+												{ label: "Reverse", value: "reverse" },
+												{ label: "Mirror", value: "mirror" },
+											]}
+											onChange={(value) => setAttributes({ animationRepeatType: value })}
+											__next40pxDefaultSize
+										/>
+										<RangeControl
+											__next40pxDefaultSize
+											label={__("Repeat Delay (ms)", "mello-block-extensions")}
+											value={animationRepeatDelay}
+											onChange={(value) => setAttributes({ animationRepeatDelay: value })}
+											min={0}
+											max={3000}
+											step={50}
+										/>
+									</>
+								)}
 								<Divider />
 								<SelectControl
 									label={__("Animation Trigger", "mello-block-extensions")}
@@ -231,7 +341,7 @@ function addInspectorControls(BlockEdit) {
 											{ value: -100, label: __("Top", "mello-block-extensions") },
 											{ value: 0, label: __("Bottom", "mello-block-extensions") },
 										]}
-										
+
 									/>
 								)}
 								{animationTrigger === "custom" && (
@@ -241,7 +351,7 @@ function addInspectorControls(BlockEdit) {
 											label={__("Custom Trigger Selector", "mello-block-extensions")}
 											value={animationTriggerCustomSelector}
 											onChange={(value) => setAttributes({ animationTriggerCustomSelector: value })}
-											help={__("CSS selector for custom trigger element", "mello-block-extensions")}
+											help={__("Unique CSS selector to trigger animation", "mello-block-extensions")}
 										/>
 										<RangeControl
 											__next40pxDefaultSize
@@ -256,7 +366,7 @@ function addInspectorControls(BlockEdit) {
 												{ value: -100, label: __("Top", "mello-block-extensions") },
 												{ value: 0, label: __("Bottom", "mello-block-extensions") },
 											]}
-											
+
 										/>
 									</>
 								)}
@@ -275,11 +385,11 @@ function addInspectorControls(BlockEdit) {
 								/>
 								{animateChildren && (
 									<>
-									<Divider />
+										<Divider />
 										<ComboboxControl
 											__next40pxDefaultSize
 											label={__("Child Animation Type", "mello-block-extensions")}
-											value={childAnimationType}
+											value={animationType || 'fade-in'}
 											options={[
 												{ label: "Fade In", value: "fade-in" },
 												{ label: "Slide Up", value: "slide-up" },
@@ -297,7 +407,6 @@ function addInspectorControls(BlockEdit) {
 											}
 										/>
 
-
 										{childAnimationType === "custom" && (
 											<TextareaControl
 												__next40pxDefaultSize
@@ -307,7 +416,6 @@ function addInspectorControls(BlockEdit) {
 												onChange={(value) => setAttributes({ childAnimationCustomConfig: value })}
 												rows={10}
 											/>
-											
 										)}
 										<Divider />
 										<RangeControl
@@ -320,7 +428,7 @@ function addInspectorControls(BlockEdit) {
 											min={100}
 											max={3000}
 											step={50}
-											
+
 										/>
 										<RangeControl
 											__next40pxDefaultSize
@@ -332,8 +440,77 @@ function addInspectorControls(BlockEdit) {
 											min={0}
 											max={1000}
 											step={50}
-											
+
 										/>
+										<Divider />
+										<SelectControl
+											label={__("Child Animation Method", "mello-block-extensions")}
+											value={childAnimationMethod ?? 'tween'}
+											options={[
+												{ label: "Tween", value: "tween" },
+												{ label: "Spring", value: "spring" },
+												{ label: "Inertia", value: "inertia" },
+											]}
+											onChange={(value) => {
+												setAttributes({ childAnimationMethod: value });
+												if (value !== 'tween') {
+													setAttributes({ childAnimationEasing: undefined });
+												}
+											}}
+											__next40pxDefaultSize
+										/>
+										{(childAnimationMethod ?? 'tween') === "tween" && (
+											<SelectControl
+												label={__("Child Animation Easing", "mello-block-extensions")}
+												value={childAnimationEasing ?? 'circOut'}
+												options={easingOptions}
+												onChange={(value) => setAttributes({ childAnimationEasing: value })}
+												__next40pxDefaultSize
+											/>
+										)}
+										<RangeControl
+											__next40pxDefaultSize
+											label={__("Child Repeat Count", "mello-block-extensions")}
+											value={Number.isFinite(childAnimationRepeat) ? childAnimationRepeat : 0}
+											onChange={(value) => {
+												setAttributes({ childAnimationRepeat: value });
+												if (!Number.isFinite(value) || value === 0) {
+													setAttributes({ childAnimationRepeatType: undefined, childAnimationRepeatDelay: undefined });
+												}
+											}}
+											min={0}
+											max={10}
+											step={1}
+											marks={[
+												{ value: 0, label: __("0", "mello-block-extensions") },
+												{ value: 10, label: __("∞", "mello-block-extensions") },
+											]}
+											help={__("Set to 10 for infinite repeat", "mello-block-extensions")}
+										/>
+										{((Number.isFinite(childAnimationRepeat) ? childAnimationRepeat : 0) > 0 || childAnimationRepeatType !== undefined || childAnimationRepeatDelay !== undefined) && (
+											<>
+												<SelectControl
+													label={__("Child Repeat Type", "mello-block-extensions")}
+													value={childAnimationRepeatType}
+													options={[
+														{ label: "Loop", value: "loop" },
+														{ label: "Reverse", value: "reverse" },
+														{ label: "Mirror", value: "mirror" },
+													]}
+													onChange={(value) => setAttributes({ childAnimationRepeatType: value })}
+													__next40pxDefaultSize
+												/>
+												<RangeControl
+													__next40pxDefaultSize
+													label={__("Child Repeat Delay (ms)", "mello-block-extensions")}
+													value={childAnimationRepeatDelay}
+													onChange={(value) => setAttributes({ childAnimationRepeatDelay: value })}
+													min={0}
+													max={3000}
+													step={50}
+												/>
+											</>
+										)}
 										<Divider />
 										<SelectControl
 											label={__("Child Animation Trigger", "mello-block-extensions")}
@@ -360,13 +537,13 @@ function addInspectorControls(BlockEdit) {
 													{ value: -100, label: __("Top", "mello-block-extensions") },
 													{ value: 0, label: __("Bottom", "mello-block-extensions") },
 												]}
-												
+
 											/>
 										)}
 										{childAnimationTrigger === "custom" && (
 											<>
 												<TextControl
-												__next40pxDefaultSize
+													__next40pxDefaultSize
 													label={__("Custom Child Trigger Selector", "mello-block-extensions")}
 													value={childAnimationCustomSelector}
 													onChange={(value) => setAttributes({ childAnimationCustomSelector: value })}
@@ -385,7 +562,7 @@ function addInspectorControls(BlockEdit) {
 														{ value: -100, label: __("Top", "mello-block-extensions") },
 														{ value: 0, label: __("Bottom", "mello-block-extensions") },
 													]}
-													
+
 												/>
 											</>
 										)}
@@ -431,6 +608,16 @@ function addSaveProps(extraProps, blockType, attributes) {
 		childAnimationTriggerPoint,
 		animationCustomConfig,
 		childAnimationCustomConfig,
+		animationMethod,
+		animationEasing,
+		animationRepeat,
+		animationRepeatType,
+		animationRepeatDelay,
+		childAnimationMethod,
+		childAnimationEasing,
+		childAnimationRepeat,
+		childAnimationRepeatType,
+		childAnimationRepeatDelay,
 	} = attributes;
 
 	if (animateSelf) {
@@ -440,7 +627,23 @@ function addSaveProps(extraProps, blockType, attributes) {
 		extraProps["data-animation-duration"] = animationDuration;
 		extraProps["data-animation-delay"] = animationDelay;
 		extraProps["data-animation-trigger-point"] = animationTriggerPoint;
-
+		// Only print new v2 attributes if explicitly set
+		if (animationMethod != null) {
+			extraProps["data-animation-method"] = animationMethod;
+		}
+		if ((animationMethod ?? 'tween') === 'tween' && animationEasing != null) {
+			extraProps["data-animation-easing"] = animationEasing;
+		}
+		if (Number.isFinite(animationRepeat) && animationRepeat > 0) {
+			extraProps["data-animation-repeat"] = animationRepeat === 10 ? "Infinity" : animationRepeat;
+			if (animationRepeatType != null) {
+				extraProps["data-animation-repeat-type"] = animationRepeatType;
+			}
+			if (Number.isFinite(animationRepeatDelay) && animationRepeatDelay > 0) {
+				extraProps["data-animation-repeat-delay"] = animationRepeatDelay;
+			}
+		}
+		// Custom selector/config (existing guards)
 		if (typeof animationTriggerCustomSelector === 'string' &&
 			animationTriggerCustomSelector.trim() !== '' &&
 			animationTrigger === 'custom') {
@@ -472,6 +675,11 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-animation-trigger-point"];
 		delete extraProps["data-animation-trigger-custom-selector"];
 		delete extraProps["data-animation-config"];
+		delete extraProps["data-animation-method"];
+		delete extraProps["data-animation-easing"];
+		delete extraProps["data-animation-repeat"];
+		delete extraProps["data-animation-repeat-type"];
+		delete extraProps["data-animation-repeat-delay"];
 	}
 
 	if (animateChildren) {
@@ -481,6 +689,22 @@ function addSaveProps(extraProps, blockType, attributes) {
 		extraProps["data-child-animation-stagger-delay"] = childAnimationStaggerDelay;
 		extraProps["data-child-animation-trigger"] = childAnimationTrigger;
 		extraProps["data-child-animation-trigger-point"] = childAnimationTriggerPoint;
+		// Only print new v2 child attributes if explicitly set
+		if (childAnimationMethod != null) {
+			extraProps["data-child-animation-method"] = childAnimationMethod;
+		}
+		if ((childAnimationMethod ?? 'tween') === 'tween' && childAnimationEasing != null) {
+			extraProps["data-child-animation-easing"] = childAnimationEasing;
+		}
+		if (Number.isFinite(childAnimationRepeat) && childAnimationRepeat > 0) {
+			extraProps["data-child-animation-repeat"] = childAnimationRepeat === 10 ? "Infinity" : childAnimationRepeat;
+			if (childAnimationRepeatType != null) {
+				extraProps["data-child-animation-repeat-type"] = childAnimationRepeatType;
+			}
+			if (Number.isFinite(childAnimationRepeatDelay) && childAnimationRepeatDelay > 0) {
+				extraProps["data-child-animation-repeat-delay"] = childAnimationRepeatDelay;
+			}
+		}
 
 		if (typeof childAnimationCustomSelector === 'string' &&
 			childAnimationCustomSelector.trim() !== '' &&
@@ -513,6 +737,11 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-child-animation-trigger-point"];
 		delete extraProps["data-child-animation-custom-selector"];
 		delete extraProps["data-child-animation-config"];
+		delete extraProps["data-child-animation-method"];
+		delete extraProps["data-child-animation-easing"];
+		delete extraProps["data-child-animation-repeat"];
+		delete extraProps["data-child-animation-repeat-type"];
+		delete extraProps["data-child-animation-repeat-delay"];
 	}
 
 	return extraProps;

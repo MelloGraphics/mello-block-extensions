@@ -10,6 +10,81 @@ function findClosestByTag(element, tagName) {
     return element;
 }
 
+// Helper to get easing function from Motion.js
+function getEasingFunction(easingName) {
+    const { 
+        linear, ease, easeIn, easeOut, easeInOut,
+        circIn, circOut, circInOut,
+        backIn, backOut, backInOut,
+        anticipate,
+        bounceIn, bounceOut, bounceInOut
+    } = window.MelloMotion;
+    
+    const easingMap = {
+        linear,
+        ease,
+        easeIn,
+        easeOut,
+        easeInOut,
+        circIn,
+        circOut,
+        circInOut,
+        backIn,
+        backOut,
+        backInOut,
+        anticipate,
+        bounceIn,
+        bounceOut,
+        bounceInOut
+    };
+    
+    return easingMap[easingName] || circOut;
+}
+
+// Helper to create animation options with method, easing, and repeat
+function createAnimationOptions(element, prefix = '') {
+    const dataPrefix = prefix ? `data-${prefix}-` : 'data-animation-';
+    
+    const duration = parseFloat(element.getAttribute(`${dataPrefix}duration`) || 0.5) / 1000;
+    const delay = parseFloat(element.getAttribute(`${dataPrefix}delay`) || 0) / 1000;
+    const method = element.getAttribute(`${dataPrefix}method`) || 'tween';
+    const easing = element.getAttribute(`${dataPrefix}easing`) || 'circOut';
+    const repeat = element.getAttribute(`${dataPrefix}repeat`) || '0';
+    const repeatType = element.getAttribute(`${dataPrefix}repeat-type`) || 'loop';
+    const repeatDelay = parseFloat(element.getAttribute(`${dataPrefix}repeat-delay`) || 0) / 1000;
+    
+    const options = {
+        duration,
+        delay
+    };
+    
+    // Handle animation method
+    if (method === 'tween') {
+        options.ease = getEasingFunction(easing);
+    } else if (method === 'spring') {
+        // Spring animations use different properties
+        options.type = 'spring';
+        options.stiffness = 100;
+        options.damping = 10;
+    } else if (method === 'inertia') {
+        options.type = 'inertia';
+        options.power = 0.8;
+        options.timeConstant = 750;
+    }
+    
+    // Handle repeat
+    if (repeat !== '0') {
+        const repeatCount = repeat === 'Infinity' ? Infinity : parseInt(repeat);
+        options.repeat = repeatCount;
+        options.repeatType = repeatType;
+        if (repeatDelay > 0) {
+            options.repeatDelay = repeatDelay;
+        }
+    }
+    
+    return options;
+}
+
 const animationDefaults = {
     "fade-in": { opacity: [0, 1] },
     "slide-up": { opacity: [0, 1], y: [20, 0] },
@@ -35,20 +110,19 @@ const animationDefaults = {
 };
 
 document.addEventListener('mello-motion-ready', () => {
-    const { animate, easeOut, inView, stagger } = window.MelloMotion;
+    const { animate, stagger, inView } = window.MelloMotion;
+    
+    // Individual element animations
     const animatedElements = document.querySelectorAll('[data-animation="true"]');
-
     animatedElements.forEach((element) => {
         const animationType = element.getAttribute("data-animation-type") || "fade-in";
-        const duration = element.getAttribute("data-animation-duration") || 0.5;
-        const delay = element.getAttribute("data-animation-delay") || 0;
         const trigger = element.getAttribute("data-animation-trigger") || "section";
         const customSelector = element.getAttribute("data-animation-trigger-custom-selector");
         const triggerPointValue = element.getAttribute("data-animation-trigger-point") || "-25";
         const triggerPoint = triggerPointValue.includes("%") ? triggerPointValue : `${triggerPointValue}%`;
-        let triggerElement = element;
-
+        
         // Determine trigger element
+        let triggerElement = element;
         if (trigger === "section") {
             triggerElement = findClosestByTag(element, "section");
         } else if (trigger === "self") {
@@ -60,132 +134,118 @@ document.addEventListener('mello-motion-ready', () => {
             }
         }
 
-        let animationTimeline;
-        let animationProps = animationDefaults[animationType];
-
-        // Set initial styles for non-custom animations
-        if (animationType !== "custom") {
-            element.style.opacity = animationProps.opacity ? animationProps.opacity[0] : 0;
-            if (animationProps.x) element.style.transform = `translateX(${animationProps.x[0]})`;
-            if (animationProps.y) element.style.transform = `translateY(${animationProps.y[0]})`;
-            if (animationProps.clipPath) element.style.clipPath = animationProps.clipPath[0];
-        }
-
+        // Get animation properties
+        let animationProps;
         if (animationType === "custom") {
             const configRaw = element.getAttribute("data-animation-config");
-
             if (!configRaw) {
                 console.warn("No data-animation-config attribute found on element:", element);
                 return;
             }
 
             try {
-                const config = JSON.parse(configRaw);
-                animationProps = config;
-
-                // Set initial styles for custom animation
-                if (config.opacity) element.style.opacity = config.opacity[0];
-                if (config.x) element.style.transform = `translateX(${config.x[0]})`;
-                if (config.y) element.style.transform = `translateY(${config.y[0]})`;
-                if (config.scale) element.style.transform = `scale(${config.scale[0]})`;
-                if (config.clipPath) element.style.clipPath = config.clipPath[0];
-
-                animationTimeline = animate(
-                    element,
-                    config,
-                    {
-                        duration: parseFloat(duration) / 1000,
-                        delay: parseFloat(delay) / 1000,
-                        ease: easeOut,
-                    }
-                );
+                animationProps = JSON.parse(configRaw);
             } catch (err) {
                 console.error("Failed to parse data-animation-config:", configRaw, err);
                 return;
             }
         } else {
-            animationTimeline = animate(
-                element,
-                animationProps,
-                {
-                    duration: parseFloat(duration) / 1000,
-                    delay: parseFloat(delay) / 1000,
-                    ease: easeOut,
-                }
-            );
+            animationProps = animationDefaults[animationType];
+            if (!animationProps) {
+                console.warn(`Unknown animation type: ${animationType}`, element);
+                return;
+            }
         }
 
-        animationTimeline.pause();
-        animationTimeline.time = 0;
+        // Create animation options with advanced settings
+        const animationOptions = createAnimationOptions(element);
 
-        inView(
-            triggerElement,
-            () => {
-                animationTimeline.play();
-            },
-            {
-                margin: `0% 0% ${triggerPoint} 0%`,
-            }
-        );
+        // Create and setup animation
+        const animation = animate(element, animationProps, animationOptions);
+
+        // Start paused at beginning
+        animation.pause();
+        animation.time = 0;
+
+        // Trigger on scroll
+        inView(triggerElement, () => {
+            animation.play();
+        }, {
+            margin: `0% 0% ${triggerPoint} 0%`,
+        });
     });
 
-    // Child animations (unchanged for brevity)
+    // Child animations with stagger
     const animatedChildren = document.querySelectorAll('[data-child-animation="true"]');
     animatedChildren.forEach((parent) => {
         const children = parent.querySelectorAll(":scope > *");
+        if (children.length === 0) return;
+
         const childAnimationType = parent.getAttribute("data-child-animation-type") || "fade-in";
-        const childDuration = parseFloat(parent.getAttribute("data-child-animation-duration") || 0.5) / 1000;
         const childStagger = parseFloat(parent.getAttribute("data-child-animation-stagger-delay") || 0) / 1000;
         const childTrigger = parent.getAttribute("data-child-animation-trigger") || "section";
         const childTriggerPointValue = parent.getAttribute("data-child-animation-trigger-point") || "-25";
         const childTriggerPoint = childTriggerPointValue.includes("%") ? childTriggerPointValue : `${childTriggerPointValue}%`;
         const childCustomSelector = parent.getAttribute("data-child-animation-custom-selector");
 
-        let childAnimationProps = animationDefaults[childAnimationType];
-
+        // Get child animation properties
+        let childAnimationProps;
         if (childAnimationType === 'custom') {
             const rawChildConfig = parent.getAttribute("data-child-animation-config");
+            if (!rawChildConfig) {
+                console.warn("No data-child-animation-config attribute found on parent:", parent);
+                return;
+            }
+
             try {
-                const parsedChildConfig = JSON.parse(rawChildConfig);
-                childAnimationProps = parsedChildConfig;
+                childAnimationProps = JSON.parse(rawChildConfig);
             } catch (err) {
                 console.error("Invalid data-child-animation-config:", rawChildConfig, err);
                 return;
             }
+        } else {
+            childAnimationProps = animationDefaults[childAnimationType];
+            if (!childAnimationProps) {
+                console.warn(`Unknown child animation type: ${childAnimationType}`, parent);
+                return;
+            }
         }
 
-        const childAnimationTimeline = animate(
-            children,
-            childAnimationProps,
-            {
-                duration: childDuration,
-                delay: stagger(childStagger),
-                ease: easeOut,
-            }
-        );
-        childAnimationTimeline.pause();
-        childAnimationTimeline.time = 0;
-
+        // Determine trigger element
         let triggerElement = parent;
         if (childTrigger === "section") {
             triggerElement = findClosestByTag(parent, "section");
         } else if (childTrigger === "self") {
             triggerElement = parent;
         } else if (childTrigger === "custom" && childCustomSelector) {
-            const foundChild = parent.closest(childCustomSelector) || document.querySelector(childCustomSelector);
-            if (foundChild) {
-                triggerElement = foundChild;
+            const found = parent.closest(childCustomSelector) || document.querySelector(childCustomSelector);
+            if (found) {
+                triggerElement = found;
             }
         }
 
-        inView(
-            triggerElement,
-            () => {
-                childAnimationTimeline.play();
-            },
-            {
-                margin: `0% 0% ${childTriggerPoint} 0%`,
-            }
-        );
+        // Create child animation options with advanced settings
+        const childAnimationOptions = createAnimationOptions(parent, 'child-animation');
+        
+        // Add stagger to delay
+        if (childAnimationOptions.delay) {
+            childAnimationOptions.delay = [childAnimationOptions.delay, stagger(childStagger)];
+        } else {
+            childAnimationOptions.delay = stagger(childStagger);
+        }
+
+        // Create staggered child animation
+        const childAnimation = animate(children, childAnimationProps, childAnimationOptions);
+
+        // Start paused at beginning
+        childAnimation.pause();
+        childAnimation.time = 0;
+
+        // Trigger on scroll
+        inView(triggerElement, () => {
+            childAnimation.play();
+        }, {
+            margin: `0% 0% ${childTriggerPoint} 0%`,
+        });
     });
 });

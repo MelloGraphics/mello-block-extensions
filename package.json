@@ -26,12 +26,12 @@
   "dependencies": {
     "classnames": "^2.3.2",
     "lenis": "^1.2.3",
-    "motion": "^12.7.3",
+    "motion": "^12.23.12",
     "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@wordpress/icons": "^9.35.0",
-    "@wordpress/scripts": "^26.15.0",
+    "@wordpress/scripts": "^30.21.0",
     "glob": "^11.0.0",
     "micromodal": "^0.6.1",
     "mini-css-extract-plugin": "^2.9.2",
