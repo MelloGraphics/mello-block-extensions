@@ -102,6 +102,9 @@
     "scrollbarHide": {
       "type": "boolean"
     },
+    "scrollbarDraggable": {
+      "type": "boolean"
+    },
     "enableThumbs": {
       "type": "boolean"
     },

@@ -1,7 +1,9 @@
 import { InspectorControls } from "@wordpress/block-editor";
 import {
+	Button,
 	ComboboxControl,
 	__experimentalDivider as Divider,
+	Modal,
 	PanelBody,
 	RangeControl,
 	SelectControl,
@@ -9,8 +11,48 @@ import {
 	TextareaControl,
 	ToggleControl,
 } from "@wordpress/components";
+import { useState } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
+
+/**
+ * Helper functions for animation config validation
+ */
+function isValidAnimationConfig(config) {
+	if (!config || !config.trim()) return false;
+
+	try {
+		const parsed = JSON.parse(config);
+
+		// Check if it's a timeline array
+		if (Array.isArray(parsed)) {
+			return parsed.every(item =>
+				Array.isArray(item) &&
+				item.length >= 2 &&
+				typeof item[0] === 'string' &&
+				typeof item[1] === 'object'
+			);
+		}
+
+		// Check if it's a single animation object
+		if (typeof parsed === 'object' && parsed !== null) {
+			return true;
+		}
+
+		return false;
+	} catch {
+		return false;
+	}
+}
+
+function getAnimationConfigType(config) {
+	try {
+		const parsed = JSON.parse(config);
+		return Array.isArray(parsed) ? 'timeline' : 'single';
+	} catch {
+		return 'invalid';
+	}
+}
 
 /**
  * Add the attribute for custom data attributes to specified blocks.
@@ -38,6 +80,7 @@ function addAttributes(settings) {
 		animationRepeat: { type: "number" }, // No default, undefined unless set
 		animationRepeatType: { type: "string" }, // No default, undefined unless set
 		animationRepeatDelay: { type: "number" }, // No default, undefined unless set
+		animationSpringAmount: { type: "number" }, // No default, undefined unless set
 
 		childAnimationType: { type: "string", default: "fade-in" },
 		childAnimationDuration: { type: "number", default: 500 },
@@ -52,6 +95,7 @@ function addAttributes(settings) {
 		childAnimationRepeat: { type: "number" }, // No default, undefined unless set
 		childAnimationRepeatType: { type: "string" }, // No default, undefined unless set
 		childAnimationRepeatDelay: { type: "number" }, // No default, undefined unless set
+		childAnimationSpringAmount: { type: "number" }, // No default, undefined unless set
 	};
 
 	// Optional attributes, no defaults, so they are only saved if set.
@@ -90,6 +134,12 @@ function addInspectorControls(BlockEdit) {
 			return <BlockEdit {...props} />;
 		}
 
+		// State for help popovers and temp values
+		const [showAnimationHelp, setShowAnimationHelp] = useState(false);
+		const [showChildAnimationHelp, setShowChildAnimationHelp] = useState(false);
+		const [tempAnimationConfig, setTempAnimationConfig] = useState('');
+		const [tempChildAnimationConfig, setTempChildAnimationConfig] = useState('');
+
 		const { attributes, setAttributes } = props;
 		const {
 			animationType,
@@ -113,11 +163,13 @@ function addInspectorControls(BlockEdit) {
 			animationRepeat,
 			animationRepeatType,
 			animationRepeatDelay,
+			animationSpringAmount,
 			childAnimationMethod,
 			childAnimationEasing,
 			childAnimationRepeat,
 			childAnimationRepeatType,
 			childAnimationRepeatDelay,
+			childAnimationSpringAmount,
 		} = attributes;
 
 		const allowedParentBlockTypes = [
@@ -179,6 +231,7 @@ function addInspectorControls(BlockEdit) {
 						initialOpen={false}
 					>
 						<ToggleControl
+							__nextHasNoMarginBottom
 							__next40pxDefaultSize
 							label={__("Animate block", "mello-block-extensions")}
 							checked={!!animateSelf}
@@ -216,17 +269,173 @@ function addInspectorControls(BlockEdit) {
 									onChange={(value) => setAttributes({ animationType: value })}
 								/>
 								{animationType === "custom" && (
-									<TextareaControl
-										__next40pxDefaultSize
-										label={__("Custom Animation Config", "mello-block-extensions")}
-										help={__("Provide Motion.js animation config as JSON. E.g. { \"opacity\": [0,1], \"scale\": [0,1] }", "mello-block-extensions")}
-										value={animationCustomConfig}
-										onChange={(value) => setAttributes({ animationCustomConfig: value })}
-										rows={10}
-									/>
+									<>
+										<Button
+											variant="secondary"
+											onClick={() => {
+												setTempAnimationConfig(animationCustomConfig || '');
+												setShowAnimationHelp(true);
+											}}
+											className="mello-animation-config-button"
+										>
+											{__("Custom Animation Config", "mello-block-extensions")}
+											{animationCustomConfig && (
+												<span className="mello-animation-config-indicator">
+													{getAnimationConfigType(animationCustomConfig) === 'timeline' ? '⚡' : '✨'}
+												</span>
+											)}
+										</Button>
+
+										{showAnimationHelp && (
+											<Modal
+												className="mello-animation-config-modal mello-modal-fullscreen"
+												title={__("Custom Animation Configuration", "mello-block-extensions")}
+												isFullScreen
+												onRequestClose={() => {
+													setShowAnimationHelp(false);
+													setTempAnimationConfig('');
+												}}
+											>
+												<div className="mello-animation-config-inner">
+													<div className="mello-animation-config-header" />
+													<div className="mello-animation-config-body">
+														{/* Help Column */}
+														<div className="mello-animation-config-help">
+															<div className="mello-animation-help-section">
+																<h4 className="mello-animation-help-section-title">
+																	{__("Animation Types", "mello-block-extensions")}
+																</h4>
+																<div className="mello-animation-help-section-content">
+																	<div><strong>Single Element:</strong></div>
+																	<div className="mello-animation-help-examples">
+																		{`{ "opacity": [0,1], "y": [-20,0] }`}
+																	</div>
+																	<div><strong>Timeline (Multiple Elements):</strong></div>
+																	<div className="mello-animation-help-examples">
+																		{`[
+  [".title", { "opacity": [0,1] }],
+  [".subtitle", { "opacity": [0,1] }, { "at": 0.3 }]
+]`}
+																	</div>
+																</div>
+															</div>
+
+															<div className="mello-animation-help-section">
+																<h4 className="mello-animation-help-section-title">
+																	{__("Selectors", "mello-block-extensions")}
+																</h4>
+																<div className="mello-animation-help-section-content">
+																	<div>• <code>"&"</code> - Block itself</div>
+																	<div>• <code>".class"</code> - Elements with class</div>
+																	<div>• <code>"p"</code> - Paragraph elements</div>
+																	<div>• <code>"[data-attr]"</code> - Data attributes</div>
+																</div>
+															</div>
+
+															<div className="mello-animation-help-section">
+																<h4 className="mello-animation-help-section-title">
+																	{__("Timeline Options", "mello-block-extensions")}
+																</h4>
+																<div className="mello-animation-help-section-content">
+																	<div>• <code>"at": 0.5</code> - Start time</div>
+																	<div>• <code>"duration": 0.8</code> - Duration (seconds)</div>
+																	<div>• <code>"stagger": 0.1</code> - Element delay</div>
+																	<div>• <code>"ease": "easeOut"</code> - Easing function</div>
+																</div>
+															</div>
+
+															<div className="mello-animation-help-section">
+																<h4 className="mello-animation-help-section-title">
+																	{__("Properties", "mello-block-extensions")}
+																</h4>
+																<div className="mello-animation-help-section-content">
+																	<div>• <code>"opacity": [0,1]</code> - Fade</div>
+																	<div>• <code>"x": [-50,0]</code> - Horizontal</div>
+																	<div>• <code>"y": [-20,0]</code> - Vertical</div>
+																	<div>• <code>"scale": [0.8,1]</code> - Size</div>
+																	<div>• <code>"rotate": [0,360]</code> - Rotation</div>
+																</div>
+															</div>
+														</div>
+
+														{/* Editor Column */}
+														<div className="mello-animation-config-editor">
+															<TextareaControl
+																label={__("Animation Configuration", "mello-block-extensions")}
+																value={tempAnimationConfig}
+																onChange={(value) => setTempAnimationConfig(value)}
+																rows={20}
+																placeholder={`Single element:
+{ "opacity": [0,1], "y": [-20,0] }
+
+Timeline (multiple elements):
+[
+  [".title", { "opacity": [0,1], "y": [-30,0] }],
+  [".subtitle", { "opacity": [0,1] }, { "at": 0.3 }],
+  ["&", { "scale": [0.98,1] }, { "duration": 1 }]
+]`}
+															/>
+
+															{/* Validation indicator */}
+															{tempAnimationConfig && (
+																<div className="mello-animation-validation">
+																	{isValidAnimationConfig(tempAnimationConfig) ? (
+																		<div className="mello-animation-validation-success">
+																			✓ {getAnimationConfigType(tempAnimationConfig) === 'timeline'
+																				? __("Valid timeline animation", "mello-block-extensions")
+																				: __("Valid single element animation", "mello-block-extensions")
+																			}
+																		</div>
+																	) : (
+																		<div className="mello-animation-validation-error">
+																			✗ {__("Invalid JSON format", "mello-block-extensions")}
+																		</div>
+																	)}
+																</div>
+															)}
+														</div>
+													</div>
+
+													<div className="mello-animation-config-footer">
+														<Button
+															variant="secondary"
+															onClick={() => {
+																setShowAnimationHelp(false);
+																setTempAnimationConfig('');
+															}}
+														>
+															{__("Cancel", "mello-block-extensions")}
+														</Button>
+														<Button
+															variant="primary"
+															onClick={() => {
+																setAttributes({ animationCustomConfig: tempAnimationConfig });
+																setShowAnimationHelp(false);
+																setTempAnimationConfig('');
+															}}
+															disabled={tempAnimationConfig && !isValidAnimationConfig(tempAnimationConfig)}
+														>
+															{__("Save & Close", "mello-block-extensions")}
+														</Button>
+													</div>
+												</div>
+											</Modal>
+										)}
+
+										{/* Show current config summary */}
+										{animationCustomConfig && (
+											<div className="mello-animation-config-summary">
+												{getAnimationConfigType(animationCustomConfig) === 'timeline'
+													? __("Timeline animation configured", "mello-block-extensions")
+													: __("Single element animation configured", "mello-block-extensions")
+												}
+											</div>
+										)}
+									</>
 								)}
 								<Divider />
 								<RangeControl
+									__nextHasNoMarginBottom
 									__next40pxDefaultSize
 									label={__("Duration (ms)", "mello-block-extensions")}
 									value={animationDuration}
@@ -237,6 +446,7 @@ function addInspectorControls(BlockEdit) {
 
 								/>
 								<RangeControl
+									__nextHasNoMarginBottom
 									__next40pxDefaultSize
 									label={__("Delay (ms)", "mello-block-extensions")}
 									value={animationDelay}
@@ -260,8 +470,12 @@ function addInspectorControls(BlockEdit) {
 										if (value !== 'tween') {
 											setAttributes({ animationEasing: undefined });
 										}
+										if (value !== 'spring') {
+											setAttributes({ animationSpringAmount: undefined });
+										}
 									}}
 									__next40pxDefaultSize
+									__nextHasNoMarginBottom
 								/>
 								{(animationMethod ?? 'tween') === "tween" && (
 									<SelectControl
@@ -270,9 +484,24 @@ function addInspectorControls(BlockEdit) {
 										options={easingOptions}
 										onChange={(value) => setAttributes({ animationEasing: value })}
 										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+									/>
+								)}
+								{(animationMethod ?? 'tween') === 'spring' && (
+									<RangeControl
+										__nextHasNoMarginBottom
+										__next40pxDefaultSize
+										label={__("Spring Amount", "mello-block-extensions")}
+										value={Number.isFinite(animationSpringAmount) ? animationSpringAmount : 0.5}
+										onChange={(value) => setAttributes({ animationSpringAmount: value })}
+										min={0}
+										max={1}
+										step={0.05}
+										help={__("Higher = more bouncy", "mello-block-extensions")}
 									/>
 								)}
 								<RangeControl
+									__nextHasNoMarginBottom
 									__next40pxDefaultSize
 									label={__("Repeat Count", "mello-block-extensions")}
 									value={Number.isFinite(animationRepeat) ? animationRepeat : 0}
@@ -303,8 +532,10 @@ function addInspectorControls(BlockEdit) {
 											]}
 											onChange={(value) => setAttributes({ animationRepeatType: value })}
 											__next40pxDefaultSize
+											__nextHasNoMarginBottom
 										/>
 										<RangeControl
+											__nextHasNoMarginBottom
 											__next40pxDefaultSize
 											label={__("Repeat Delay (ms)", "mello-block-extensions")}
 											value={animationRepeatDelay}
@@ -326,9 +557,11 @@ function addInspectorControls(BlockEdit) {
 									]}
 									onChange={handleAnimationTriggerChange}
 									__next40pxDefaultSize
+									__nextHasNoMarginBottom
 								/>
 								{animationTrigger === "self" && (
 									<RangeControl
+										__nextHasNoMarginBottom
 										__next40pxDefaultSize
 										label={__("Trigger Point (Self)", "mello-block-extensions")}
 										value={animationTriggerPoint}
@@ -354,6 +587,7 @@ function addInspectorControls(BlockEdit) {
 											help={__("Unique CSS selector to trigger animation", "mello-block-extensions")}
 										/>
 										<RangeControl
+											__nextHasNoMarginBottom
 											__next40pxDefaultSize
 											label={__("Trigger Point (Custom)", "mello-block-extensions")}
 											value={animationTriggerPoint}
@@ -377,6 +611,7 @@ function addInspectorControls(BlockEdit) {
 								<Divider />
 								<ToggleControl
 									__next40pxDefaultSize
+									__nextHasNoMarginBottom
 									label={__("Animate Children", "mello-block-extensions")}
 									checked={!!animateChildren}
 									onChange={(value) =>
@@ -389,7 +624,7 @@ function addInspectorControls(BlockEdit) {
 										<ComboboxControl
 											__next40pxDefaultSize
 											label={__("Child Animation Type", "mello-block-extensions")}
-											value={animationType || 'fade-in'}
+											value={childAnimationType || 'fade-in'}
 											options={[
 												{ label: "Fade In", value: "fade-in" },
 												{ label: "Slide Up", value: "slide-up" },
@@ -408,17 +643,143 @@ function addInspectorControls(BlockEdit) {
 										/>
 
 										{childAnimationType === "custom" && (
-											<TextareaControl
-												__next40pxDefaultSize
-												label={__("Custom Child Animation Config", "mello-block-extensions")}
-												help={__("Provide Motion.js animation config as JSON. E.g. { \"opacity\": [0,1], \"scale\": [0,1] }", "mello-block-extensions")}
-												value={childAnimationCustomConfig}
-												onChange={(value) => setAttributes({ childAnimationCustomConfig: value })}
-												rows={10}
-											/>
+											<>
+												<Button
+													variant="secondary"
+													onClick={() => {
+														setTempChildAnimationConfig(childAnimationCustomConfig || '');
+														setShowChildAnimationHelp(true);
+													}}
+													className="mello-animation-config-button"
+												>
+													{__("Custom Child Animation Config", "mello-block-extensions")}
+													{childAnimationCustomConfig && (
+														<span className="mello-animation-config-indicator">
+															{getAnimationConfigType(childAnimationCustomConfig) === 'timeline' ? '⚡' : '✨'}
+														</span>
+													)}
+												</Button>
+
+												{showChildAnimationHelp && (
+													<Modal
+														className="mello-animation-config-modal mello-modal-fullscreen"
+														title={__("Custom Child Animation Configuration", "mello-block-extensions")}
+														isFullScreen
+														onRequestClose={() => {
+															setShowChildAnimationHelp(false);
+															setTempChildAnimationConfig('');
+														}}
+													>
+														<div className="mello-animation-config-inner">
+															<div className="mello-animation-config-header" />
+															<div className="mello-animation-config-body">
+																{/* Help Column */}
+																<div className="mello-animation-config-help">
+																	<div className="mello-animation-help-section">
+																		<h4 className="mello-animation-help-section-title">
+																			{__("Child Animations", "mello-block-extensions")}
+																		</h4>
+																		<div className="mello-animation-help-section-content">
+																			<div>Uses the same format as main animations but targets child elements within the block.</div>
+																		</div>
+																	</div>
+																	<div className="mello-animation-help-section">
+																		<h4 className="mello-animation-help-section-title">
+																			{__("Examples", "mello-block-extensions")}
+																		</h4>
+																		<div className="mello-animation-help-section-content">
+																			<div><strong>Single Child:</strong></div>
+																			<div className="mello-animation-help-examples">
+																				{`{ "opacity": [0,1], "stagger": 0.1 }`}
+																			</div>
+																			<div><strong>Multiple Children:</strong></div>
+																			<div className="mello-animation-help-examples">
+																				{`[
+  [".child-item", { "opacity": [0,1] }],
+  [".child-icon", { "rotate": [0,360] }, { "at": 0.2 }]
+]`}
+																			</div>
+																		</div>
+																	</div>
+																</div>
+
+																{/* Editor Column */}
+																<div className="mello-animation-config-editor">
+																	<TextareaControl
+																		label={__("Child Animation Configuration", "mello-block-extensions")}
+																		value={tempChildAnimationConfig}
+																		onChange={(value) => setTempChildAnimationConfig(value)}
+																		rows={20}
+																		placeholder={`Single element:
+{ "opacity": [0,1], "scale": [0.8,1] }
+
+Timeline (multiple children):
+[
+  [".child-item", { "opacity": [0,1], "stagger": 0.1 }],
+  [".child-icon", { "rotate": [0,360] }, { "at": 0.3 }]
+]`}
+																	/>
+
+																	{/* Validation indicator */}
+																	{tempChildAnimationConfig && (
+																		<div className="mello-animation-validation">
+																			{isValidAnimationConfig(tempChildAnimationConfig) ? (
+																				<div className="mello-animation-validation-success">
+																					✓ {getAnimationConfigType(tempChildAnimationConfig) === 'timeline'
+																						? __("Valid timeline animation", "mello-block-extensions")
+																						: __("Valid single element animation", "mello-block-extensions")
+																					}
+																				</div>
+																			) : (
+																				<div className="mello-animation-validation-error">
+																					✗ {__("Invalid JSON format", "mello-block-extensions")}
+																				</div>
+																			)}
+																		</div>
+																	)}
+																</div>
+															</div>
+
+															<div className="mello-animation-config-footer">
+																<Button
+																	variant="secondary"
+																	onClick={() => {
+																		setShowChildAnimationHelp(false);
+																		setTempChildAnimationConfig('');
+																	}}
+																>
+																	{__("Cancel", "mello-block-extensions")}
+																</Button>
+																<Button
+																	variant="primary"
+																	onClick={() => {
+																		setAttributes({ childAnimationCustomConfig: tempChildAnimationConfig });
+																		setShowChildAnimationHelp(false);
+																		setTempChildAnimationConfig('');
+																	}}
+																	disabled={tempChildAnimationConfig && !isValidAnimationConfig(tempChildAnimationConfig)}
+																>
+																	{__("Save & Close", "mello-block-extensions")}
+																</Button>
+															</div>
+														</div>
+													</Modal>
+												)}
+
+												{/* Show current config summary */}
+												{childAnimationCustomConfig && (
+													<div className="mello-animation-config-summary">
+														{getAnimationConfigType(childAnimationCustomConfig) === 'timeline'
+															? __("Child timeline animation configured", "mello-block-extensions")
+															: __("Child single element animation configured", "mello-block-extensions")
+														}
+													</div>
+												)}
+											</>
 										)}
 										<Divider />
 										<RangeControl
+											__nextHasNoMarginBottom
 											__next40pxDefaultSize
 											label={__("Child Animation Duration (ms)", "mello-block-extensions")}
 											value={childAnimationDuration}
@@ -431,6 +792,7 @@ function addInspectorControls(BlockEdit) {
 
 										/>
 										<RangeControl
+											__nextHasNoMarginBottom
 											__next40pxDefaultSize
 											label={__("Stagger Delay (ms)", "mello-block-extensions")}
 											value={childAnimationStaggerDelay}
@@ -456,8 +818,12 @@ function addInspectorControls(BlockEdit) {
 												if (value !== 'tween') {
 													setAttributes({ childAnimationEasing: undefined });
 												}
+												if (value !== 'spring') {
+													setAttributes({ childAnimationSpringAmount: undefined });
+												}
 											}}
 											__next40pxDefaultSize
+											__nextHasNoMarginBottom
 										/>
 										{(childAnimationMethod ?? 'tween') === "tween" && (
 											<SelectControl
@@ -466,9 +832,24 @@ function addInspectorControls(BlockEdit) {
 												options={easingOptions}
 												onChange={(value) => setAttributes({ childAnimationEasing: value })}
 												__next40pxDefaultSize
+												__nextHasNoMarginBottom
+											/>
+										)}
+										{(childAnimationMethod ?? 'tween') === 'spring' && (
+											<RangeControl
+												__nextHasNoMarginBottom
+												__next40pxDefaultSize
+												label={__("Child Spring Amount", "mello-block-extensions")}
+												value={Number.isFinite(childAnimationSpringAmount) ? childAnimationSpringAmount : 0.5}
+												onChange={(value) => setAttributes({ childAnimationSpringAmount: value })}
+												min={0}
+												max={1}
+												step={0.05}
+												help={__("Higher = stronger spring (maps to Motion spring settings)", "mello-block-extensions")}
 											/>
 										)}
 										<RangeControl
+											__nextHasNoMarginBottom
 											__next40pxDefaultSize
 											label={__("Child Repeat Count", "mello-block-extensions")}
 											value={Number.isFinite(childAnimationRepeat) ? childAnimationRepeat : 0}
@@ -499,9 +880,11 @@ function addInspectorControls(BlockEdit) {
 													]}
 													onChange={(value) => setAttributes({ childAnimationRepeatType: value })}
 													__next40pxDefaultSize
+													__nextHasNoMarginBottom
 												/>
 												<RangeControl
 													__next40pxDefaultSize
+													__nextHasNoMarginBottom
 													label={__("Child Repeat Delay (ms)", "mello-block-extensions")}
 													value={childAnimationRepeatDelay}
 													onChange={(value) => setAttributes({ childAnimationRepeatDelay: value })}
@@ -522,9 +905,11 @@ function addInspectorControls(BlockEdit) {
 											]}
 											onChange={handleChildAnimationTriggerChange}
 											__next40pxDefaultSize
+											__nextHasNoMarginBottom
 										/>
 										{childAnimationTrigger === "self" && (
 											<RangeControl
+												__nextHasNoMarginBottom
 												__next40pxDefaultSize
 												label={__("Child Trigger Point (Self)", "mello-block-extensions")}
 												value={childAnimationTriggerPoint}
@@ -544,12 +929,14 @@ function addInspectorControls(BlockEdit) {
 											<>
 												<TextControl
 													__next40pxDefaultSize
+													__nextHasNoMarginBottom
 													label={__("Custom Child Trigger Selector", "mello-block-extensions")}
 													value={childAnimationCustomSelector}
 													onChange={(value) => setAttributes({ childAnimationCustomSelector: value })}
 													help={__("CSS selector for custom child trigger", "mello-block-extensions")}
 												/>
 												<RangeControl
+													__nextHasNoMarginBottom
 													__next40pxDefaultSize
 													label={__("Child Trigger Point (Custom)", "mello-block-extensions")}
 													value={childAnimationTriggerPoint}
@@ -613,11 +1000,13 @@ function addSaveProps(extraProps, blockType, attributes) {
 		animationRepeat,
 		animationRepeatType,
 		animationRepeatDelay,
+		animationSpringAmount,
 		childAnimationMethod,
 		childAnimationEasing,
 		childAnimationRepeat,
 		childAnimationRepeatType,
 		childAnimationRepeatDelay,
+		childAnimationSpringAmount,
 	} = attributes;
 
 	if (animateSelf) {
@@ -643,6 +1032,9 @@ function addSaveProps(extraProps, blockType, attributes) {
 				extraProps["data-animation-repeat-delay"] = animationRepeatDelay;
 			}
 		}
+		if ((animationMethod ?? 'tween') === 'spring' && Number.isFinite(animationSpringAmount)) {
+			extraProps["data-animation-spring-amount"] = String(animationSpringAmount);
+		}
 		// Custom selector/config (existing guards)
 		if (typeof animationTriggerCustomSelector === 'string' &&
 			animationTriggerCustomSelector.trim() !== '' &&
@@ -652,16 +1044,26 @@ function addSaveProps(extraProps, blockType, attributes) {
 
 		if (animationType === 'custom' && animationCustomConfig) {
 			try {
-				let maybeJson = animationCustomConfig.trim();
-
-				// If it starts with a quote, assume escaped string and decode it
-				if (!maybeJson.startsWith('{')) {
-					const decoded = JSON.parse(`"${maybeJson}"`);
-					maybeJson = `{${decoded}}`;
+				let configToValidate = animationCustomConfig.trim();
+				// Handle escaped strings for backwards compatibility
+				if (!configToValidate.startsWith('{') && !configToValidate.startsWith('[')) {
+					const decoded = JSON.parse(`"${configToValidate}"`);
+					configToValidate = decoded.startsWith('{') || decoded.startsWith('[') ? decoded : `{${decoded}}`;
 				}
-
-				JSON.parse(maybeJson); // validate
-				extraProps["data-animation-config"] = maybeJson;
+				const parsed = JSON.parse(configToValidate);
+				if (Array.isArray(parsed)) {
+					// Timeline animation
+					extraProps["data-animation-mode"] = "timeline";
+					extraProps["data-animation-timeline"] = configToValidate;
+					// Remove single-mode attribute if previously present
+					delete extraProps["data-animation-config"];
+				} else {
+					// Single element animation
+					extraProps["data-animation-mode"] = "single";
+					extraProps["data-animation-config"] = configToValidate;
+					// Remove timeline attribute if previously present
+					delete extraProps["data-animation-timeline"];
+				}
 			} catch (err) {
 				console.warn("Invalid custom animation config", err);
 			}
@@ -675,11 +1077,14 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-animation-trigger-point"];
 		delete extraProps["data-animation-trigger-custom-selector"];
 		delete extraProps["data-animation-config"];
+		delete extraProps["data-animation-mode"];
+		delete extraProps["data-animation-timeline"];
 		delete extraProps["data-animation-method"];
 		delete extraProps["data-animation-easing"];
 		delete extraProps["data-animation-repeat"];
 		delete extraProps["data-animation-repeat-type"];
 		delete extraProps["data-animation-repeat-delay"];
+		delete extraProps["data-animation-spring-amount"];
 	}
 
 	if (animateChildren) {
@@ -705,6 +1110,9 @@ function addSaveProps(extraProps, blockType, attributes) {
 				extraProps["data-child-animation-repeat-delay"] = childAnimationRepeatDelay;
 			}
 		}
+		if ((childAnimationMethod ?? 'tween') === 'spring' && Number.isFinite(childAnimationSpringAmount)) {
+			extraProps["data-child-animation-spring-amount"] = String(childAnimationSpringAmount);
+		}
 
 		if (typeof childAnimationCustomSelector === 'string' &&
 			childAnimationCustomSelector.trim() !== '' &&
@@ -714,16 +1122,26 @@ function addSaveProps(extraProps, blockType, attributes) {
 
 		if (childAnimationType === 'custom' && childAnimationCustomConfig) {
 			try {
-				let maybeJson = childAnimationCustomConfig.trim();
-
-				// If it starts with a quote, assume escaped string and decode it
-				if (!maybeJson.startsWith('{')) {
-					const decoded = JSON.parse(`"${maybeJson}"`);
-					maybeJson = `{${decoded}}`;
+				let configToValidate = childAnimationCustomConfig.trim();
+				// Handle escaped strings for backwards compatibility
+				if (!configToValidate.startsWith('{') && !configToValidate.startsWith('[')) {
+					const decoded = JSON.parse(`"${configToValidate}"`);
+					configToValidate = decoded.startsWith('{') || decoded.startsWith('[') ? decoded : `{${decoded}}`;
 				}
-
-				JSON.parse(maybeJson); // validate
-				extraProps["data-child-animation-config"] = maybeJson;
+				const parsed = JSON.parse(configToValidate);
+				if (Array.isArray(parsed)) {
+					// Timeline animation for children
+					extraProps["data-child-animation-mode"] = "timeline";
+					extraProps["data-child-animation-timeline"] = configToValidate;
+					// Remove single-mode attribute if previously present
+					delete extraProps["data-child-animation-config"];
+				} else {
+					// Single element animation for children
+					extraProps["data-child-animation-mode"] = "single";
+					extraProps["data-child-animation-config"] = configToValidate;
+					// Remove timeline attribute if previously present
+					delete extraProps["data-child-animation-timeline"];
+				}
 			} catch (err) {
 				console.warn("Invalid custom child animation config", err);
 			}
@@ -737,11 +1155,14 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-child-animation-trigger-point"];
 		delete extraProps["data-child-animation-custom-selector"];
 		delete extraProps["data-child-animation-config"];
+		delete extraProps["data-child-animation-mode"];
+		delete extraProps["data-child-animation-timeline"];
 		delete extraProps["data-child-animation-method"];
 		delete extraProps["data-child-animation-easing"];
 		delete extraProps["data-child-animation-repeat"];
 		delete extraProps["data-child-animation-repeat-type"];
 		delete extraProps["data-child-animation-repeat-delay"];
+		delete extraProps["data-child-animation-spring-amount"];
 	}
 
 	return extraProps;

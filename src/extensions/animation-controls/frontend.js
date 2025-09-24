@@ -12,14 +12,14 @@ function findClosestByTag(element, tagName) {
 
 // Helper to get easing function from Motion.js
 function getEasingFunction(easingName) {
-    const { 
+    const {
         linear, ease, easeIn, easeOut, easeInOut,
         circIn, circOut, circInOut,
         backIn, backOut, backInOut,
         anticipate,
         bounceIn, bounceOut, bounceInOut
     } = window.MelloMotion;
-    
+
     const easingMap = {
         linear,
         ease,
@@ -37,14 +37,16 @@ function getEasingFunction(easingName) {
         bounceOut,
         bounceInOut
     };
-    
+
     return easingMap[easingName] || circOut;
 }
+
+function lerp(a, b, t) { return a + (b - a) * t; }
 
 // Helper to create animation options with method, easing, and repeat
 function createAnimationOptions(element, prefix = '') {
     const dataPrefix = prefix ? `data-${prefix}-` : 'data-animation-';
-    
+
     const duration = parseFloat(element.getAttribute(`${dataPrefix}duration`) || 0.5) / 1000;
     const delay = parseFloat(element.getAttribute(`${dataPrefix}delay`) || 0) / 1000;
     const method = element.getAttribute(`${dataPrefix}method`) || 'tween';
@@ -52,26 +54,34 @@ function createAnimationOptions(element, prefix = '') {
     const repeat = element.getAttribute(`${dataPrefix}repeat`) || '0';
     const repeatType = element.getAttribute(`${dataPrefix}repeat-type`) || 'loop';
     const repeatDelay = parseFloat(element.getAttribute(`${dataPrefix}repeat-delay`) || 0) / 1000;
-    
+    const springAmountAttr = element.getAttribute(`${dataPrefix}spring-amount`);
+    const springAmount = springAmountAttr !== null ? parseFloat(springAmountAttr) : undefined;
+
     const options = {
         duration,
         delay
     };
-    
+
     // Handle animation method
     if (method === 'tween') {
         options.ease = getEasingFunction(easing);
     } else if (method === 'spring') {
-        // Spring animations use different properties
+        const amt = Number.isFinite(springAmount) ? Math.max(0, Math.min(1, springAmount)) : 0.5;
+        if (!Number.isFinite(springAmount)) {
+            console.warn("No spring amount set on", element, "defaulting to 0.5");
+        }
+        // Map amount -> stiffness/damping (higher amount = stronger spring, less damping)
+        const stiffness = Math.round(lerp(100, 800, amt));
+        const damping = Math.round(lerp(30, 8, amt));
         options.type = 'spring';
-        options.stiffness = 100;
-        options.damping = 10;
+        options.stiffness = stiffness;
+        options.damping = damping;
     } else if (method === 'inertia') {
         options.type = 'inertia';
         options.power = 0.8;
         options.timeConstant = 750;
     }
-    
+
     // Handle repeat
     if (repeat !== '0') {
         const repeatCount = repeat === 'Infinity' ? Infinity : parseInt(repeat);
@@ -81,7 +91,7 @@ function createAnimationOptions(element, prefix = '') {
             options.repeatDelay = repeatDelay;
         }
     }
-    
+
     return options;
 }
 
@@ -111,7 +121,7 @@ const animationDefaults = {
 
 document.addEventListener('mello-motion-ready', () => {
     const { animate, stagger, inView } = window.MelloMotion;
-    
+
     // Individual element animations
     const animatedElements = document.querySelectorAll('[data-animation="true"]');
     animatedElements.forEach((element) => {
@@ -120,7 +130,7 @@ document.addEventListener('mello-motion-ready', () => {
         const customSelector = element.getAttribute("data-animation-trigger-custom-selector");
         const triggerPointValue = element.getAttribute("data-animation-trigger-point") || "-25";
         const triggerPoint = triggerPointValue.includes("%") ? triggerPointValue : `${triggerPointValue}%`;
-        
+
         // Determine trigger element
         let triggerElement = element;
         if (trigger === "section") {
@@ -226,7 +236,7 @@ document.addEventListener('mello-motion-ready', () => {
 
         // Create child animation options with advanced settings
         const childAnimationOptions = createAnimationOptions(parent, 'child-animation');
-        
+
         // Add stagger to delay
         if (childAnimationOptions.delay) {
             childAnimationOptions.delay = [childAnimationOptions.delay, stagger(childStagger)];

@@ -193,6 +193,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'scrollbarHide':
                     if (options.scrollbar) options.scrollbar.hide = value;
                     break;
+                case 'scrollbarDraggable':
+                    if (options.scrollbar) options.scrollbar.draggable = value;
+                    break;
                 case 'autoplayDelay':
                     if (options.autoplay) options.autoplay.delay = value;
                     break;

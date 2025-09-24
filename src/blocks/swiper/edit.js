@@ -55,6 +55,7 @@ export default function Edit({ attributes, setAttributes }) {
         paginationClickable,
         scrollbar,
         scrollbarHide,
+        scrollbarDraggable,
         enableThumbs,
         thumbsTarget,
         effect,
@@ -122,6 +123,7 @@ export default function Edit({ attributes, setAttributes }) {
         ...(paginationClickable !== undefined && { 'data-swiper-pagination-clickable': paginationClickable }),
         ...(scrollbar !== undefined && { 'data-swiper-scrollbar': scrollbar }),
         ...(scrollbarHide !== undefined && { 'data-swiper-scrollbar-hide': scrollbarHide }),
+        ...(scrollbarDraggable !== undefined && { 'data-swiper-scrollbar-draggable': scrollbarDraggable }),
         ...(effect !== undefined && { 'data-swiper-effect': effect }),
         ...(mousewheel !== undefined && { 'data-swiper-mousewheel': mousewheel }),
         ...(mousewheelForceToAxis !== undefined && { 'data-swiper-mousewheel-force-to-axis': mousewheelForceToAxis }),
@@ -374,11 +376,18 @@ export default function Edit({ attributes, setAttributes }) {
                         onChange={(value) => setAttributes({ scrollbar: value !== undefined ? value : undefined })}
                     />
                     {scrollbar && (
-                        <ToggleControl
-                            label={__('Hide Scrollbar', 'mello-block')}
-                            checked={scrollbarHide}
-                            onChange={(value) => setAttributes({ scrollbarHide: value !== undefined ? value : undefined })}
-                        />
+                        <>
+                            <ToggleControl
+                                label={__('Hide Scrollbar', 'mello-block')}
+                                checked={scrollbarHide}
+                                onChange={(value) => setAttributes({ scrollbarHide: value !== undefined ? value : undefined })}
+                            />
+                            <ToggleControl
+                                label={__('Draggable', 'mello-block')}
+                                checked={scrollbarDraggable}
+                                onChange={(value) => setAttributes({ scrollbarDraggable: value !== undefined ? value : undefined })}
+                            />
+                        </>
                     )}
                     <Divider />
                     <ToggleControl

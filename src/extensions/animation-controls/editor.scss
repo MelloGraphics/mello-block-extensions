@@ -1,0 +1,34 @@
+// .mello-modal-fullscreen {
+// }
+
+.mello-animation-config-inner {
+    display: grid;
+    grid-template-rows: auto 1fr auto; // header / body / footer
+    height: 100%;
+
+    .mello-animation-config-body {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 20px;
+        padding: 20px;
+        min-height: 0; // allow children to scroll
+        overflow: auto;
+
+        @media (max-width: 782px) {
+            grid-template-columns: 1fr;
+
+            .mello-animation-config-help {
+                display: none;
+            }
+        }
+    }
+
+    .mello-animation-config-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 12px 20px;
+        border-top: 1px solid #e0e0e0;
+        background: #fafafa;
+    }
+}

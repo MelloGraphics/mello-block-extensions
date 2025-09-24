@@ -23,6 +23,7 @@ export default function save({ attributes }) {
         paginationClickable,
         scrollbar,
         scrollbarHide,
+        scrollbarDraggable, // Add this line
         effect,
         mousewheel,
         mousewheelForceToAxis,
@@ -84,6 +85,7 @@ export default function save({ attributes }) {
         ...addAttributeIfTruthy('scrollbar', scrollbar),
         // Only add scrollbar-related attributes if scrollbar is true
         ...(scrollbar === true ? addAttributeIfTruthy('scrollbar-hide', scrollbarHide) : {}),
+        ...(scrollbar === true ? addAttributeIfTruthy('scrollbar-draggable', scrollbarDraggable) : {}), // Add this line
         ...addAttributeIfTruthy('effect', effect),
         ...addAttributeIfTruthy('mousewheel', mousewheel),
         // Only add mousewheel-related attributes if mousewheel is true
