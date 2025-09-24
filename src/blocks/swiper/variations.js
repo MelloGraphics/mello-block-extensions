@@ -64,6 +64,30 @@ const registerBlockVariations = {
         ],
         scope: ["inserter"],
     },
+    "core/group": [
+		{
+			name: "swiper-slide",
+			title: "Swiper Slide",
+			description: "A group block to wrap each swiper slide.",
+			attributes: {
+				metadata: { name: "Swiper Slide" },
+			},
+			scope: ["inserter"],
+			isDefault: false,
+			icon: "screenoptions",
+		},
+		{
+			name: "swiper-thumb",
+			title: "Swiper Thumb",
+			description: "A group block to wrap each swiper thumb.",
+			attributes: {
+				metadata: { name: "Swiper Thumb" },
+			},
+			scope: ["inserter"],
+			isDefault: false,
+			icon: "screenoptions",
+		},
+	],
 };
 
 domReady(() => {

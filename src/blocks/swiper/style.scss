@@ -89,6 +89,10 @@
         width: 100%;
     }
 
+    &[data-swiper-scrollbar-draggable="true"] .swiper-scrollbar-drag {
+        cursor: grab;
+    }
+
     // Navigation - Pagination
 
     .swiper-pagination {
@@ -111,7 +115,7 @@
 
     // Auto fit slides horizontal - shrink slides to fit content
 
-    &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper > * {
+    &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper>* {
         flex-shrink: 1;
         min-width: fit-content;
     }
@@ -127,7 +131,7 @@
 
         // Auto fit slides horizontal - shrink slides to fit content
 
-        &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper > * {
+        &[data-swiper-slides-per-view-auto="true"] .swiper-wrapper>* {
             flex-shrink: 1;
             height: fit-content;
         }
