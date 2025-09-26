@@ -1,6 +1,10 @@
 // .mello-modal-fullscreen {
 // }
 
+div:has(>.mello-animation-config-inner){
+    display: contents;
+}
+
 .mello-animation-config-inner {
     display: grid;
     grid-template-rows: auto 1fr auto; // header / body / footer

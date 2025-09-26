@@ -1071,13 +1071,11 @@ function addSaveProps(extraProps, blockType, attributes) {
 				const parsed = JSON.parse(configToValidate);
 				if (Array.isArray(parsed)) {
 					// Timeline animation
-					extraProps["data-animation-mode"] = "timeline";
 					extraProps["data-animation-timeline"] = configToValidate;
 					// Remove single-mode attribute if previously present
 					delete extraProps["data-animation-config"];
 				} else {
 					// Single element animation
-					extraProps["data-animation-mode"] = "single";
 					extraProps["data-animation-config"] = configToValidate;
 					// Remove timeline attribute if previously present
 					delete extraProps["data-animation-timeline"];
@@ -1095,7 +1093,6 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-animation-trigger-point"];
 		delete extraProps["data-animation-trigger-custom-selector"];
 		delete extraProps["data-animation-config"];
-		delete extraProps["data-animation-mode"];
 		delete extraProps["data-animation-timeline"];
 		delete extraProps["data-animation-method"];
 		delete extraProps["data-animation-easing"];
@@ -1149,13 +1146,11 @@ function addSaveProps(extraProps, blockType, attributes) {
 				const parsed = JSON.parse(configToValidate);
 				if (Array.isArray(parsed)) {
 					// Timeline animation for children
-					extraProps["data-child-animation-mode"] = "timeline";
 					extraProps["data-child-animation-timeline"] = configToValidate;
 					// Remove single-mode attribute if previously present
 					delete extraProps["data-child-animation-config"];
 				} else {
 					// Single element animation for children
-					extraProps["data-child-animation-mode"] = "single";
 					extraProps["data-child-animation-config"] = configToValidate;
 					// Remove timeline attribute if previously present
 					delete extraProps["data-child-animation-timeline"];
@@ -1173,7 +1168,6 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-child-animation-trigger-point"];
 		delete extraProps["data-child-animation-custom-selector"];
 		delete extraProps["data-child-animation-config"];
-		delete extraProps["data-child-animation-mode"];
 		delete extraProps["data-child-animation-timeline"];
 		delete extraProps["data-child-animation-method"];
 		delete extraProps["data-child-animation-easing"];

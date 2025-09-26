@@ -10,6 +10,23 @@ function findClosestByTag(element, tagName) {
     return element;
 }
 
+// Resolve a selector relative to a base element. "&" means the base element itself.
+function resolveSelector(base, selector) {
+    if (!selector || typeof selector !== 'string') return [];
+    if (selector.trim() === '&') return [base];
+    try {
+        // Prefer scoping within the base element first
+        const scoped = base.querySelectorAll(selector);
+        if (scoped && scoped.length) return Array.from(scoped);
+        // Fallback: global lookup (useful if selector targets outside like body/header)
+        const global = document.querySelectorAll(selector);
+        return Array.from(global);
+    } catch (e) {
+        console.warn('Invalid selector in animation config:', selector, e);
+        return [];
+    }
+}
+
 // Helper to get easing function from Motion.js
 function getEasingFunction(easingName) {
     const {
@@ -120,7 +137,8 @@ const animationDefaults = {
 };
 
 document.addEventListener('mello-motion-ready', () => {
-    const { animate, stagger, inView } = window.MelloMotion;
+    const MM = window.MelloMotion || {};
+    const { animate, stagger, inView } = MM;
 
     // Individual element animations
     const animatedElements = document.querySelectorAll('[data-animation="true"]');
@@ -146,17 +164,21 @@ document.addEventListener('mello-motion-ready', () => {
 
         // Get animation properties
         let animationProps;
+        let isTimeline = false;
         if (animationType === "custom") {
             const configRaw = element.getAttribute("data-animation-config");
-            if (!configRaw) {
-                console.warn("No data-animation-config attribute found on element:", element);
+            const timelineRaw = element.getAttribute("data-animation-timeline");
+            const raw = configRaw ?? timelineRaw;
+            if (!raw) {
+                console.warn("No data-animation-config or data-animation-timeline attribute found on element:", element);
                 return;
             }
-
             try {
-                animationProps = JSON.parse(configRaw);
+                const parsed = JSON.parse(raw);
+                animationProps = parsed;
+                isTimeline = Array.isArray(parsed);
             } catch (err) {
-                console.error("Failed to parse data-animation-config:", configRaw, err);
+                console.error("Failed to parse custom animation:", raw, err);
                 return;
             }
         } else {
@@ -171,7 +193,28 @@ document.addEventListener('mello-motion-ready', () => {
         const animationOptions = createAnimationOptions(element);
 
         // Create and setup animation
-        const animation = animate(element, animationProps, animationOptions);
+        let animation;
+        if (isTimeline) {
+            // Expecting an array of steps: [ selector, keyframes, stepOptions? ]
+            const sequence = [];
+            animationProps.forEach((step, idx) => {
+                if (!Array.isArray(step) || step.length < 2) {
+                    console.warn('Invalid timeline step at index', idx, step);
+                    return;
+                }
+                const [selector, keyframes, stepOptions] = step;
+                const targets = typeof selector === 'string' ? resolveSelector(element, selector) : [];
+                if (!targets.length) return; // skip empty steps silently
+                const mergedOptions = stepOptions ? { ...animationOptions, ...stepOptions } : { ...animationOptions };
+                targets.forEach((t) => {
+                    sequence.push([ t, keyframes, mergedOptions ]);
+                });
+            });
+            if (!sequence.length) return;
+            animation = animate(sequence);
+        } else {
+            animation = animate(element, animationProps, animationOptions);
+        }
 
         // Start paused at beginning
         animation.pause();
@@ -200,17 +243,21 @@ document.addEventListener('mello-motion-ready', () => {
 
         // Get child animation properties
         let childAnimationProps;
+        let childIsTimeline = false;
         if (childAnimationType === 'custom') {
             const rawChildConfig = parent.getAttribute("data-child-animation-config");
-            if (!rawChildConfig) {
-                console.warn("No data-child-animation-config attribute found on parent:", parent);
+            const rawChildTimeline = parent.getAttribute("data-child-animation-timeline");
+            const rawChild = rawChildConfig ?? rawChildTimeline;
+            if (!rawChild) {
+                console.warn("No data-child-animation-config or data-child-animation-timeline attribute found on parent:", parent);
                 return;
             }
-
             try {
-                childAnimationProps = JSON.parse(rawChildConfig);
+                const parsedChild = JSON.parse(rawChild);
+                childAnimationProps = parsedChild;
+                childIsTimeline = Array.isArray(parsedChild);
             } catch (err) {
-                console.error("Invalid data-child-animation-config:", rawChildConfig, err);
+                console.error("Invalid child custom animation:", rawChild, err);
                 return;
             }
         } else {
@@ -237,15 +284,33 @@ document.addEventListener('mello-motion-ready', () => {
         // Create child animation options with advanced settings
         const childAnimationOptions = createAnimationOptions(parent, 'child-animation');
 
-        // Add stagger to delay
-        if (childAnimationOptions.delay) {
-            childAnimationOptions.delay = [childAnimationOptions.delay, stagger(childStagger)];
+        let childAnimation;
+        if (childIsTimeline) {
+            const sequence = [];
+            childAnimationProps.forEach((step, idx) => {
+                if (!Array.isArray(step) || step.length < 2) {
+                    console.warn('Invalid child timeline step at index', idx, step);
+                    return;
+                }
+                const [selector, keyframes, stepOptions] = step;
+                const targets = typeof selector === 'string' ? resolveSelector(parent, selector) : [];
+                if (!targets.length) return;
+                const mergedOptions = stepOptions ? { ...childAnimationOptions, ...stepOptions } : { ...childAnimationOptions };
+                targets.forEach((t) => {
+                    sequence.push([ t, keyframes, mergedOptions ]);
+                });
+            });
+            if (!sequence.length) return;
+            childAnimation = animate(sequence);
         } else {
-            childAnimationOptions.delay = stagger(childStagger);
+            // Add stagger to delay for non-timeline child animations
+            if (childAnimationOptions.delay) {
+                childAnimationOptions.delay = [childAnimationOptions.delay, stagger(childStagger)];
+            } else {
+                childAnimationOptions.delay = stagger(childStagger);
+            }
+            childAnimation = animate(children, childAnimationProps, childAnimationOptions);
         }
-
-        // Create staggered child animation
-        const childAnimation = animate(children, childAnimationProps, childAnimationOptions);
 
         // Start paused at beginning
         childAnimation.pause();
