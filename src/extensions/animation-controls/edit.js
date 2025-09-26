@@ -1,3 +1,19 @@
+// Namespaces and deny-list for enabling animation controls
+const ALLOW_NAMESPACES = [ 'core', 'mellobase' ];
+const DENY_BLOCKS = [
+    'core/calendar',
+	'core/archives',
+	'core/latest-comments',
+	'core/rss',
+	'core/tag-cloud'
+];
+
+function shouldEnableFor( name ) {
+    if ( ! name || typeof name !== 'string' ) return false;
+    if ( DENY_BLOCKS.includes( name ) ) return false;
+    const ns = name.split('/')[0];
+    return ALLOW_NAMESPACES.includes( ns );
+}
 import { InspectorControls } from "@wordpress/block-editor";
 import {
 	Button,
@@ -58,12 +74,12 @@ function getAnimationConfigType(config) {
  * Add the attribute for custom data attributes to specified blocks.
  *
  * @param {Object} settings Block settings.
+ * @param {string} name Block name.
  */
-function addAttributes(settings) {
-	const unsupportedBlocks = ['core/calendar'];
-	if (!settings.name || !settings.name.startsWith('core/') || unsupportedBlocks.includes(settings.name)) {
-		return settings;
-	}
+function addAttributes(settings, name) {
+    if ( ! shouldEnableFor( name ) ) {
+        return settings;
+    }
 
 	// Base animation attributes with defaults only where needed.
 	const animationAttributes = {
@@ -128,11 +144,10 @@ addFilter(
  * @param {Object} BlockEdit Block edit component.
  */
 function addInspectorControls(BlockEdit) {
-	return (props) => {
-		const unsupportedBlocks = ['core/calendar'];
-		if (!props.name || !props.name.startsWith('core/') || unsupportedBlocks.includes(props.name)) {
-			return <BlockEdit {...props} />;
-		}
+    return (props) => {
+        if ( ! shouldEnableFor( props.name ) ) {
+            return <BlockEdit { ...props } />;
+        }
 
 		// State for help popovers and temp values
 		const [showAnimationHelp, setShowAnimationHelp] = useState(false);
@@ -978,6 +993,9 @@ addFilter(
  * @param {Object} attributes Block attributes.
  */
 function addSaveProps(extraProps, blockType, attributes) {
+    if ( ! shouldEnableFor( blockType?.name ) ) {
+        return extraProps;
+    }
 	const {
 		animateSelf,
 		animationType,
