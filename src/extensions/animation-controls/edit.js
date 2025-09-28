@@ -19,6 +19,7 @@ import {
 	Button,
 	ComboboxControl,
 	__experimentalDivider as Divider,
+	Icon,
 	Modal,
 	PanelBody,
 	RangeControl,
@@ -26,10 +27,12 @@ import {
 	TextControl,
 	TextareaControl,
 	ToggleControl,
+	Tooltip,
 } from "@wordpress/components";
 import { useState } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
+import { check, help } from "@wordpress/icons";
 
 /**
  * Helper functions for animation config validation
@@ -100,7 +103,10 @@ function addAttributes(settings, name) {
 
 		childAnimationType: { type: "string", default: "fade-in" },
 		childAnimationDuration: { type: "number", default: 500 },
+		childAnimationDelay: { type: "number" }, // No default, undefined unless set
 		childAnimationStaggerDelay: { type: "number", default: 100 },
+		childAnimationStaggerFrom: { type: "string" }, // No default, undefined unless set
+		childAnimationStaggerEasing: { type: "string" }, // No default, undefined unless set
 		childAnimationTrigger: { type: "string", default: "section" },
 		childAnimationTriggerPoint: { type: "number", default: -25 },
 		animationCustomConfig: { type: "string" },
@@ -167,7 +173,10 @@ function addInspectorControls(BlockEdit) {
 			animateChildren,
 			childAnimationType,
 			childAnimationDuration,
+			childAnimationDelay,
 			childAnimationStaggerDelay,
+			childAnimationStaggerFrom,
+			childAnimationStaggerEasing,
 			childAnimationTrigger,
 			childAnimationCustomSelector,
 			childAnimationTriggerPoint,
@@ -248,7 +257,19 @@ function addInspectorControls(BlockEdit) {
 						<ToggleControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							label={__("Animate block", "mello-block-extensions")}
+							label={
+								<>
+									{__("Animate block", "mello-block-extensions")}{" "}
+									<Tooltip
+										text={__("Choose from a set of preset animations or add a custom motion.js timeline to your block", "mello-block-extensions")}
+										placement="top"
+									>
+										<span className="mello-help-icon" tabIndex={0} aria-label={__("More info", "mello-block-extensions")}>
+											<Icon icon={help} />
+										</span>
+									</Tooltip>
+								</>
+							}
 							checked={!!animateSelf}
 							onChange={(value) => {
 								setAttributes({ animateSelf: value });
@@ -293,12 +314,7 @@ function addInspectorControls(BlockEdit) {
 											}}
 											className="mello-animation-config-button"
 										>
-											{__("Custom Animation Config", "mello-block-extensions")}
-											{animationCustomConfig && (
-												<span className="mello-animation-config-indicator">
-													{getAnimationConfigType(animationCustomConfig) === 'timeline' ? '⚡' : '✨'}
-												</span>
-											)}
+											{__("Edit Custom Animation", "mello-block-extensions")}
 										</Button>
 
 										{showAnimationHelp && (
@@ -440,10 +456,10 @@ Timeline (multiple elements):
 										{/* Show current config summary */}
 										{animationCustomConfig && (
 											<div className="mello-animation-config-summary">
+												<Icon icon={check} size={20} />{" "}
 												{getAnimationConfigType(animationCustomConfig) === 'timeline'
-													? __("Timeline animation configured", "mello-block-extensions")
-													: __("Single element animation configured", "mello-block-extensions")
-												}
+													? __("Custom timeline animation added", "mello-block-extensions")
+													: __("Custom single animation added", "mello-block-extensions")}
 											</div>
 										)}
 									</>
@@ -627,7 +643,19 @@ Timeline (multiple elements):
 								<ToggleControl
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
-									label={__("Animate Children", "mello-block-extensions")}
+									label={
+										<>
+											{__("Animate Children", "mello-block-exgleConts")}{" "}
+											<Tooltip
+												text={__("Add sequential animation to direct child elements", "mello-block-extensions")}
+												placement="top"
+											>
+												<span className="mello-help-icon" tabIndex={0} aria-label={__("More info", "mello-block-extensions")}>
+													<Icon icon={help} />
+												</span>
+											</Tooltip>
+										</>
+									}
 									checked={!!animateChildren}
 									onChange={(value) =>
 										setAttributes({ animateChildren: value })
@@ -667,12 +695,7 @@ Timeline (multiple elements):
 													}}
 													className="mello-animation-config-button"
 												>
-													{__("Custom Child Animation Config", "mello-block-extensions")}
-													{childAnimationCustomConfig && (
-														<span className="mello-animation-config-indicator">
-															{getAnimationConfigType(childAnimationCustomConfig) === 'timeline' ? '⚡' : '✨'}
-														</span>
-													)}
+													{__("Edit Child Animation", "mello-block-extensions")}
 												</Button>
 
 												{showChildAnimationHelp && (
@@ -784,10 +807,10 @@ Timeline (multiple children):
 												{/* Show current config summary */}
 												{childAnimationCustomConfig && (
 													<div className="mello-animation-config-summary">
+														<Icon icon={check} size={20} />{" "}
 														{getAnimationConfigType(childAnimationCustomConfig) === 'timeline'
-															? __("Child timeline animation configured", "mello-block-extensions")
-															: __("Child single element animation configured", "mello-block-extensions")
-														}
+															? __("Child timeline animation added", "mello-block-extensions")
+															: __("Child single animation added", "mello-block-extensions")}
 													</div>
 												)}
 											</>
@@ -804,7 +827,18 @@ Timeline (multiple children):
 											min={100}
 											max={3000}
 											step={50}
-
+										/>
+										<RangeControl
+											__nextHasNoMarginBottom
+											__next40pxDefaultSize
+											label={__("Child Animation Delay (ms)", "mello-block-extensions")}
+											value={childAnimationDelay ?? 0}
+											onChange={(value) =>
+												setAttributes({ childAnimationDelay: value })
+											}
+											min={0}
+											max={3000}
+											step={50}
 										/>
 										<RangeControl
 											__nextHasNoMarginBottom
@@ -817,7 +851,27 @@ Timeline (multiple children):
 											min={0}
 											max={1000}
 											step={50}
-
+										/>
+										<SelectControl
+											label={__("Stagger From", "mello-block-extensions")}
+											value={childAnimationStaggerFrom ?? 'first'}
+											options={[
+												{ label: "First", value: "first" },
+												{ label: "Last", value: "last" },
+												{ label: "Center", value: "center" },
+											]}
+											onChange={(value) => setAttributes({ childAnimationStaggerFrom: value })}
+											__next40pxDefaultSize
+											__nextHasNoMarginBottom
+										/>
+										<SelectControl
+											label={__("Stagger Easing", "mello-block-extensions")}
+											value={childAnimationStaggerEasing ?? 'easeOut'}
+											options={easingOptions}
+											onChange={(value) => setAttributes({ childAnimationStaggerEasing: value })}
+											__next40pxDefaultSize
+											__nextHasNoMarginBottom
+											help={__("Used when staggering child elements; defaults to easeOut on the front end when unset.", "mello-block-extensions")}
 										/>
 										<Divider />
 										<SelectControl
@@ -937,7 +991,6 @@ Timeline (multiple children):
 													{ value: -100, label: __("Top", "mello-block-extensions") },
 													{ value: 0, label: __("Bottom", "mello-block-extensions") },
 												]}
-
 											/>
 										)}
 										{childAnimationTrigger === "custom" && (
@@ -964,7 +1017,6 @@ Timeline (multiple children):
 														{ value: -100, label: __("Top", "mello-block-extensions") },
 														{ value: 0, label: __("Bottom", "mello-block-extensions") },
 													]}
-
 												/>
 											</>
 										)}
@@ -1007,7 +1059,10 @@ function addSaveProps(extraProps, blockType, attributes) {
 		animateChildren,
 		childAnimationType,
 		childAnimationDuration,
+		childAnimationDelay,
 		childAnimationStaggerDelay,
+		childAnimationStaggerFrom,
+		childAnimationStaggerEasing,
 		childAnimationTrigger,
 		childAnimationCustomSelector,
 		childAnimationTriggerPoint,
@@ -1106,7 +1161,14 @@ function addSaveProps(extraProps, blockType, attributes) {
 		extraProps["data-child-animation"] = true;
 		extraProps["data-child-animation-type"] = childAnimationType;
 		extraProps["data-child-animation-duration"] = childAnimationDuration;
+		extraProps["data-child-animation-delay"] = childAnimationDelay;
 		extraProps["data-child-animation-stagger-delay"] = childAnimationStaggerDelay;
+		if (typeof childAnimationStaggerFrom === 'string' && childAnimationStaggerFrom.trim() !== '') {
+			extraProps["data-child-animation-stagger-from"] = childAnimationStaggerFrom;
+		}
+		if (typeof childAnimationStaggerEasing === 'string' && childAnimationStaggerEasing.trim() !== '') {
+			extraProps["data-child-animation-stagger-easing"] = childAnimationStaggerEasing;
+		}
 		extraProps["data-child-animation-trigger"] = childAnimationTrigger;
 		extraProps["data-child-animation-trigger-point"] = childAnimationTriggerPoint;
 		// Only print new v2 child attributes if explicitly set
@@ -1163,7 +1225,10 @@ function addSaveProps(extraProps, blockType, attributes) {
 		delete extraProps["data-child-animation"];
 		delete extraProps["data-child-animation-type"];
 		delete extraProps["data-child-animation-duration"];
+		delete extraProps["data-child-animation-delay"];
 		delete extraProps["data-child-animation-stagger-delay"];
+		delete extraProps["data-child-animation-stagger-from"];
+		delete extraProps["data-child-animation-stagger-easing"];
 		delete extraProps["data-child-animation-trigger"];
 		delete extraProps["data-child-animation-trigger-point"];
 		delete extraProps["data-child-animation-custom-selector"];

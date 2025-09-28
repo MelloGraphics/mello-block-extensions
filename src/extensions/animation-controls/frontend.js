@@ -64,19 +64,30 @@ function lerp(a, b, t) { return a + (b - a) * t; }
 function createAnimationOptions(element, prefix = '') {
     const dataPrefix = prefix ? `data-${prefix}-` : 'data-animation-';
 
-    const duration = parseFloat(element.getAttribute(`${dataPrefix}duration`) || 0.5) / 1000;
-    const delay = parseFloat(element.getAttribute(`${dataPrefix}delay`) || 0) / 1000;
+    const durationRaw = element.getAttribute(`${dataPrefix}duration`) || '500';
+    const delayRaw = element.getAttribute(`${dataPrefix}delay`) || '0';
+    
+    const duration = parseFloat(durationRaw);
+    const delay = parseFloat(delayRaw);
+    
+    // Validate duration and delay are finite numbers
+    const validDuration = Number.isFinite(duration) ? Math.max(0, duration) / 1000 : 0.5;
+    const validDelay = Number.isFinite(delay) ? Math.max(0, delay) / 1000 : 0;
+    
     const method = element.getAttribute(`${dataPrefix}method`) || 'tween';
     const easing = element.getAttribute(`${dataPrefix}easing`) || 'circOut';
     const repeat = element.getAttribute(`${dataPrefix}repeat`) || '0';
     const repeatType = element.getAttribute(`${dataPrefix}repeat-type`) || 'loop';
-    const repeatDelay = parseFloat(element.getAttribute(`${dataPrefix}repeat-delay`) || 0) / 1000;
+    const repeatDelayRaw = element.getAttribute(`${dataPrefix}repeat-delay`) || '0';
+    const repeatDelay = parseFloat(repeatDelayRaw);
+    const validRepeatDelay = Number.isFinite(repeatDelay) ? Math.max(0, repeatDelay) / 1000 : 0;
+    
     const springAmountAttr = element.getAttribute(`${dataPrefix}spring-amount`);
     const springAmount = springAmountAttr !== null ? parseFloat(springAmountAttr) : undefined;
 
     const options = {
-        duration,
-        delay
+        duration: validDuration,
+        delay: validDelay
     };
 
     // Handle animation method
@@ -102,10 +113,12 @@ function createAnimationOptions(element, prefix = '') {
     // Handle repeat
     if (repeat !== '0') {
         const repeatCount = repeat === 'Infinity' ? Infinity : parseInt(repeat);
-        options.repeat = repeatCount;
-        options.repeatType = repeatType;
-        if (repeatDelay > 0) {
-            options.repeatDelay = repeatDelay;
+        if (Number.isFinite(repeatCount) || repeatCount === Infinity) {
+            options.repeat = repeatCount;
+            options.repeatType = repeatType;
+            if (validRepeatDelay > 0) {
+                options.repeatDelay = validRepeatDelay;
+            }
         }
     }
 
@@ -235,7 +248,18 @@ document.addEventListener('mello-motion-ready', () => {
         if (children.length === 0) return;
 
         const childAnimationType = parent.getAttribute("data-child-animation-type") || "fade-in";
-        const childStagger = parseFloat(parent.getAttribute("data-child-animation-stagger-delay") || 0) / 1000;
+        const childDelayRaw = parent.getAttribute("data-child-animation-delay") || "0";
+        const childStaggerRaw = parent.getAttribute("data-child-animation-stagger-delay") || "0";
+        const childStaggerFrom = parent.getAttribute("data-child-animation-stagger-from") || "first";
+        const childStaggerEasingName = parent.getAttribute("data-child-animation-stagger-easing") || "easeOut";
+        const childStaggerEasingFn = getEasingFunction(childStaggerEasingName);
+        
+        const childDelay = parseFloat(childDelayRaw);
+        const childStagger = parseFloat(childStaggerRaw);
+        
+        // Validate delays are finite numbers
+        const validChildDelay = Number.isFinite(childDelay) ? Math.max(0, childDelay) / 1000 : 0;
+        const validChildStagger = Number.isFinite(childStagger) ? Math.max(0, childStagger) / 1000 : 0;
         const childTrigger = parent.getAttribute("data-child-animation-trigger") || "section";
         const childTriggerPointValue = parent.getAttribute("data-child-animation-trigger-point") || "-25";
         const childTriggerPoint = childTriggerPointValue.includes("%") ? childTriggerPointValue : `${childTriggerPointValue}%`;
@@ -303,12 +327,25 @@ document.addEventListener('mello-motion-ready', () => {
             if (!sequence.length) return;
             childAnimation = animate(sequence);
         } else {
-            // Add stagger to delay for non-timeline child animations
-            if (childAnimationOptions.delay) {
-                childAnimationOptions.delay = [childAnimationOptions.delay, stagger(childStagger)];
-            } else {
-                childAnimationOptions.delay = stagger(childStagger);
+            // Handle child animation delay and stagger separately
+            // Child delay applies to all children, stagger applies between children
+            if (validChildStagger > 0) {
+                // Build stagger options
+                const staggerOptions = { from: childStaggerFrom, easing: childStaggerEasingFn };
+                
+                // Add startDelay if we have a child delay
+                if (validChildDelay > 0) {
+                    staggerOptions.startDelay = validChildDelay;
+                }
+                
+                childAnimationOptions.delay = stagger(validChildStagger, staggerOptions);
+            } else if (validChildDelay > 0) {
+                // Only child delay, no stagger
+                const baseDelay = childAnimationOptions.delay || 0;
+                const combinedDelay = Number.isFinite(baseDelay) ? baseDelay + validChildDelay : validChildDelay;
+                childAnimationOptions.delay = combinedDelay;
             }
+            
             childAnimation = animate(children, childAnimationProps, childAnimationOptions);
         }
 

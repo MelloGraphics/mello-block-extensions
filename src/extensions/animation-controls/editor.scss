@@ -1,8 +1,38 @@
 // .mello-modal-fullscreen {
 // }
 
-div:has(>.mello-animation-config-inner){
+// help icon placement
+
+.components-toggle-control__label:has(>.mello-help-icon) {
+    display: flex;
+    align-items: center;
+    gap: .25em;
+}
+
+.mello-help-icon {
+    display: inline-flex;
+    cursor: help;
+}
+
+// custom animation modal styles
+
+div:has(>.mello-animation-config-inner) {
     display: contents;
+}
+
+.mello-animation-config-button {
+    width: 100%;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: center;
+}
+
+.mello-animation-config-summary {
+    display: flex;
+}
+
+svg {
+    height: 1.4em;
 }
 
 .mello-animation-config-inner {
