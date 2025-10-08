@@ -12,6 +12,10 @@
 .mello-help-icon {
     display: inline-flex;
     cursor: help;
+
+    svg {
+        height: 1.4em;
+    }
 }
 
 // custom animation modal styles
@@ -29,10 +33,10 @@ div:has(>.mello-animation-config-inner) {
 
 .mello-animation-config-summary {
     display: flex;
-}
 
-svg {
-    height: 1.4em;
+    > svg {
+        height: 1.4em;
+    }
 }
 
 .mello-animation-config-inner {

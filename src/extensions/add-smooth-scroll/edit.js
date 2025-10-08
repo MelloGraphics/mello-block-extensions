@@ -3,19 +3,21 @@ import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
-// Define allowed blocks
-const allowedBlocks = [
-	'core/paragraph',
-	'core/heading',
-	'core/post-title',
-	'core/query-title',
-	'core/image',
-	'core/cover',
-	'core/group',
-	'core/columns',
-	'core/column',
-	'core/post-featured-image',
+// Namespaces and deny-list for enabling smooth scroll controls
+const ALLOW_NAMESPACES = [ 'core', 'mellobase' ];
+const DENY_BLOCKS = [
+	'core/calendar',
+	'core/archives',
+	'core/latest-comments',
+	'core/rss',
+	'core/tag-cloud'
 ];
+
+const getNamespace = (name) =>
+	typeof name === 'string' && name.includes('/') ? name.split('/')[0] : '';
+
+const isAllowedBlock = (name) =>
+	ALLOW_NAMESPACES.includes(getNamespace(name)) && !DENY_BLOCKS.includes(name);
 
 // Blocks that support inner parallax targeting
 const blocksWithInnerParallaxTarget = [
@@ -30,7 +32,7 @@ const blocksWithInnerParallaxTarget = [
  * @param {Object} settings Block settings.
  */
 function addAttributes(settings) {
-	if (!allowedBlocks.includes(settings.name)) {
+	if (!isAllowedBlock(settings.name)) {
 		return settings;
 	}
 
@@ -69,7 +71,7 @@ addFilter(
  */
 function addInspectorControls(BlockEdit) {
 	return (props) => {
-		if (!allowedBlocks.includes(props.name)) {
+		if (!isAllowedBlock(props.name)) {
 			return <BlockEdit {...props} />;
 		}
 
