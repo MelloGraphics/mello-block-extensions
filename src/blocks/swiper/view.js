@@ -32,44 +32,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modulesToLoad = [];
 
     if (needsNavigation) {
-        // await import('swiper/css/navigation');
         const { Navigation } = await import('swiper/modules');
         modulesToLoad.push({ module: Navigation, name: 'Navigation' });
     }
 
     if (needsPagination) {
-        // await import('swiper/css/pagination');
         const { Pagination } = await import('swiper/modules');
         modulesToLoad.push({ module: Pagination, name: 'Pagination' });
     }
 
     if (needsScrollbar) {
-        // await import('swiper/css/scrollbar');
         const { Scrollbar } = await import('swiper/modules');
         modulesToLoad.push({ module: Scrollbar, name: 'Scrollbar' });
     }
 
     if (needsMousewheel) {
-        // await import('swiper/css/mousewheel');
         const { Mousewheel } = await import('swiper/modules');
         modulesToLoad.push({ module: Mousewheel, name: 'Mousewheel' });
     }
 
     if (needsAutoplay) {
-        // await import('swiper/css/autoplay');
         const { Autoplay } = await import('swiper/modules');
         modulesToLoad.push({ module: Autoplay, name: 'Autoplay' });
     }
 
     if (needsEffectFade) {
-        // await import('swiper/css/effect-fade');
         const { EffectFade } = await import('swiper/modules');
         modulesToLoad.push({ module: EffectFade, name: 'EffectFade' });
     }
 
     if (needsFreeMode) {
-        // await import('swiper/css/free-mode');
-        // Free Mode is a parameter, not a module
+        const { FreeMode } = await import('swiper/modules');
+        modulesToLoad.push({ module: FreeMode, name: 'FreeMode' });
     }
 
     if (needsThumbs) {
@@ -106,6 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             attr.name === 'data-swiper-autoplay' && (attr.value === 'true' || !isNaN(attr.value))
         );
         const hasEffectFade = dataAttributes.some(attr => attr.name === 'data-swiper-effect' && attr.value === 'fade');
+        const hasFreeMode = dataAttributes.some(attr => attr.name === 'data-swiper-free-mode' && attr.value === 'true');
         const hasThumbs = dataAttributes.some(attr => attr.name === 'data-swiper-enable-thumbs' && attr.value === 'true');
         const thumbsTargetSelector = swiperElement.getAttribute('data-swiper-thumbs-target');
         const hasThumbsTarget = typeof thumbsTargetSelector === 'string' && thumbsTargetSelector.trim() !== '';
@@ -115,7 +110,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             attr.name === 'data-swiper-slides-per-view-auto' && attr.value === 'true');
 
         // Add only the modules that this specific swiper needs
-        // Using the pre-loaded modules from our dynamic imports
         modulesToLoad.forEach(moduleInfo => {
             if (
                 (moduleInfo.name === 'Navigation' && hasNavigation) ||
@@ -124,6 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 (moduleInfo.name === 'Mousewheel' && hasMousewheel) ||
                 (moduleInfo.name === 'Autoplay' && hasAutoplay) ||
                 (moduleInfo.name === 'EffectFade' && hasEffectFade) ||
+                (moduleInfo.name === 'FreeMode' && hasFreeMode) ||
                 (moduleInfo.name === 'Thumbs' && hasThumbs)
             ) {
                 activeModules.push(moduleInfo.module);
@@ -169,6 +164,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (hasEffectFade) {
             options.effect = 'fade';
+        }
+
+        // Initialize Free Mode configuration
+        if (hasFreeMode) {
+            options.freeMode = {
+                enabled: true
+            };
         }
 
         // Set modules to options
@@ -223,6 +225,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'autoplayReverseDirection':
                     if (options.autoplay) options.autoplay.reverseDirection = value;
                     break;
+                // Free Mode specific options
+                case 'freeModeMomentum':
+                    if (options.freeMode) options.freeMode.momentum = value;
+                    break;
+                case 'freeModeMomentumRatio':
+                    if (options.freeMode) options.freeMode.momentumRatio = value;
+                    break;
+                case 'freeModeMomentumVelocityRatio':
+                    if (options.freeMode) options.freeMode.momentumVelocityRatio = value;
+                    break;
+                case 'freeModeSticky':
+                    if (options.freeMode) options.freeMode.sticky = value;
+                    break;
                 // Skip the main module flags we already processed
                 case 'navigation':
                 case 'pagination':
@@ -230,6 +245,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'mousewheel':
                 case 'autoplay':
                 case 'slidesPerViewAuto':
+                case 'freeMode':
                     // Already handled above or will be handled separately
                     break;
                 default:
@@ -242,8 +258,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (hasSlidesPerViewAuto) {
             options.slidesPerView = 'auto';
 
-            // When in auto mode, we don't need the breakpoints for slidesPerView
-            // but we still want to maintain the spaceBetween values
             const spaceBetween = options.spaceBetween || 0;
             const spaceBetweenMobile = swiperElement.hasAttribute('data-swiper-space-between-mobile')
                 ? Number(swiperElement.getAttribute('data-swiper-space-between-mobile'))
@@ -252,7 +266,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
                 : spaceBetweenMobile;
 
-            // Set up breakpoints just for spaceBetween when in auto mode
             options.breakpoints = {
                 0: {
                     slidesPerView: 'auto',
@@ -268,7 +281,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             };
         } else {
-            // Original responsive breakpoints logic when not in auto mode
             const slidesPerView = options.slidesPerView || 1;
             const spaceBetween = options.spaceBetween || 0;
             const slidesPerViewMobile = swiperElement.hasAttribute('data-swiper-slides-per-view-mobile')
@@ -284,19 +296,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
                 : spaceBetweenMobile;
 
-            // Set up breakpoints for standard fixed-width slides mode
             options.breakpoints = {
-                // when window width is >= 0px (mobile same as MelloBase phone-only)
                 0: {
                     slidesPerView: slidesPerViewMobile,
                     spaceBetween: spaceBetweenMobile
                 },
-                // when window width is >= 782px (tablet same as MelloBase tablet-portrait)
                 782: {
                     slidesPerView: slidesPerViewTablet,
                     spaceBetween: spaceBetweenTablet
                 },
-                // when window width is >= 1200px (desktop same as MelloBase desktop-up)
                 1200: {
                     slidesPerView: slidesPerView,
                     spaceBetween: spaceBetween
@@ -305,20 +313,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Handle thumbs integration if enabled
-        // Handle thumbs integration if enabled
         if (hasThumbs && hasThumbsTarget) {
             const thumbsEl = document.querySelector(thumbsTargetSelector);
             if (thumbsEl) {
                 const thumbModuleInfo = modulesToLoad.find(m => m.name === 'Thumbs');
                 if (thumbModuleInfo) {
-                    // Initialize thumbs options
                     const thumbsOptions = {
                         modules: [thumbModuleInfo.module],
                         watchSlidesProgress: true,
                         slideToClickedSlide: true,
                     };
 
-                    // Add `swiper-slide` class to each child of thumbs swiper
                     const thumbsWrapper = thumbsEl.querySelector('.swiper-wrapper');
                     if (thumbsWrapper) {
                         thumbsWrapper.querySelectorAll(':scope > *').forEach((child) => {
@@ -328,15 +333,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
                     }
 
-                    // Read thumbs swiper data attributes and build configuration
                     const thumbsDataAttributes = Array.from(thumbsEl.attributes)
                         .filter(attr => attr.name.startsWith('data-swiper-'));
 
-                    // Check if thumbs swiper needs slidesPerViewAuto
                     const thumbsHasSlidesPerViewAuto = thumbsDataAttributes.some(attr =>
                         attr.name === 'data-swiper-slides-per-view-auto' && attr.value === 'true');
 
-                    // Process thumbs data attributes
                     thumbsDataAttributes.forEach((attr) => {
                         const key = attr.name.replace('data-swiper-', '').replace(/-([a-z])/g, (g) => g[1].toUpperCase());
                         let value = attr.value;
@@ -345,15 +347,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         else if (value === 'false') value = false;
                         else if (!isNaN(value)) value = Number(value);
 
-                        // Skip certain attributes that don't apply to thumbs
-                        if (['navigation', 'pagination', 'scrollbar', 'mousewheel', 'autoplay', 'slidesPerViewAuto'].includes(key)) {
+                        if (['navigation', 'pagination', 'scrollbar', 'mousewheel', 'autoplay', 'slidesPerViewAuto', 'freeMode'].includes(key)) {
                             return;
                         }
 
                         thumbsOptions[key] = value;
                     });
 
-                    // Handle responsive breakpoints for thumbs
                     if (thumbsHasSlidesPerViewAuto) {
                         thumbsOptions.slidesPerView = 'auto';
 
@@ -380,7 +380,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                             }
                         };
                     } else {
-                        // Standard responsive breakpoints for thumbs
                         const slidesPerView = thumbsOptions.slidesPerView || 1;
                         const spaceBetween = thumbsOptions.spaceBetween || 0;
                         const slidesPerViewMobile = thumbsEl.hasAttribute('data-swiper-slides-per-view-mobile')
@@ -412,12 +411,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         };
                     }
 
-                    // Set direction if provided for thumbs
                     if (thumbsEl.hasAttribute('data-swiper-direction')) {
                         thumbsOptions.direction = thumbsEl.getAttribute('data-swiper-direction');
                     }
 
-                    // Create the thumbs swiper with full configuration
                     const thumbsSwiper = new Swiper(thumbsEl, thumbsOptions);
                     options.thumbs = { swiper: thumbsSwiper };
                 }
@@ -426,7 +423,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // Set direction if provided
         if (swiperElement.hasAttribute('data-swiper-direction')) {
             options.direction = swiperElement.getAttribute('data-swiper-direction');
         }
@@ -434,5 +430,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Initialize Swiper with configured options
         new Swiper(swiperElement, options);
     });
-    // End of forEach loop
 });

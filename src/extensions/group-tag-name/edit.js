@@ -83,7 +83,18 @@ const withCustomElementOptions = createHigherOrderComponent((BlockEdit) => {
 
         useEffect(() => {
             const interval = setInterval(() => {
-                const labels = Array.from(document.querySelectorAll('label[for^="inspector-select-control"]'));
+                // Only run when a core/group block is actively selected
+                const selectedBlock = wp.data.select('core/block-editor').getSelectedBlock();
+                if (!selectedBlock || selectedBlock.name !== 'core/group') return;
+
+                // Target the sidebar for the selected Group block
+                const groupInspector = document.querySelector(
+                    '.block-editor-block-inspector, .edit-site-sidebar'
+                );
+                if (!groupInspector) return;
+
+                // Find the native "HTML element" label and hide its control
+                const labels = Array.from(groupInspector.querySelectorAll('label[for^="inspector-select-control"]'));
                 labels.forEach((label) => {
                     if (label.textContent.trim() === 'HTML element') {
                         const control = label.closest('.components-base-control');

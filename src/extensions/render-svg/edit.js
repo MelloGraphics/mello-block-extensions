@@ -14,32 +14,23 @@ const allowedBlocks = [
 ];
 
 /**
- * Add the attribute for custom data attributes to specified blocks.
- *
- * @param {Object} settings Block settings.
+ * Add the renderSVG attribute to specified blocks.
  */
 function addAttributes(settings) {
 	if (!allowedBlocks.includes(settings.name)) {
 		return settings;
 	}
 
-	// Add the attribute.
-	const customAttributes = {
-		renderSVG: {
-			type: 'boolean',
-			default: false,
-		},
-	};
-
-	const newSettings = {
+	return {
 		...settings,
 		attributes: {
 			...settings.attributes,
-			...customAttributes,
+			renderSVG: {
+				type: 'boolean',
+				default: false,
+			},
 		},
 	};
-
-	return newSettings;
 }
 
 addFilter(
@@ -49,9 +40,7 @@ addFilter(
 );
 
 /**
- * Add InspectorControls to specified blocks to set custom data attributes.
- *
- * @param {Object} BlockEdit Block edit component.
+ * Add InspectorControls to specified blocks.
  */
 function addInspectorControls(BlockEdit) {
 	return (props) => {
@@ -67,10 +56,13 @@ function addInspectorControls(BlockEdit) {
 				<BlockEdit {...props} />
 				<InspectorAdvancedControls>
 					<ToggleControl
-						label={__('Render SVG', 'mello-block-extensions')}
+						label={__('Render as inline SVG', 'mello-block-extensions')}
 						checked={!!renderSVG}
 						onChange={(value) => setAttributes({ renderSVG: value })}
-						help={__('Render as inline SVG', 'mello-block-extensions')}
+						help={__(
+							'Converts SVG images to inline code for styling and animations.',
+							'mello-block-extensions'
+						)}
 					/>
 				</InspectorAdvancedControls>
 			</>
@@ -85,17 +77,12 @@ addFilter(
 );
 
 /**
- * Add the custom data attributes to the front-end save function.
- *
- * @param {Object} extraProps Block properties.
- * @param {Object} blockType Block type.
- * @param {Object} attributes Block attributes.
+ * Add the style-svg class to blocks with renderSVG enabled.
  */
 function addSaveProps(extraProps, blockType, attributes) {
 	if (attributes.renderSVG) {
 		extraProps.className = (extraProps.className || '') + ' style-svg';
 	}
-
 	return extraProps;
 }
 

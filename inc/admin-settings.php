@@ -125,7 +125,7 @@ function mello_register_settings() {
         'navigation-submenu-allowed-blocks' => 'Navigation Submenu: Extend allowed blocks',
         'query-exclude-current-post' => 'Query: Exclude current post',
         'query-render-featured-video' => 'Query: Render a featured video',
-        'render-svg' => 'Mixed: Render SVG',
+        'render-svg' => 'Mixed: Enable SVG Support',
         'animation-controls' => 'Global: Animation Controls',
         'button-icon-toggle' => 'Button: Render inline icon'
     ];
@@ -149,7 +149,7 @@ function mello_register_settings() {
         'read-time'                 => 'Display the read time of the current page.',
         'post-type'                 => 'Display the post type for the page, or in a query.',
         'counter'                 => 'Display stats and figures animated in on scroll.',
-        'render-svg' => 'Renders an SVG inline on the frontend',
+        'render-svg' => 'Enables upload and frontend rendering of SVG inline',
         'animation-controls' => 'Adds triggered animations to all blocks',
         'button-icon-toggle' => 'Adds a toggle to render a FontAwesome icon or image in the button block.'
     ];

@@ -140,9 +140,16 @@ class Block_Extensions {
                     wp_enqueue_script(
                         "mello-frontend-$slug",
                         plugin_dir_url(__FILE__) . "../build/$base/$slug/frontend.js",
-                        [],
+                        ['jquery'], // Ensure jQuery loads first
                         filemtime($frontend_js),
                         true
+                    );
+
+                    // Localise global data for frontend use
+                    wp_localize_script(
+                        "mello-frontend-$slug",
+                        'melloGlobals',
+                        $this->get_localize_script_data()
                     );
                 }
             }
