@@ -200,16 +200,15 @@ export default function Edit({ attributes, setAttributes }) {
                     {!slidesPerViewAuto && (
                         <>
                             <RangeControl
-                                label={__('Slides Per View (XLarge Desktop)', 'mello-block')}
-                                value={slidesPerViewXLarge !== undefined ? slidesPerViewXLarge : 4}
+                                label={__('Slides Per View (> 1700px)', 'mello-block')}
+                                value={slidesPerViewXLarge !== undefined ? slidesPerViewXLarge : slidesPerView}
                                 onChange={(value) => setAttributes({ slidesPerViewXLarge: value !== undefined ? value : undefined })}
                                 min={1}
                                 max={12}
                                 step={0.25}
-                                help={__('Leave at 4 to match desktop value', 'mello-block')}
                             />
                             <RangeControl
-                                label={__('Slides Per View (Desktop)', 'mello-block')}
+                                label={__('Slides Per View (> 1200px)', 'mello-block')}
                                 value={slidesPerView !== undefined ? slidesPerView : 3}
                                 onChange={(value) => setAttributes({ slidesPerView: value !== undefined ? value : undefined })}
                                 min={1}
@@ -217,7 +216,7 @@ export default function Edit({ attributes, setAttributes }) {
                                 step={0.25}
                             />
                             <RangeControl
-                                label={__('Slides Per View (Tablet)', 'mello-block')}
+                                label={__('Slides Per View (> 782px)', 'mello-block')}
                                 value={slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2}
                                 onChange={(value) => setAttributes({ slidesPerViewTablet: value !== undefined ? value : undefined })}
                                 min={1}
@@ -246,24 +245,23 @@ export default function Edit({ attributes, setAttributes }) {
                 </PanelBody>
                 <PanelBody title={__('Slide Spacing', 'mello-block')} initialOpen={false}>
                     <RangeControl
-                        label={__('Space Between Slides (XLarge Desktop, px)', 'mello-block')}
+                        label={__('Space Between Slides (> 1700px)', 'mello-block')}
                         value={spaceBetweenXLarge !== undefined ? spaceBetweenXLarge : spaceBetween}
                         onChange={(value) => setAttributes({ spaceBetweenXLarge: value !== undefined ? value : undefined })}
                         min={0}
                         max={200}
                         step={1}
-                        help={__('Leave unset to match desktop spacing', 'mello-block')}
                     />
                     <RangeControl
-                        label={__('Space Between Slides (Desktop, px)', 'mello-block')}
-                        value={spaceBetween}
+                        label={__('Space Between Slides (> 1200px)', 'mello-block')}
+                        value={spaceBetween !== undefined ? spaceBetween : 75}
                         onChange={(value) => setAttributes({ spaceBetween: value !== undefined ? value : undefined })}
                         min={0}
                         max={200}
                         step={1}
                     />
                     <RangeControl
-                        label={__('Space Between Slides (Tablet, px)', 'mello-block')}
+                        label={__('Space Between Slides (> 782px)', 'mello-block')}
                         value={spaceBetweenTablet !== undefined ? spaceBetweenTablet : 50}
                         onChange={(value) => setAttributes({ spaceBetweenTablet: value !== undefined ? value : undefined })}
                         min={0}
@@ -271,7 +269,7 @@ export default function Edit({ attributes, setAttributes }) {
                         step={1}
                     />
                     <RangeControl
-                        label={__('Space Between Slides (Mobile, px)', 'mello-block')}
+                        label={__('Space Between Slides (Mobile)', 'mello-block')}
                         value={spaceBetweenMobile !== undefined ? spaceBetweenMobile : 25}
                         onChange={(value) => setAttributes({ spaceBetweenMobile: value !== undefined ? value : undefined })}
                         min={0}
