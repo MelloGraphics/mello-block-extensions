@@ -1,19 +1,20 @@
-.wp-block-button.has-custom-icon{
+.wp-block-button.has-custom-icon .wp-block-button__link {
   display: flex;
-
-  .mello-button-icon__wrapper{
-    border: solid pink 1px;
-  }
-
-  .mello-button-icon__fa-icon {
-    font-family: var(--wp--preset--font-family--icon);
-    font-weight: inherit;
-    display: inline-block;
-    vertical-align: middle;
-  }
-
-  .mello-button-icon__img-icon{
-    max-width: 50px;
-  }
-
+  gap: 0.5em;
+  flex-wrap: nowrap;
 }
+.wp-block-button.has-custom-icon .mello-button-icon__wrapper {
+  align-content: center;
+}
+.wp-block-button.has-custom-icon .mello-button-icon__fa-icon {
+  font-family: var(--wp--preset--font-family--icon);
+  font-weight: inherit;
+  display: inline-block;
+  vertical-align: middle;
+}
+.wp-block-button.has-custom-icon .mello-button-icon__img-icon {
+  max-width: 50px;
+}
+.wp-block-button.has-custom-icon .mello-button-icon__button-text {
+  align-content: center;
+}/*# sourceMappingURL=styles.css.map */

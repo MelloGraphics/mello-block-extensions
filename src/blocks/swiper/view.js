@@ -87,6 +87,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const options = {};
         const activeModules = [];
 
+        // Enable observer to watch for container size changes
+        options.observer = true;
+        options.observeParents = true;
+
         // Read all data attributes and build configuration
         const dataAttributes = Array.from(swiperElement.attributes)
             .filter(attr => attr.name.startsWith('data-swiper-'));
@@ -238,6 +242,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 'freeModeSticky':
                     if (options.freeMode) options.freeMode.sticky = value;
                     break;
+                case 'allowTouchMove':
+                    options.allowTouchMove = value;
+                    break;
                 // Skip the main module flags we already processed
                 case 'navigation':
                 case 'pagination':
@@ -265,6 +272,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const spaceBetweenTablet = swiperElement.hasAttribute('data-swiper-space-between-tablet')
                 ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
                 : spaceBetweenMobile;
+            const spaceBetweenXLarge = swiperElement.hasAttribute('data-swiper-space-between-xlarge')
+                ? Number(swiperElement.getAttribute('data-swiper-space-between-xlarge'))
+                : spaceBetween;
 
             options.breakpoints = {
                 0: {
@@ -278,11 +288,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 1200: {
                     slidesPerView: 'auto',
                     spaceBetween: spaceBetween
+                },
+                1700: {
+                    slidesPerView: 'auto',
+                    spaceBetween: spaceBetweenXLarge
                 }
             };
         } else {
             const slidesPerView = options.slidesPerView || 1;
             const spaceBetween = options.spaceBetween || 0;
+            
+            // Get XLarge values - if not set, fall back to desktop values
+            const slidesPerViewXLarge = swiperElement.hasAttribute('data-swiper-slides-per-view-xlarge')
+                ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-xlarge'))
+                : slidesPerView;
+            
+            const spaceBetweenXLarge = swiperElement.hasAttribute('data-swiper-space-between-xlarge')
+                ? Number(swiperElement.getAttribute('data-swiper-space-between-xlarge'))
+                : spaceBetween;
+            
             const slidesPerViewMobile = swiperElement.hasAttribute('data-swiper-slides-per-view-mobile')
                 ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-mobile'))
                 : slidesPerView;
@@ -296,11 +320,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? Number(swiperElement.getAttribute('data-swiper-space-between-tablet'))
                 : spaceBetweenMobile;
 
+            // Set base options that will be used below the first breakpoint
+            options.slidesPerView = slidesPerViewMobile;
+            options.spaceBetween = spaceBetweenMobile;
+            
             options.breakpoints = {
-                0: {
-                    slidesPerView: slidesPerViewMobile,
-                    spaceBetween: spaceBetweenMobile
-                },
                 782: {
                     slidesPerView: slidesPerViewTablet,
                     spaceBetween: spaceBetweenTablet
@@ -308,6 +332,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 1200: {
                     slidesPerView: slidesPerView,
                     spaceBetween: spaceBetween
+                },
+                1700: {
+                    slidesPerView: slidesPerViewXLarge,
+                    spaceBetween: spaceBetweenXLarge
                 }
             };
         }
@@ -364,6 +392,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const spaceBetweenTablet = thumbsEl.hasAttribute('data-swiper-space-between-tablet')
                             ? Number(thumbsEl.getAttribute('data-swiper-space-between-tablet'))
                             : spaceBetweenMobile;
+                        const spaceBetweenXLarge = thumbsEl.hasAttribute('data-swiper-space-between-xlarge')
+                            ? Number(thumbsEl.getAttribute('data-swiper-space-between-xlarge'))
+                            : spaceBetween;
 
                         thumbsOptions.breakpoints = {
                             0: {
@@ -377,11 +408,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                             1200: {
                                 slidesPerView: 'auto',
                                 spaceBetween: spaceBetween
+                            },
+                            1700: {
+                                slidesPerView: 'auto',
+                                spaceBetween: spaceBetweenXLarge
                             }
                         };
                     } else {
                         const slidesPerView = thumbsOptions.slidesPerView || 1;
                         const spaceBetween = thumbsOptions.spaceBetween || 0;
+                        
+                        // Get XLarge values - if not set, fall back to desktop values
+                        const slidesPerViewXLarge = thumbsEl.hasAttribute('data-swiper-slides-per-view-xlarge')
+                            ? Number(thumbsEl.getAttribute('data-swiper-slides-per-view-xlarge'))
+                            : slidesPerView;
+                        
+                        const spaceBetweenXLarge = thumbsEl.hasAttribute('data-swiper-space-between-xlarge')
+                            ? Number(thumbsEl.getAttribute('data-swiper-space-between-xlarge'))
+                            : spaceBetween;
+                        
                         const slidesPerViewMobile = thumbsEl.hasAttribute('data-swiper-slides-per-view-mobile')
                             ? Number(thumbsEl.getAttribute('data-swiper-slides-per-view-mobile'))
                             : slidesPerView;
@@ -395,11 +440,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             ? Number(thumbsEl.getAttribute('data-swiper-space-between-tablet'))
                             : spaceBetweenMobile;
 
+                        // Set base options that will be used below the first breakpoint
+                        thumbsOptions.slidesPerView = slidesPerViewMobile;
+                        thumbsOptions.spaceBetween = spaceBetweenMobile;
+                        
                         thumbsOptions.breakpoints = {
-                            0: {
-                                slidesPerView: slidesPerViewMobile,
-                                spaceBetween: spaceBetweenMobile
-                            },
                             782: {
                                 slidesPerView: slidesPerViewTablet,
                                 spaceBetween: spaceBetweenTablet
@@ -407,6 +452,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                             1200: {
                                 slidesPerView: slidesPerView,
                                 spaceBetween: spaceBetween
+                            },
+                            1700: {
+                                slidesPerView: slidesPerViewXLarge,
+                                spaceBetween: spaceBetweenXLarge
                             }
                         };
                     }

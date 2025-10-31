@@ -3,6 +3,7 @@ import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 export default function save({ attributes }) {
     const {
         slidesPerView,
+        slidesPerViewXLarge,
         slidesPerViewTablet,
         slidesPerViewMobile,
         slidesPerViewAuto,
@@ -13,6 +14,7 @@ export default function save({ attributes }) {
         autoplayDisableOnInteraction,
         autoplayReverseDirection,
         spaceBetween,
+        spaceBetweenXLarge,
         spaceBetweenTablet,
         spaceBetweenMobile,
         speed,
@@ -23,7 +25,7 @@ export default function save({ attributes }) {
         paginationClickable,
         scrollbar,
         scrollbarHide,
-        scrollbarDraggable, // Add this line
+        scrollbarDraggable,
         effect,
         mousewheel,
         mousewheelForceToAxis,
@@ -41,7 +43,8 @@ export default function save({ attributes }) {
         freeModeSticky,
         enableThumbs,
         thumbsTarget,
-        overflowHidden
+        overflowHidden,
+        allowTouchMove
     } = attributes;
 
     // Helper function to add attribute only if it has a valid and truthy value
@@ -61,6 +64,7 @@ export default function save({ attributes }) {
         ...(slidesPerViewAuto
             ? addAttributeIfTruthy('slides-per-view-auto', true)
             : {
+                ...(slidesPerViewXLarge !== undefined ? addAttributeIfTruthy('slides-per-view-xlarge', slidesPerViewXLarge) : {}),
                 ...addAttributeIfTruthy('slides-per-view', slidesPerView),
                 ...addAttributeIfTruthy('slides-per-view-tablet', slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2),
                 ...addAttributeIfTruthy('slides-per-view-mobile', slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1),
@@ -73,6 +77,7 @@ export default function save({ attributes }) {
         ...(autoplay === true ? addAttributeIfTruthy('autoplay-disable-on-interaction', autoplayDisableOnInteraction) : {}),
         ...(autoplay === true ? addAttributeIfTruthy('autoplay-reverse-direction', autoplayReverseDirection) : {}),
         ...addAttributeIfTruthy('space-between', spaceBetween),
+        ...(spaceBetweenXLarge !== undefined ? addAttributeIfTruthy('space-between-xlarge', spaceBetweenXLarge) : {}),
         ...addAttributeIfTruthy('space-between-tablet', spaceBetweenTablet !== undefined ? spaceBetweenTablet : 50),
         ...addAttributeIfTruthy('space-between-mobile', spaceBetweenMobile !== undefined ? spaceBetweenMobile : 50),
         ...addAttributeIfTruthy('speed', speed),
@@ -85,7 +90,7 @@ export default function save({ attributes }) {
         ...addAttributeIfTruthy('scrollbar', scrollbar),
         // Only add scrollbar-related attributes if scrollbar is true
         ...(scrollbar === true ? addAttributeIfTruthy('scrollbar-hide', scrollbarHide) : {}),
-        ...(scrollbar === true ? addAttributeIfTruthy('scrollbar-draggable', scrollbarDraggable) : {}), // Add this line
+        ...(scrollbar === true ? addAttributeIfTruthy('scrollbar-draggable', scrollbarDraggable) : {}),
         ...addAttributeIfTruthy('effect', effect),
         ...addAttributeIfTruthy('mousewheel', mousewheel),
         // Only add mousewheel-related attributes if mousewheel is true
@@ -106,6 +111,7 @@ export default function save({ attributes }) {
         ...addAttributeIfTruthy('enable-thumbs', enableThumbs),
         ...(enableThumbs === true ? addAttributeIfTruthy('thumbs-target', thumbsTarget) : {}),
         ...(overflowHidden === true ? addAttributeIfTruthy('overflow-hidden', overflowHidden) : {}),
+        ...(allowTouchMove === false ? { 'data-swiper-allow-touch-move': false } : {}),
     });
 
     return (

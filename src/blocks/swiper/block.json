@@ -8,6 +8,9 @@
 	"icon": "slides",
 	"description": "Swiper block for content and query elements",
 	"attributes": {
+		"slidesPerViewXLarge": {
+			"type": "number"
+		},
 		"slidesPerView": {
 			"type": "number",
 			"default": 3
@@ -31,6 +34,9 @@
 		"spaceBetween": {
 			"type": "number",
 			"default": 75
+		},
+		"spaceBetweenXLarge": {
+			"type": "number"
 		},
 		"spaceBetweenTablet": {
 			"type": "number",
@@ -103,6 +109,9 @@
 			"type": "boolean"
 		},
 		"scrollbarDraggable": {
+			"type": "boolean"
+		},
+		"allowTouchMove": {
 			"type": "boolean"
 		},
 		"enableThumbs": {

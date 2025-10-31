@@ -3,17 +3,51 @@
 /**
  * Enable SVG uploads in WordPress
  */
-function enable_svg_upload($mimes) {
+function render_svg_ext_enable_svg_upload($mimes)
+{
     $mimes['svg'] = 'image/svg+xml';
     $mimes['svgz'] = 'image/svg+xml';
     return $mimes;
 }
-add_filter('upload_mimes', 'enable_svg_upload');
+add_filter('upload_mimes', 'render_svg_ext_enable_svg_upload');
+
+/**
+ * Sanitize SVG uploads for security
+ */
+function render_svg_ext_sanitize_svg_upload($file)
+{
+    if ($file['type'] === 'image/svg+xml') {
+        $svg_content = file_get_contents($file['tmp_name']);
+
+        $is_svgator = strpos($svg_content, '__SVGATOR_PLAYER__') !== false;
+        $has_danger = false;
+
+        // Tags we want to block unless explicitly allowed
+        $dangerous_tags = ['iframe', 'object', 'embed', 'link'];
+
+        foreach ($dangerous_tags as $tag) {
+            if (stripos($svg_content, '<' . $tag) !== false) {
+                $has_danger = true;
+                break;
+            }
+        }
+
+        // Block SVGs with dangerous tags unless it's SVGator
+        if ($has_danger && !$is_svgator) {
+            $file['error'] = 'This SVG file contains potentially dangerous elements and cannot be uploaded.';
+            return $file;
+        }
+    }
+
+    return $file;
+}
+add_filter('wp_handle_upload_prefilter', 'render_svg_ext_sanitize_svg_upload');
 
 /**
  * Fix SVG display in media library
  */
-function fix_svg_display($response, $attachment, $meta) {
+function render_svg_ext_fix_svg_display($response, $attachment, $meta)
+{
     if ($response['type'] === 'image' && $response['subtype'] === 'svg+xml') {
         $response['image'] = [
             'src' => $response['url'],
@@ -35,12 +69,13 @@ function fix_svg_display($response, $attachment, $meta) {
     }
     return $response;
 }
-add_filter('wp_prepare_attachment_for_js', 'fix_svg_display', 10, 3);
+add_filter('wp_prepare_attachment_for_js', 'render_svg_ext_fix_svg_display', 10, 3);
 
 /**
  * Add CSS to fix SVG display in media library
  */
-function svg_media_library_css() {
+function render_svg_ext_media_library_css()
+{
     echo '<style>
         table.media .column-title .media-icon img[src$=".svg"] {
             width: 60px;
@@ -48,158 +83,94 @@ function svg_media_library_css() {
         }
     </style>';
 }
-add_action('admin_head', 'svg_media_library_css');
-
-/**
- * Sanitize SVG uploads for security
- */
-function sanitize_svg_upload($file) {
-    if ($file['type'] === 'image/svg+xml') {
-        $svg_content = file_get_contents($file['tmp_name']);
-        
-        // Basic security check - remove potentially dangerous elements
-        $dangerous_tags = ['script', 'iframe', 'object', 'embed', 'link'];
-        $has_danger = false;
-        
-        foreach ($dangerous_tags as $tag) {
-            if (stripos($svg_content, '<' . $tag) !== false) {
-                // Allow script tags for animations, but log it
-                if ($tag === 'script') {
-                    error_log('SVG uploaded with script tag: ' . $file['name']);
-                    continue;
-                }
-                $has_danger = true;
-                break;
-            }
-        }
-        
-        if ($has_danger) {
-            $file['error'] = 'This SVG file contains potentially dangerous elements and cannot be uploaded.';
-        }
-    }
-    return $file;
-}
-add_filter('wp_handle_upload_prefilter', 'sanitize_svg_upload');
+add_action('admin_head', 'render_svg_ext_media_library_css');
 
 /**
  * Render SVG images inline for styling and animations
  */
-function render_svg_inline($content) {
-    // Check if the content contains the `style-svg` class
+function render_style_svg_as_inline($content) {
     if (strpos($content, 'style-svg') === false) {
         return $content;
     }
 
-    // Find img tags within elements with style-svg class
-    $pattern = '/(<[^>]*class="[^"]*style-svg[^"]*"[^>]*>.*?)(<img[^>]*src="([^"]*\.svg)"[^>]*class="([^"]*)"[^>]*\/?>)(.*?<\/[^>]+>)/is';
-    
-    $content = preg_replace_callback($pattern, function($matches) {
-        $before_img = $matches[1];
-        $svg_src = $matches[3];
-        $img_classes = $matches[4];
-        $after_img = $matches[5];
-        
-        // Resolve the full path of the SVG file
-        $path_to_svg = wp_normalize_path(ABSPATH . str_replace(site_url() . '/', '', $svg_src));
-        
-        if (!file_exists($path_to_svg)) {
-            error_log("SVG file not found: $path_to_svg");
-            return $matches[0];
-        }
-        
-        // Cache the processed SVG
-        $cache_key = 'inline_svg_v3_' . md5($path_to_svg . filemtime($path_to_svg));
-        $cached_data = get_transient($cache_key);
-        
-        if (!$cached_data) {
-            $svg_content = file_get_contents($path_to_svg);
-            if ($svg_content) {
-                
-                // Remove CDATA wrappers from text elements
-                $svg_content = preg_replace_callback(
-                    '/<text([^>]*)>(.*?)<\/text>/is',
-                    function($m) {
-                        $text = preg_replace('/<!\[CDATA\[(.*?)\]\]>/s', '$1', $m[2]);
-                        return '<text' . $m[1] . '>' . $text . '</text>';
-                    },
-                    $svg_content
-                );
-                
-                // Process scripts - keep them in SVG but escape special characters per SVGator method
-                $svg_content = preg_replace_callback(
-                    '/<script([^>]*)>(.*?)<\/script>/is',
-                    function($m) {
-                        $script = $m[2];
-                        // Extract from CDATA if present
-                        if (preg_match('/^[\s\n]*<!\[CDATA\[(.*)\]\]>[\s\n]*$/s', $script, $cdata)) {
-                            $script = $cdata[1];
-                        }
-                        
-                        // Replace special characters with HTML entities (SVGator method)
-                        $replacements = [
-                            '<' => '&lt;',
-                            '>' => '&gt;',
-                            '[' => '&#91;',
-                            ']' => '&#93;',
-                        ];
-                        
-                        $script = str_replace(
-                            array_keys($replacements),
-                            array_values($replacements),
-                            $script
-                        );
-                        
-                        return '<script' . $m[1] . '>' . $script . '</script>';
-                    },
-                    $svg_content
-                );
-                
-                $cached_data = $svg_content;
-                set_transient($cache_key, $cached_data, DAY_IN_SECONDS);
-            }
-        }
-        
-        if (!$cached_data) {
-            return $matches[0];
-        }
-        
-        // Add classes to the SVG tag
-        $svg_with_classes = preg_replace_callback(
-            '/<svg([^>]*)>/',
-            function($svg_matches) use ($img_classes) {
-                $attrs = $svg_matches[1];
-                $combined_classes = trim($img_classes . ' replaced-svg');
-                
-                if (preg_match('/class="([^"]*)"/', $attrs, $class_match)) {
-                    $existing = $class_match[1];
-                    $all_classes = trim($existing . ' ' . $combined_classes);
-                    $attrs = preg_replace('/class="[^"]*"/', 'class="' . esc_attr($all_classes) . '"', $attrs);
-                } else {
-                    $attrs .= ' class="' . esc_attr($combined_classes) . '"';
+    libxml_use_internal_errors(true);
+    $dom = new DOMDocument();
+    $dom->loadHTML('<?xml encoding="utf-8" ?>' . $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+    $xpath = new DOMXPath($dom);
+    $elements = $xpath->query('//*[@class and contains(concat(" ", normalize-space(@class), " "), " style-svg ")]');
+
+    foreach ($elements as $element) {
+        $images = $element->getElementsByTagName('img');
+
+        foreach ($images as $img) {
+            $src = $img->getAttribute('src');
+            if (!$src) continue;
+
+            $path_to_svg = wp_normalize_path(ABSPATH . str_replace(site_url() . '/', '', strtok($src, '?')));
+            if (!file_exists($path_to_svg)) continue;
+
+            $cache_key = 'inline_svg_' . md5($path_to_svg . filemtime($path_to_svg));
+            $cached_svg = get_transient($cache_key);
+
+            if (!$cached_svg) {
+                $svg_content = file_get_contents($path_to_svg);
+                if ($svg_content) {
+                    set_transient($cache_key, $svg_content, DAY_IN_SECONDS);
                 }
-                
-                return '<svg' . $attrs . '>';
-            },
-            $cached_data,
-            1
-        );
-        
-        return $before_img . $svg_with_classes . $after_img;
-    }, $content);
-    
-    return $content;
+            } else {
+                $svg_content = $cached_svg;
+            }
+
+            if (!$svg_content) continue;
+
+            $img_classes = $img->getAttribute('class');
+
+            // More robust check for <script> tags in SVGs
+            if (preg_match('/<script\b/i', $svg_content)) {
+                // Clear cache to prevent stale inline render
+                delete_transient($cache_key);
+
+                $embed = $dom->createElement('embed');
+                $embed->setAttribute('type', 'image/svg+xml');
+                $embed->setAttribute('src', esc_url($src));
+                $embed->setAttribute('class', $img_classes . ' mello-svg-embed mello-svg-embed-observed');
+                $embed->setAttribute('width', '100%');
+                $embed->setAttribute('height', '100%');
+                $embed->setAttribute('loading', 'lazy');
+                $embed->setAttribute('data-animate', 'true');
+                $img->parentNode->replaceChild($embed, $img);
+                continue;
+            }
+
+            $svg_dom = new DOMDocument();
+            $svg_dom->loadXML($svg_content);
+            $svg_node = $svg_dom->documentElement;
+            if (!$svg_node || $svg_node->nodeName !== 'svg') continue;
+
+            $existing_classes = $svg_node->getAttribute('class');
+            $combined_classes = trim($existing_classes . ' ' . $img_classes . ' replaced-svg');
+            $svg_node->setAttribute('class', $combined_classes);
+
+            $svg_node = $dom->importNode($svg_node, true);
+            $img->parentNode->replaceChild($svg_node, $img);
+        }
+    }
+
+    return $dom->saveHTML();
 }
 
 // Apply to full page output
-function buffer_template_output() {
+function render_svg_ext_buffer_template_output()
+{
     ob_start(function ($content) {
-        return render_svg_inline($content);
+        return render_style_svg_as_inline($content);
     });
 }
-add_action('template_redirect', 'buffer_template_output');
+add_action('template_redirect', 'render_svg_ext_buffer_template_output');
 
 // Apply to post/page content
-add_filter('the_content', 'render_svg_inline', 20);
+add_filter('the_content', 'render_style_svg_as_inline', 20);
 
 // Add class to blocks with the renderSVG attribute
 add_filter('render_block', function ($block_content, $block) {
@@ -208,7 +179,7 @@ add_filter('render_block', function ($block_content, $block) {
         && !empty($block['attrs']['renderSVG'])
     ) {
         $tag = ($block['blockName'] === 'core/site-logo') ? 'div' : 'figure';
-        
+
         $block_content = preg_replace_callback(
             '/<' . $tag . '([^>]*class=")([^"]*)"/',
             function ($matches) use ($tag) {
@@ -221,6 +192,50 @@ add_filter('render_block', function ($block_content, $block) {
             $block_content
         );
     }
-    
+
     return $block_content;
 }, 20, 2);
+
+// Add IntersectionObserver to pause/resume SVGator animations in <object> tags
+add_action('wp_footer', function () {
+    ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const observedObjects = document.querySelectorAll('.mello-svg-embed-observed');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const obj = entry.target;
+                const svgDoc = obj.contentDocument;
+                if (!svgDoc) return;
+
+                const svgEl = svgDoc.querySelector('svg');
+                if (!svgEl || typeof svgEl.pauseAnimations !== 'function') return;
+
+                if (entry.isIntersecting) {
+                    svgEl.unpauseAnimations?.();
+                } else {
+                    svgEl.pauseAnimations?.();
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observedObjects.forEach(obj => observer.observe(obj));
+    });
+    </script>
+    <?php
+}, 20);
+
+add_action('wp_head', function () {
+    echo '<style>
+        .mello-svg-embed {
+            pointer-events: none;
+            position: relative;
+            z-index: -1;
+        }
+        .mello-svg-embed[data-interactive="true"] {
+            pointer-events: auto;
+            z-index: auto;
+        }
+    </style>';
+});

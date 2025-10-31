@@ -35,6 +35,7 @@ const TEMPLATE = [
 export default function Edit({ attributes, setAttributes }) {
     const {
         slidesPerView,
+        slidesPerViewXLarge,
         slidesPerViewTablet,
         slidesPerViewMobile,
         slidesPerViewAuto,
@@ -46,6 +47,7 @@ export default function Edit({ attributes, setAttributes }) {
         autoplayDisableOnInteraction,
         autoplayReverseDirection,
         spaceBetween,
+        spaceBetweenXLarge,
         spaceBetweenTablet,
         spaceBetweenMobile,
         speed,
@@ -73,7 +75,8 @@ export default function Edit({ attributes, setAttributes }) {
         freeModeMomentumRatio,
         freeModeMomentumVelocityRatio,
         freeModeSticky,
-        overflowHidden
+        overflowHidden,
+        allowTouchMove
     } = attributes;
 
     const blockProps = useBlockProps({
@@ -81,11 +84,17 @@ export default function Edit({ attributes, setAttributes }) {
             ...(spaceBetween !== undefined
                 ? { '--swiper-space-between': `${spaceBetween}px` }
                 : {}),
+            ...(spaceBetweenXLarge !== undefined
+                ? { '--swiper-space-between-xlarge': `${spaceBetweenXLarge}px` }
+                : {}),
             ...(spaceBetweenTablet !== undefined
                 ? { '--swiper-space-between-tablet': `${spaceBetweenTablet}px` }
                 : {}),
             ...(spaceBetweenMobile !== undefined
                 ? { '--swiper-space-between-mobile': `${spaceBetweenMobile}px` }
+                : {}),
+            ...(!slidesPerViewAuto && slidesPerViewXLarge !== undefined
+                ? { '--swiper-spv-xlarge': slidesPerViewXLarge }
                 : {}),
             ...(!slidesPerViewAuto && slidesPerView !== undefined
                 ? { '--swiper-spv': slidesPerView }
@@ -101,6 +110,7 @@ export default function Edit({ attributes, setAttributes }) {
         ...(slidesPerViewAuto
             ? { 'data-swiper-slides-per-view-auto': true }
             : {
+                ...(slidesPerViewXLarge !== undefined && { 'data-swiper-slides-per-view-xlarge': slidesPerViewXLarge }),
                 'data-swiper-slides-per-view': slidesPerView,
                 'data-swiper-slides-per-view-tablet': slidesPerViewTablet !== undefined ? slidesPerViewTablet : 2,
                 'data-swiper-slides-per-view-mobile': slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1,
@@ -113,6 +123,7 @@ export default function Edit({ attributes, setAttributes }) {
         ...(autoplayDisableOnInteraction !== undefined && { 'data-swiper-autoplay-disable-on-interaction': autoplayDisableOnInteraction }),
         ...(autoplayReverseDirection !== undefined && { 'data-swiper-autoplay-reverse-direction': autoplayReverseDirection }),
         ...(spaceBetween !== undefined && { 'data-swiper-space-between': spaceBetween }),
+        ...(spaceBetweenXLarge !== undefined && { 'data-swiper-space-between-xlarge': spaceBetweenXLarge }),
         ...(spaceBetweenTablet !== undefined && { 'data-swiper-space-between-tablet': spaceBetweenTablet }),
         ...(spaceBetweenMobile !== undefined && { 'data-swiper-space-between-mobile': spaceBetweenMobile }),
         ...(speed !== undefined && { 'data-swiper-speed': speed }),
@@ -141,6 +152,7 @@ export default function Edit({ attributes, setAttributes }) {
         ...(enableThumbs !== undefined && { 'data-swiper-enable-thumbs': enableThumbs }),
         ...(thumbsTarget !== undefined && { 'data-swiper-thumbs-target': thumbsTarget }),
         ...(overflowHidden !== undefined && { 'data-swiper-overflow-hidden': overflowHidden }),
+        ...(allowTouchMove !== undefined && { 'data-swiper-allow-touch-move': allowTouchMove }),
     });
 
     return (
@@ -188,6 +200,15 @@ export default function Edit({ attributes, setAttributes }) {
                     {!slidesPerViewAuto && (
                         <>
                             <RangeControl
+                                label={__('Slides Per View (XLarge Desktop)', 'mello-block')}
+                                value={slidesPerViewXLarge !== undefined ? slidesPerViewXLarge : 4}
+                                onChange={(value) => setAttributes({ slidesPerViewXLarge: value !== undefined ? value : undefined })}
+                                min={1}
+                                max={12}
+                                step={0.25}
+                                help={__('Leave at 4 to match desktop value', 'mello-block')}
+                            />
+                            <RangeControl
                                 label={__('Slides Per View (Desktop)', 'mello-block')}
                                 value={slidesPerView !== undefined ? slidesPerView : 3}
                                 onChange={(value) => setAttributes({ slidesPerView: value !== undefined ? value : undefined })}
@@ -225,6 +246,15 @@ export default function Edit({ attributes, setAttributes }) {
                 </PanelBody>
                 <PanelBody title={__('Slide Spacing', 'mello-block')} initialOpen={false}>
                     <RangeControl
+                        label={__('Space Between Slides (XLarge Desktop, px)', 'mello-block')}
+                        value={spaceBetweenXLarge !== undefined ? spaceBetweenXLarge : spaceBetween}
+                        onChange={(value) => setAttributes({ spaceBetweenXLarge: value !== undefined ? value : undefined })}
+                        min={0}
+                        max={200}
+                        step={1}
+                        help={__('Leave unset to match desktop spacing', 'mello-block')}
+                    />
+                    <RangeControl
                         label={__('Space Between Slides (Desktop, px)', 'mello-block')}
                         value={spaceBetween}
                         onChange={(value) => setAttributes({ spaceBetween: value !== undefined ? value : undefined })}
@@ -252,10 +282,32 @@ export default function Edit({ attributes, setAttributes }) {
 
                 <PanelBody title={__('Behaviour', 'mello-block')} initialOpen={false}>
                     <ToggleControl
-                        label={__('Grab Cursor', 'mello-block')}
-                        checked={grabCursor}
-                        onChange={(value) => setAttributes({ grabCursor: value !== undefined ? value : undefined })}
+                        label={__('Allow Touch/Drag', 'mello-block')}
+                        checked={allowTouchMove !== false}
+                        onChange={(value) => {
+                            const updates = { allowTouchMove: value };
+                            // Disable related options when touch/drag is disabled
+                            if (value === false) {
+                                updates.grabCursor = undefined;
+                                updates.freeMode = undefined;
+                                updates.freeModeMomentum = undefined;
+                                updates.freeModeMomentumRatio = undefined;
+                                updates.freeModeMomentumVelocityRatio = undefined;
+                                updates.freeModeSticky = undefined;
+                            }
+                            setAttributes(updates);
+                        }}
+                        help={__('Disable to prevent swiping/dragging (useful for thumbs)', 'mello-block')}
                     />
+                    {allowTouchMove !== false && (
+                        <>
+                            <ToggleControl
+                                label={__('Grab Cursor', 'mello-block')}
+                                checked={grabCursor}
+                                onChange={(value) => setAttributes({ grabCursor: value !== undefined ? value : undefined })}
+                            />
+                        </>
+                    )}
                     <ToggleControl
                         label={__('Slide to Clicked Slide', 'mello-block')}
                         checked={slideToClickedSlide}
@@ -295,40 +347,46 @@ export default function Edit({ attributes, setAttributes }) {
                             />
                         </>
                     )}
-                    <Divider />
-                    <ToggleControl
-                        label={__('Free Mode', 'mello-block')}
-                        checked={freeMode}
-                        onChange={(value) => setAttributes({ freeMode: value !== undefined ? value : undefined })}
-                    />
-                    {freeMode && (
+
+                    {allowTouchMove !== false && (
+
                         <>
+                            <Divider />
                             <ToggleControl
-                                label={__('Momentum', 'mello-block')}
-                                checked={freeModeMomentum}
-                                onChange={(value) => setAttributes({ freeModeMomentum: value !== undefined ? value : undefined })}
+                                label={__('Free Mode', 'mello-block')}
+                                checked={freeMode}
+                                onChange={(value) => setAttributes({ freeMode: value !== undefined ? value : undefined })}
                             />
-                            <RangeControl
-                                label={__('Momentum Ratio', 'mello-block')}
-                                value={freeModeMomentumRatio}
-                                onChange={(value) => setAttributes({ freeModeMomentumRatio: value !== undefined ? value : undefined })}
-                                min={0}
-                                max={10}
-                                step={0.1}
-                            />
-                            <RangeControl
-                                label={__('Momentum Velocity Ratio', 'mello-block')}
-                                value={freeModeMomentumVelocityRatio}
-                                onChange={(value) => setAttributes({ freeModeMomentumVelocityRatio: value !== undefined ? value : undefined })}
-                                min={0}
-                                max={10}
-                                step={0.1}
-                            />
-                            <ToggleControl
-                                label={__('Sticky', 'mello-block')}
-                                checked={freeModeSticky}
-                                onChange={(value) => setAttributes({ freeModeSticky: value !== undefined ? value : undefined })}
-                            />
+                            {freeMode && (
+                                <>
+                                    <ToggleControl
+                                        label={__('Momentum', 'mello-block')}
+                                        checked={freeModeMomentum}
+                                        onChange={(value) => setAttributes({ freeModeMomentum: value !== undefined ? value : undefined })}
+                                    />
+                                    <RangeControl
+                                        label={__('Momentum Ratio', 'mello-block')}
+                                        value={freeModeMomentumRatio}
+                                        onChange={(value) => setAttributes({ freeModeMomentumRatio: value !== undefined ? value : undefined })}
+                                        min={0}
+                                        max={10}
+                                        step={0.1}
+                                    />
+                                    <RangeControl
+                                        label={__('Momentum Velocity Ratio', 'mello-block')}
+                                        value={freeModeMomentumVelocityRatio}
+                                        onChange={(value) => setAttributes({ freeModeMomentumVelocityRatio: value !== undefined ? value : undefined })}
+                                        min={0}
+                                        max={10}
+                                        step={0.1}
+                                    />
+                                    <ToggleControl
+                                        label={__('Sticky', 'mello-block')}
+                                        checked={freeModeSticky}
+                                        onChange={(value) => setAttributes({ freeModeSticky: value !== undefined ? value : undefined })}
+                                    />
+                                </>
+                            )}
                         </>
                     )}
                 </PanelBody>
