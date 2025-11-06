@@ -476,6 +476,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             options.direction = swiperElement.getAttribute('data-swiper-direction');
         }
 
+        // Validate mousewheel eventsTarget to prevent null element errors
+        if (options.mousewheel && options.mousewheel.eventsTarget && options.mousewheel.eventsTarget !== 'container') {
+            const targetEl = document.querySelector(options.mousewheel.eventsTarget);
+            if (!targetEl) {
+                console.warn(`Swiper mousewheel eventsTarget "${options.mousewheel.eventsTarget}" not found. Resetting to container.`, swiperElement);
+                options.mousewheel.eventsTarget = 'container';
+            }
+        }
+
         // Initialize Swiper with configured options
         new Swiper(swiperElement, options);
     });
