@@ -297,16 +297,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             const slidesPerView = options.slidesPerView || 1;
             const spaceBetween = options.spaceBetween || 0;
-            
+
             // Get XLarge values - if not set, fall back to desktop values
             const slidesPerViewXLarge = swiperElement.hasAttribute('data-swiper-slides-per-view-xlarge')
                 ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-xlarge'))
                 : slidesPerView;
-            
+
             const spaceBetweenXLarge = swiperElement.hasAttribute('data-swiper-space-between-xlarge')
                 ? Number(swiperElement.getAttribute('data-swiper-space-between-xlarge'))
                 : spaceBetween;
-            
+
             const slidesPerViewMobile = swiperElement.hasAttribute('data-swiper-slides-per-view-mobile')
                 ? Number(swiperElement.getAttribute('data-swiper-slides-per-view-mobile'))
                 : slidesPerView;
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Set base options that will be used below the first breakpoint
             options.slidesPerView = slidesPerViewMobile;
             options.spaceBetween = spaceBetweenMobile;
-            
+
             options.breakpoints = {
                 782: {
                     slidesPerView: slidesPerViewTablet,
@@ -346,11 +346,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (thumbsEl) {
                 const thumbModuleInfo = modulesToLoad.find(m => m.name === 'Thumbs');
                 if (thumbModuleInfo) {
+                    const thumbsActiveModules = [thumbModuleInfo.module];
+
+                    // Check if thumbs needs EffectFade
+                    const thumbsHasEffectFade = thumbsEl.hasAttribute('data-swiper-effect') &&
+                        thumbsEl.getAttribute('data-swiper-effect') === 'fade';
+
+                    if (thumbsHasEffectFade) {
+                        const fadeModuleInfo = modulesToLoad.find(m => m.name === 'EffectFade');
+                        if (fadeModuleInfo) {
+                            thumbsActiveModules.push(fadeModuleInfo.module);
+                        }
+                    }
+
                     const thumbsOptions = {
-                        modules: [thumbModuleInfo.module],
+                        modules: thumbsActiveModules,
                         watchSlidesProgress: true,
                         slideToClickedSlide: true,
                     };
+
+                    // Apply fade effect if needed
+                    if (thumbsHasEffectFade) {
+                        thumbsOptions.effect = 'fade';
+                    }
 
                     const thumbsWrapper = thumbsEl.querySelector('.swiper-wrapper');
                     if (thumbsWrapper) {
@@ -417,16 +435,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     } else {
                         const slidesPerView = thumbsOptions.slidesPerView || 1;
                         const spaceBetween = thumbsOptions.spaceBetween || 0;
-                        
+
                         // Get XLarge values - if not set, fall back to desktop values
                         const slidesPerViewXLarge = thumbsEl.hasAttribute('data-swiper-slides-per-view-xlarge')
                             ? Number(thumbsEl.getAttribute('data-swiper-slides-per-view-xlarge'))
                             : slidesPerView;
-                        
+
                         const spaceBetweenXLarge = thumbsEl.hasAttribute('data-swiper-space-between-xlarge')
                             ? Number(thumbsEl.getAttribute('data-swiper-space-between-xlarge'))
                             : spaceBetween;
-                        
+
                         const slidesPerViewMobile = thumbsEl.hasAttribute('data-swiper-slides-per-view-mobile')
                             ? Number(thumbsEl.getAttribute('data-swiper-slides-per-view-mobile'))
                             : slidesPerView;
@@ -443,7 +461,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         // Set base options that will be used below the first breakpoint
                         thumbsOptions.slidesPerView = slidesPerViewMobile;
                         thumbsOptions.spaceBetween = spaceBetweenMobile;
-                        
+
                         thumbsOptions.breakpoints = {
                             782: {
                                 slidesPerView: slidesPerViewTablet,

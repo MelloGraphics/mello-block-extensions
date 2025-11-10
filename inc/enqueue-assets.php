@@ -2,7 +2,8 @@
 
 namespace Mello;
 
-class Block_Extensions {
+class Block_Extensions
+{
 
     /**
      * @var string $editor_script_handle the editor script handle id
@@ -27,13 +28,14 @@ class Block_Extensions {
     /**
      * Constructor for setting up handles and hooks.
      */
-    public function __construct() {
+    public function __construct()
+    {
 
         // Define script/style handles using a consistent identifier.
         $this->editor_script_handle = 'mello-block-editor-script';
-        $this->editor_style_handle  = 'mello-block-editor-style';
-        $this->public_style_handle  = 'mello-block-style';
-        $this->public_script_handle  = 'mello-block-frontend-script'; // New handle for frontend script
+        $this->editor_style_handle = 'mello-block-editor-style';
+        $this->public_style_handle = 'mello-block-style';
+        $this->public_script_handle = 'mello-block-frontend-script'; // New handle for frontend script
 
         // Register the hooks to enqueue block assets.
         $this->register_hooks();
@@ -42,26 +44,29 @@ class Block_Extensions {
     /**
      * Register the hooks for enqueuing assets and registering blocks.
      */
-    public function register_hooks() {
+    public function register_hooks()
+    {
         // Hook for including extension functions early.
-        add_action( 'init', [ $this, 'include_extension_functions' ] );
+        add_action('init', [$this, 'include_extension_functions']);
         // Hook for editor-only assets.
-        add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+        add_action('enqueue_block_editor_assets', [$this, 'enqueue_block_editor_assets']);
         // Hook for frontend-only assets.
-        add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
         // Hook to register blocks on init
-        add_action( 'init', [ $this, 'register_blocks' ] );
+        add_action('init', [$this, 'register_blocks']);
     }
 
     /**
      * Include block-functions.php for enabled extensions early in the lifecycle.
      */
-    public function include_extension_functions() {
+    public function include_extension_functions()
+    {
         $enabled = \Mello\mello_get_enabled_extensions();
         $function_dirs = ['extensions'];
 
         foreach ($enabled as $slug => $active) {
-            if (! $active) continue;
+            if (!$active)
+                continue;
 
             foreach ($function_dirs as $base) {
                 $functions_file = plugin_dir_path(__FILE__) . "../build/$base/$slug/block-functions.php";
@@ -75,11 +80,13 @@ class Block_Extensions {
     /**
      * Enqueue editor-specific assets.
      */
-    public function enqueue_block_editor_assets() {
+    public function enqueue_block_editor_assets()
+    {
         $enabled = \Mello\mello_get_enabled_extensions();
 
         foreach ($enabled as $slug => $active) {
-            if (! $active) continue;
+            if (!$active)
+                continue;
 
             $asset_dirs = ['extensions', 'blocks'];
 
@@ -89,7 +96,7 @@ class Block_Extensions {
 
                 if (file_exists($editor_js)) {
                     $asset_file = plugin_dir_path(__FILE__) . "../build/$base/$slug/edit.asset.php";
-                    $asset = file_exists($asset_file) ? require $asset_file : [ 'dependencies' => [], 'version' => false ];
+                    $asset = file_exists($asset_file) ? require $asset_file : ['dependencies' => [], 'version' => false];
 
                     wp_enqueue_script(
                         "mello-editor-$slug",
@@ -115,11 +122,13 @@ class Block_Extensions {
     /**
      * Enqueue frontend-specific assets.
      */
-    public function enqueue_frontend_assets() {
+    public function enqueue_frontend_assets()
+    {
         $enabled = \Mello\mello_get_enabled_extensions();
 
         foreach ($enabled as $slug => $active) {
-            if (! $active) continue;
+            if (!$active)
+                continue;
 
             $asset_dirs = ['extensions', 'blocks'];
 
@@ -160,46 +169,50 @@ class Block_Extensions {
      * Register blocks from the build/blocks folder.
      * Scans each directory in build/blocks and, if a block.json file exists and the toggle is enabled, registers the block.
      */
-    public function register_blocks() {
+    public function register_blocks()
+    {
         // Get the enabled extensions/settings.
         $enabled = \Mello\mello_get_enabled_extensions();
 
-        $blocks_dir = plugin_dir_path( __FILE__ ) . "../build/blocks/";
+        $blocks_dir = plugin_dir_path(__FILE__) . "../build/blocks/";
 
-        if ( ! file_exists( $blocks_dir ) ) {
+        if (!file_exists($blocks_dir)) {
             return;
         }
 
         // Get all directories in the build/blocks folder
-        $directories = glob( $blocks_dir . '*', GLOB_ONLYDIR );
+        $directories = glob($blocks_dir . '*', GLOB_ONLYDIR);
 
-        if ( ! $directories ) {
+        if (!$directories) {
             return;
         }
 
-        foreach ( $directories as $dir ) {
+        foreach ($directories as $dir) {
             // The block slug is the directory name.
-            $slug = basename( $dir );
+            $slug = basename($dir);
             // Only register if the toggle for this block is enabled.
-            if ( empty( $enabled[ $slug ] ) || ! $enabled[ $slug ] ) {
+            if (empty($enabled[$slug]) || !$enabled[$slug]) {
                 continue;
             }
-            $block_json = trailingslashit( $dir ) . 'block.json';
-            if ( file_exists( $block_json ) ) {
+            $block_json = trailingslashit($dir) . 'block.json';
+            if (file_exists($block_json)) {
                 // Register the block using the directory path.
-                register_block_type( $dir );
+                register_block_type($dir);
             }
         }
+
+
     }
 
     /**
      * Prepare localized script data to pass to JavaScript.
      * This can be useful for things like REST API URLs, nonces, or any dynamic data.
      */
-    public function get_localize_script_data() {
+    public function get_localize_script_data()
+    {
         return [
             'site_url' => get_site_url(),
-            'nonce'    => wp_create_nonce( 'wp_rest' ), // Nonce for security in AJAX requests.
+            'nonce' => wp_create_nonce('wp_rest'), // Nonce for security in AJAX requests.
         ];
     }
 }
