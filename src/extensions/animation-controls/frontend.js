@@ -149,8 +149,9 @@ const animationDefaults = {
     },
 };
 
-// Track initialized elements to prevent double-initialization
-const initializedElements = new WeakSet();
+// Track initialized animation types separately
+const initializedElementAnimations = new WeakSet();
+const initializedChildAnimations = new WeakSet();
 
 // Initialize individual element animation
 function initializeElementAnimation(element) {
@@ -158,7 +159,7 @@ function initializeElementAnimation(element) {
     const { animate, inView } = MM;
 
     // Skip if already initialized
-    if (initializedElements.has(element)) {
+    if (initializedElementAnimations.has(element)) {
         return;
     }
 
@@ -247,7 +248,7 @@ function initializeElementAnimation(element) {
     });
 
     // Mark as initialized
-    initializedElements.add(element);
+    initializedElementAnimations.add(element);
 }
 
 // Initialize child animation
@@ -256,11 +257,11 @@ function initializeChildAnimation(parent) {
     const { animate, stagger, inView } = MM;
 
     // Skip if already initialized
-    if (initializedElements.has(parent)) {
+    if (initializedChildAnimations.has(parent)) {
         return;
     }
 
-    const children = parent.querySelectorAll(":scope > *");
+    const children = Array.from(parent.children).filter(el => el.nodeType === 1);
     if (children.length === 0) return;
 
     const childAnimationType = parent.getAttribute("data-child-animation-type") || "fade-in";
@@ -377,7 +378,7 @@ function initializeChildAnimation(parent) {
     });
 
     // Mark as initialized
-    initializedElements.add(parent);
+    initializedChildAnimations.add(parent);
 }
 
 // Initialize all animations in a container
@@ -399,23 +400,17 @@ document.addEventListener('mello-motion-ready', () => {
     // Initialize animations on page load
     initializeAnimations();
 
+    // Define the selector for results/query area
+    const RESULTS_SELECTOR = '.wp-block-query';
+
     // Set up mutation observer to watch for dynamically added content
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
-                // Only process element nodes
-                if (node.nodeType === 1) {
-                    // Check if the node itself has animation attributes
-                    if (node.hasAttribute('data-animation')) {
-                        initializeElementAnimation(node);
-                    }
-                    if (node.hasAttribute('data-child-animation')) {
-                        initializeChildAnimation(node);
-                    }
+                if (node.nodeType !== 1) return;
+                if (!node.closest(RESULTS_SELECTOR)) return;
 
-                    // Check for animated elements within the added node
-                    initializeAnimations(node);
-                }
+                initializeAnimations(node);
             });
         });
     });
