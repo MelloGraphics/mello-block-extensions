@@ -149,16 +149,17 @@ const animationDefaults = {
     },
 };
 
-// Track initialized elements to prevent double-initialization
-const initializedElements = new WeakSet();
+// Track initialized animations separately for elements and child sets
+const initializedElementAnimations = new WeakSet();
+const initializedChildAnimations = new WeakSet();
 
 // Initialize individual element animation
 function initializeElementAnimation(element) {
     const MM = window.MelloMotion || {};
     const { animate, inView } = MM;
 
-    // Skip if already initialized
-    if (initializedElements.has(element)) {
+    // Skip if this element's own animation is already initialized
+    if (initializedElementAnimations.has(element)) {
         return;
     }
 
@@ -246,8 +247,8 @@ function initializeElementAnimation(element) {
         margin: `0% 0% ${triggerPoint} 0%`,
     });
 
-    // Mark as initialized
-    initializedElements.add(element);
+    // Mark this element animation as initialized
+    initializedElementAnimations.add(element);
 }
 
 // Initialize child animation
@@ -255,8 +256,8 @@ function initializeChildAnimation(parent) {
     const MM = window.MelloMotion || {};
     const { animate, stagger, inView } = MM;
 
-    // Skip if already initialized
-    if (initializedElements.has(parent)) {
+    // Skip if this parent's child animation set is already initialized
+    if (initializedChildAnimations.has(parent)) {
         return;
     }
 
@@ -376,8 +377,8 @@ function initializeChildAnimation(parent) {
         margin: `0% 0% ${childTriggerPoint} 0%`,
     });
 
-    // Mark as initialized
-    initializedElements.add(parent);
+    // Mark this parent's child animation as initialized
+    initializedChildAnimations.add(parent);
 }
 
 // Initialize all animations in a container
