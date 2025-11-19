@@ -1,5 +1,17 @@
 import Lenis from 'lenis';
 
+const style = document.createElement('style');
+style.textContent = `
+    [data-scroll-speed], .has-inner-scroll-speed * {
+        transform: translateY(var(--mello-parallax, 0));
+    }
+    
+    [data-scroll-speed].parallax-loading, .has-inner-scroll-speed.parallax-loading * {
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+`;
+document.head.appendChild(style);
+
 // Store references
 let lenis = null;
 let isInitialized = false;
@@ -44,8 +56,13 @@ function initSmoothScroll(scrollFunction) {
     // Start the animation loop immediately
     requestAnimationFrame(raf);
 
-    // Initialize scroll speed elements
-    initScrollSpeedElements(scrollFunction);
+    // Initialize parallax elements immediately to prevent flash
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            initScrollSpeedElements(scrollFunction);
+        });
+    });
 
     // Set up event listeners and observers
     setupEventListeners(scrollFunction);
@@ -61,12 +78,23 @@ function initScrollSpeedElements(scrollFunction) {
     document.querySelectorAll('[data-scroll-speed]').forEach((el) => {
         if (el.classList.contains('has-inner-scroll-speed')) return;
         const speed = parseFloat(el.dataset.scrollSpeed) || 0;
+        
+        // Add loading class for smooth transition
+        el.classList.add('parallax-loading');
+        
+        // Remove loading class after transition completes
+        setTimeout(() => {
+            el.classList.remove('parallax-loading');
+        }, 600);
 
         scrollFunction(
             (progress) => {
+                // Clamp progress between 0 and 1 to prevent edge case issues
+                const clampedProgress = Math.max(0, Math.min(1, progress));
                 const offset = speed * 4;
-                const translateY = offset * (1 - 2 * progress);
-                el.style.transform = `translateY(${translateY}vmin)`;
+                // Center the range: at progress 0.5, translateY = 0
+                const translateY = offset - (offset * 2 * clampedProgress);
+                el.style.setProperty('--mello-parallax', `${translateY}vmin`);
             },
             {
                 target: el,
@@ -98,11 +126,22 @@ function initScrollSpeedElements(scrollFunction) {
         }
 
         if (target) {
+            // Add loading class for smooth transition
+            wrapper.classList.add('parallax-loading');
+            
+            // Remove loading class after transition completes
+            setTimeout(() => {
+                wrapper.classList.remove('parallax-loading');
+            }, 600);
+            
             scrollFunction(
                 (progress) => {
+                    // Clamp progress between 0 and 1 to prevent edge case issues
+                    const clampedProgress = Math.max(0, Math.min(1, progress));
                     const offset = speed * 4;
-                    const translateY = offset * (1 - 2 * progress);
-                    target.style.transform = `translateY(${translateY}vmin)`;
+                    // Center the range: at progress 0.5, translateY = 0
+                    const translateY = offset - (offset * 2 * clampedProgress);
+                    target.style.setProperty('--mello-parallax', `${translateY}vmin`);
                 },
                 {
                     target: wrapper,
