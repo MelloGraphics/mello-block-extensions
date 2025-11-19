@@ -2,7 +2,8 @@ import Lenis from 'lenis';
 
 const style = document.createElement('style');
 style.textContent = `
-    [data-scroll-speed], .has-inner-scroll-speed * {
+    [data-scroll-speed],
+    .mello-parallax-target {
         transform: translateY(var(--mello-parallax, 0));
     }
     
@@ -108,15 +109,28 @@ function initScrollSpeedElements(scrollFunction) {
         let target = null;
         let speed = parseFloat(wrapper.dataset.scrollSpeed) || 0;
 
-        // Detect inner element based on block type or structure
-        if (wrapper.classList.contains('wp-block-image')) {
-            target = wrapper.querySelector('img');
-        } else if (wrapper.classList.contains('wp-block-cover')) {
-            target = wrapper.querySelector('img, video');
-        } else if (wrapper.classList.contains('wp-block-post-featured-image')) {
-            target = wrapper.querySelector('img');
+        // User-defined selector takes priority
+        const userSelector = wrapper.dataset.scrollSpeedTargetSelector;
+        if (userSelector) {
+            const manual = wrapper.querySelector(userSelector);
+            if (manual) {
+                target = manual;
+            }
         }
 
+        // Auto-detection (fallback when userSelector not used or not found)
+        if (!target) {
+            if (wrapper.classList.contains('wp-block-image')) {
+                target = wrapper.querySelector('picture, img, svg');
+            } else if (wrapper.classList.contains('wp-block-cover')) {
+                // Cover blocks can contain picture/img/svg/video
+                target = wrapper.querySelector('picture, img, svg, video');
+            } else if (wrapper.classList.contains('wp-block-post-featured-image')) {
+                target = wrapper.querySelector('picture, img, svg');
+            }
+        }
+
+        // Child block with its own data-scroll-speed overrides everything
         if (!speed) {
             const innerWithSpeed = wrapper.querySelector('[data-scroll-speed]');
             if (innerWithSpeed) {
@@ -126,6 +140,7 @@ function initScrollSpeedElements(scrollFunction) {
         }
 
         if (target) {
+            target.classList.add('mello-parallax-target');
             // Add loading class for smooth transition
             wrapper.classList.add('parallax-loading');
             

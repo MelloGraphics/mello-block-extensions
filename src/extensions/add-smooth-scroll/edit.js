@@ -1,5 +1,5 @@
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
+import { PanelBody, RangeControl, TextControl, ToggleControl } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
@@ -45,6 +45,10 @@ function addAttributes(settings) {
 			type: 'boolean',
 			default: false,
 		},
+		scrollSpeedTargetSelector: {
+			type: 'string',
+			default: '',
+		},
 	};
 
 	const newSettings = {
@@ -76,7 +80,7 @@ function addInspectorControls(BlockEdit) {
 		}
 
 		const { attributes, setAttributes } = props;
-		const { scrollSpeed, scrollSpeedTargetInner } = attributes;
+		const { scrollSpeed, scrollSpeedTargetInner, scrollSpeedTargetSelector } = attributes;
 
 		return (
 			<>
@@ -96,6 +100,15 @@ function addInspectorControls(BlockEdit) {
 								label={__('Target Inner Element', 'mello-block-extensions')}
 								checked={!!scrollSpeedTargetInner}
 								onChange={(value) => setAttributes({ scrollSpeedTargetInner: value })}
+							/>
+						)}
+						{scrollSpeedTargetInner && (
+							<TextControl
+								label={__('Inner Target Selector', 'mello-block-extensions')}
+								help={__('Optional CSS selector (e.g. "img", ".my-element"). Overrides automatic detection.', 'mello-block-extensions')}
+								value={scrollSpeedTargetSelector || ''}
+								onChange={(value) => setAttributes({ scrollSpeedTargetSelector: value })}
+								placeholder="img, picture, svg"
 							/>
 						)}
 					</PanelBody>
