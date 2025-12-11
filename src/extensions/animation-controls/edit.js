@@ -204,6 +204,7 @@ function addInspectorControls(BlockEdit) {
 			'core/buttons',
 			'core/list',
 			'core/post-template',
+			'core/gallery'
 		];
 
 		const easingOptions = [
