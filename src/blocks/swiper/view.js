@@ -93,6 +93,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Enable watch slides progress for all swipers (adds swiper-slide-visible class)
         options.watchSlidesProgress = true;
+        
+        // Ensure slides render even when outside viewport (helps with overflow: visible)
+        options.watchOverflow = false;
+        options.updateOnWindowResize = true;
 
         // Read all data attributes and build configuration
         const dataAttributes = Array.from(swiperElement.attributes)
@@ -346,18 +350,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
         }
 
-        // Handle loop mode - automatically add loopAdditionalSlides
+        // Handle loop mode - set loopedSlides to match total slide count
         if (options.loop === true) {
-            // Calculate the maximum slidesPerView across all breakpoints
-            const maxSlidesPerView = Math.max(
-                options.slidesPerView === 'auto' ? 4 : (options.slidesPerView || 1),
-                ...(options.breakpoints ? Object.values(options.breakpoints).map(bp => 
-                    bp.slidesPerView === 'auto' ? 4 : (bp.slidesPerView || 1)
-                ) : [])
-            );
+            // Count the actual number of slides
+            const slideCount = wrapper ? wrapper.querySelectorAll(':scope > *').length : 0;
             
-            // Set loopAdditionalSlides to 2x the max slidesPerView (minimum of 4)
-            options.loopAdditionalSlides = Math.max(4, Math.ceil(maxSlidesPerView * 2));
+            // Set loopedSlides to the total number of slides so Swiper duplicates all of them
+            if (slideCount > 0) {
+                options.loopedSlides = slideCount;
+            }
         }
 
         // Handle thumbs integration if enabled
@@ -502,15 +503,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         thumbsOptions.direction = thumbsEl.getAttribute('data-swiper-direction');
                     }
 
-                    // Handle loop mode for thumbs too
+                    // Handle loop mode for thumbs
                     if (thumbsOptions.loop === true) {
-                        const maxThumbsSlidesPerView = Math.max(
-                            thumbsOptions.slidesPerView === 'auto' ? 4 : (thumbsOptions.slidesPerView || 1),
-                            ...(thumbsOptions.breakpoints ? Object.values(thumbsOptions.breakpoints).map(bp => 
-                                bp.slidesPerView === 'auto' ? 4 : (bp.slidesPerView || 1)
-                            ) : [])
-                        );
-                        thumbsOptions.loopAdditionalSlides = Math.max(4, Math.ceil(maxThumbsSlidesPerView * 2));
+                        const thumbsSlideCount = thumbsWrapper ? thumbsWrapper.querySelectorAll(':scope > *').length : 0;
+                        if (thumbsSlideCount > 0) {
+                            thumbsOptions.loopedSlides = thumbsSlideCount;
+                        }
                     }
 
                     const thumbsSwiper = new Swiper(thumbsEl, thumbsOptions);
