@@ -346,6 +346,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
         }
 
+        // Handle loop mode - automatically add loopAdditionalSlides
+        if (options.loop === true) {
+            // Calculate the maximum slidesPerView across all breakpoints
+            const maxSlidesPerView = Math.max(
+                options.slidesPerView === 'auto' ? 4 : (options.slidesPerView || 1),
+                ...(options.breakpoints ? Object.values(options.breakpoints).map(bp => 
+                    bp.slidesPerView === 'auto' ? 4 : (bp.slidesPerView || 1)
+                ) : [])
+            );
+            
+            // Set loopAdditionalSlides to 2x the max slidesPerView (minimum of 4)
+            options.loopAdditionalSlides = Math.max(4, Math.ceil(maxSlidesPerView * 2));
+        }
+
         // Handle thumbs integration if enabled
         if (hasThumbs && hasThumbsTarget) {
             const thumbsEl = document.querySelector(thumbsTargetSelector);
@@ -486,6 +500,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     if (thumbsEl.hasAttribute('data-swiper-direction')) {
                         thumbsOptions.direction = thumbsEl.getAttribute('data-swiper-direction');
+                    }
+
+                    // Handle loop mode for thumbs too
+                    if (thumbsOptions.loop === true) {
+                        const maxThumbsSlidesPerView = Math.max(
+                            thumbsOptions.slidesPerView === 'auto' ? 4 : (thumbsOptions.slidesPerView || 1),
+                            ...(thumbsOptions.breakpoints ? Object.values(thumbsOptions.breakpoints).map(bp => 
+                                bp.slidesPerView === 'auto' ? 4 : (bp.slidesPerView || 1)
+                            ) : [])
+                        );
+                        thumbsOptions.loopAdditionalSlides = Math.max(4, Math.ceil(maxThumbsSlidesPerView * 2));
                     }
 
                     const thumbsSwiper = new Swiper(thumbsEl, thumbsOptions);
