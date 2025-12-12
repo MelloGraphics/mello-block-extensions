@@ -26,8 +26,8 @@ const TEMPLATE = [
         'core/buttons',
         { lock: { remove: true }, className: 'swiper-navigation', metadata: { name: 'Prev / Next Buttons' }, style: { spacing: { blockGap: { left: 'var:preset|spacing|small' } } } },
         [
-            ['core/button', { className: 'swiper-button-prev', "lock": { "move": true, "remove": true }, text: __('prev', 'mello-block') }],
-            ['core/button', { className: 'swiper-button-next', "lock": { "move": true, "remove": true }, text: __('next', 'mello-block') }],
+            ['core/button', { className: 'swiper-button-prev', "lock": { "move": true, "remove": true }, text: __('prev', 'mello-block'), tagName: 'button' }],
+            ['core/button', { className: 'swiper-button-next', "lock": { "move": true, "remove": true }, text: __('next', 'mello-block'), tagName: 'button' }],
         ],
     ],
 ];

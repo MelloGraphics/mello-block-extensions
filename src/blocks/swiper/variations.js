@@ -48,8 +48,8 @@ const registerBlockVariations = {
                         'core/buttons',
                         { lock: { remove: true }, metadata: { name: 'Prev / Next Buttons' }, style: { spacing: { blockGap: { left: 'var:preset|spacing|small' } } } },
                         [
-                            ['core/button', { className: 'swiper-button-prev', text: __('prev', 'mello-block-extensions') }],
-                            ['core/button', { className: 'swiper-button-next', text: __('next', 'mello-block-extensions') }],
+                            ['core/button', { className: 'swiper-button-prev', text: __('prev', 'mello-block-extensions'), tagName: 'button' }],
+                            ['core/button', { className: 'swiper-button-next', text: __('next', 'mello-block-extensions'), tagName: 'button' }],
                         ],
                     ],
                 ],
