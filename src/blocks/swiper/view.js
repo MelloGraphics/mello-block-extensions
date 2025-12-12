@@ -90,6 +90,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Enable observer to watch for container size changes
         options.observer = true;
         options.observeParents = true;
+        
+        // Enable watch slides progress for all swipers (adds swiper-slide-visible class)
+        options.watchSlidesProgress = true;
 
         // Read all data attributes and build configuration
         const dataAttributes = Array.from(swiperElement.attributes)
@@ -244,6 +247,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     break;
                 case 'allowTouchMove':
                     options.allowTouchMove = value;
+                    break;
+                case 'watchSlidesProgress':
+                    options.watchSlidesProgress = value;
                     break;
                 // Skip the main module flags we already processed
                 case 'navigation':
