@@ -10,7 +10,8 @@
     --mello-font-small: .9em;
     --mello-font-med: 1em;
     --mello-font-large: 1.3em;
-    --mello-font-x-large: 3.5em;
+    --mello-font-x-large: 2em;
+    --mello-font-xx-large: 3.5em;
     --mello-switch-bg: #ededed;
     --mello-switch-active: var(--mello-base);
     --mello-speed-fast: .25s;
@@ -54,7 +55,7 @@
 }
 
 .wrap .mello-heading{
-    font-size: var(--mello-font-x-large);
+    font-size: var(--mello-font-xx-large);
     color: var(--mello-contrast);
     font-weight: bold;
 }
@@ -95,6 +96,7 @@
 }
 
 .mello-extension-group {
+    margin-top: 1em;
     grid-column: 1 / -1;
     padding: 0 var(--mello-spacing-med);
     display: flex;
@@ -107,7 +109,8 @@
     margin: 0;
 }
 .mello-extension-type-heading{
-    margin-bottom: calc( var(--mello-spacing-small) / 2);
+    font-size: var(--mello-font-x-large);
+    margin-bottom: var(--mello-spacing-small);
 }
 
 .title-wrapper{
