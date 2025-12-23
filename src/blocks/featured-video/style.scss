@@ -1,0 +1,22 @@
+.wp-block-mello-block-featured-video {
+	video {
+		opacity: 0;
+		transition: opacity 0.4s ease;
+		width: 100%;
+		height: auto;
+		display: block;
+		background-color: #000;
+		object-fit: cover;
+	}
+
+	&.video-ready video {
+		opacity: 1;
+	}
+
+	&.alignwide,
+	&.alignfull {
+		video {
+			max-width: 100%;
+		}
+	}
+}

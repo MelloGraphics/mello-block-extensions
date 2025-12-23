@@ -62,14 +62,18 @@ class Block_Extensions
     public function include_extension_functions()
     {
         $enabled = \Mello\mello_get_enabled_extensions();
-        $function_dirs = ['extensions'];
+
+        // Load block-level and extension-level PHP logic
+        $function_dirs = ['extensions', 'blocks'];
 
         foreach ($enabled as $slug => $active) {
-            if (!$active)
+            if (!$active) {
                 continue;
+            }
 
             foreach ($function_dirs as $base) {
                 $functions_file = plugin_dir_path(__FILE__) . "../build/$base/$slug/block-functions.php";
+
                 if (file_exists($functions_file)) {
                     include_once $functions_file;
                 }

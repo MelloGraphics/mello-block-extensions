@@ -1,0 +1,56 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mello-block/featured-video",
+	"version": "0.1.0",
+	"title": "Post Featured Video",
+	"category": "design",
+	"icon": "video-alt3",
+	"description": "Display the featured video set in the page or post settings.",
+	"example": {},
+	"supports": {
+		"html": false,
+		"align": ["wide", "full"],
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"aspectRatio": {
+			"type": "string",
+			"default": "16/9"
+		},
+		"autoplay": {
+			"type": "boolean",
+			"default": true
+		},
+		"loop": {
+			"type": "boolean",
+			"default": true
+		},
+		"muted": {
+			"type": "boolean",
+			"default": true
+		},
+		"controls": {
+			"type": "boolean",
+			"default": false
+		},
+		"playsInline": {
+			"type": "boolean",
+			"default": true
+		},
+		"useFeaturedImagePoster": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"usesContext": ["postId", "postType"],
+	"textdomain": "featured-video",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php"
+}
