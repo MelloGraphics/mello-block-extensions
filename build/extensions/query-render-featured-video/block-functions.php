@@ -79,12 +79,19 @@ function mello_render_extension_query_video($block_content, $block) {
         $img            = $img_elements->item( 0 );
         $video_element  = $dom->createElement( 'video', '' );
         $video_element->setAttribute( 'class', 'mello-featured-video intrinsic-ignore' );
-        $video_element->setAttribute( 'autoplay', '' );
+        
+        // KEY CHANGES: Remove autoplay, add preload="none" and loading="lazy"
+        $video_element->setAttribute( 'preload', 'none' );  // Don't preload video data
+        $video_element->setAttribute( 'loading', 'lazy' );   // Native lazy loading
+        
         $video_element->setAttribute( 'muted', '' );
         $video_element->setAttribute( 'loop', '' );
         $video_element->setAttribute( 'playsinline', '' );
         $video_element->setAttribute( 'src', esc_url( $video_url ) );
         $video_element->setAttribute( 'data-object-fit', 'cover' );
+        
+        // Add data attribute for JS-based autoplay on scroll
+        $video_element->setAttribute( 'data-autoplay-on-scroll', 'true' );
 
         $img->parentNode->insertBefore( $video_element, $img->nextSibling );
     }
