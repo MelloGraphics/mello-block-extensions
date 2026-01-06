@@ -1,6 +1,7 @@
 // Intelligent video autoplay based on viewport visibility
 document.addEventListener('DOMContentLoaded', function () {
-    const videos = document.querySelectorAll('video[data-autoplay-on-scroll]');
+    // Target ONLY videos with the mello-featured-video class
+    const videos = document.querySelectorAll('video.mello-featured-video[data-autoplay-on-scroll]');
 
     if (!videos.length) return;
 
