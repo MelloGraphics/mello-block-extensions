@@ -204,6 +204,7 @@ function addInspectorControls(BlockEdit) {
 			'core/buttons',
 			'core/list',
 			'core/post-template',
+			'core/term-template',
 			'core/gallery',
 			'core/accordion'
 		];
