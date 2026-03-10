@@ -32,7 +32,6 @@
   "devDependencies": {
     "@wordpress/icons": "^9.35.0",
     "@wordpress/scripts": "^30.24.0",
-    "baseline-browser-mapping": "^2.9.11",
     "glob": "^11.0.0",
     "micromodal": "^0.6.1",
     "mini-css-extract-plugin": "^2.9.2",
