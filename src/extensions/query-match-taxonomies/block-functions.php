@@ -201,8 +201,16 @@ function mello_acf_field_query_vars( array $query, array $attributes, array $que
     } else {
         // ── Push ──────────────────────────────────────────────────────────────
         // Field lives on other posts and references the current post.
-        // ACF serialises relationship values in postmeta; we LIKE-match the
-        // current post ID wrapped in quotes as ACF stores it.
+        //
+        // ACF stores post_object / relationship values in two different formats
+        // depending on the field's `multiple` setting:
+        //
+        //   multiple: 0  →  plain integer string: "123"
+        //   multiple: 1  →  serialised array: a:1:{i:0;s:3:"123";}
+        //
+        // We use a meta_query with relation OR to match both formats in one query.
+        // The EQUALS check catches the plain single value; the LIKE check catches
+        // the quoted ID inside a serialised array.
         $post_type = $query['post_type'] ?? 'post';
 
         $reverse_query = new WP_Query( [
@@ -212,6 +220,14 @@ function mello_acf_field_query_vars( array $query, array $attributes, array $que
             'no_found_rows'       => true,
             'ignore_sticky_posts' => true,
             'meta_query'          => [
+                'relation' => 'OR',
+                // Single value (multiple: 0) — stored as plain integer string
+                [
+                    'key'     => $field_name,
+                    'value'   => (string) $current_post_id,
+                    'compare' => '=',
+                ],
+                // Multiple values (multiple: 1) — stored as serialised array
                 [
                     'key'     => $field_name,
                     'value'   => '"' . $current_post_id . '"',
