@@ -1,5 +1,7 @@
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { __experimentalDivider as Divider, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import './editor.scss';
 import './style.scss';
@@ -32,7 +34,7 @@ const TEMPLATE = [
     ],
 ];
 
-export default function Edit({ attributes, setAttributes }) {
+export default function Edit({ attributes, setAttributes, clientId }) {
     const {
         slidesPerView,
         slidesPerViewXLarge,
@@ -78,6 +80,33 @@ export default function Edit({ attributes, setAttributes }) {
         overflowHidden,
         allowTouchMove
     } = attributes;
+
+    const innerBlocks = useSelect((select) => select('core/block-editor').getBlocks(clientId), [clientId]);
+    const { updateBlockAttributes } = useDispatch('core/block-editor');
+    const initialised = useRef(false);
+
+    const setInnerBlockVisibility = (metadataName, visible) => {
+        const block = innerBlocks.find((b) => b.attributes?.metadata?.name === metadataName);
+        if (!block) return;
+        const currentMetadata = block.attributes.metadata || {};
+        if (visible) {
+            const { blockVisibility, ...rest } = currentMetadata;
+            updateBlockAttributes(block.clientId, { metadata: rest });
+        } else {
+            updateBlockAttributes(block.clientId, { metadata: { ...currentMetadata, blockVisibility: false } });
+        }
+    };
+
+    // On first load, sync blockVisibility for all three inner blocks with saved attribute state.
+    useEffect(() => {
+        if (initialised.current || innerBlocks.length === 0) return;
+        initialised.current = true;
+        [
+            { name: 'Prev / Next Buttons', value: navigation },
+            { name: 'Pagination Wrapper', value: pagination },
+            { name: 'Scrollbar Wrapper', value: scrollbar },
+        ].forEach(({ name, value }) => setInnerBlockVisibility(name, !!value));
+    }, [innerBlocks.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const blockProps = useBlockProps({
         style: {
@@ -394,14 +423,20 @@ export default function Edit({ attributes, setAttributes }) {
                     <ToggleControl
                         label={__('Enable Navigation', 'mello-block')}
                         checked={navigation}
-                        onChange={(value) => setAttributes({ navigation: value !== undefined ? value : undefined })}
+                        onChange={(value) => {
+                            setAttributes({ navigation: value !== undefined ? value : undefined });
+                            setInnerBlockVisibility('Prev / Next Buttons', value);
+                        }}
                     />
                     <Divider />
                     {/* Pagination Toggle and controls */}
                     <ToggleControl
                         label={__('Enable Pagination', 'mello-block')}
                         checked={pagination}
-                        onChange={(value) => setAttributes({ pagination: value !== undefined ? value : undefined })}
+                        onChange={(value) => {
+                            setAttributes({ pagination: value !== undefined ? value : undefined });
+                            setInnerBlockVisibility('Pagination Wrapper', value);
+                        }}
                     />
                     {pagination && (
                         <>
@@ -429,7 +464,10 @@ export default function Edit({ attributes, setAttributes }) {
                     <ToggleControl
                         label={__('Enable Scrollbar', 'mello-block')}
                         checked={scrollbar}
-                        onChange={(value) => setAttributes({ scrollbar: value !== undefined ? value : undefined })}
+                        onChange={(value) => {
+                            setAttributes({ scrollbar: value !== undefined ? value : undefined });
+                            setInnerBlockVisibility('Scrollbar Wrapper', value);
+                        }}
                     />
                     {scrollbar && (
                         <>
