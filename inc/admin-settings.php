@@ -115,6 +115,7 @@ add_action('admin_init', 'mello_register_settings');
 function mello_register_settings()
 {
     $titles = [
+        'buttons-allow-additional-blocks' => 'Buttons: Allow additional blocks',
         'button-modal-toggle' => 'Button: Show link in modal',
         'content-in-modal-toggle' => 'Query: Show content in a modal',
         'columns-reverse-toggle' => 'Columns: Reverse order on mobile',
@@ -135,8 +136,10 @@ function mello_register_settings()
         'animation-controls' => 'Global: Animation Controls',
         'button-icon-toggle' => 'Button: Render inline icon',
         'query-match-taxonomies' => 'Query: Query relevant taxonomy',
+        'post-type' => 'Block: Post Type'
     ];
     $descriptions = [
+        'buttons-allow-additional-blocks' => 'Allows additional blocks (e.g. paragraph) to be inserted inside the Buttons block alongside Button blocks.',
         'button-modal-toggle' => 'Adds a toggle to buttons for opening link content in an iframe modal.',
         'content-in-modal-toggle' => 'Adds a toggle to various query blocks to open the linked content in a modal.',
         'columns-reverse-toggle' => 'Allows reversing the order of columns on mobile devices.',
@@ -153,7 +156,7 @@ function mello_register_settings()
         'query-exclude-current-post' => 'Toggle to exclude the current post from Query block results.',
         'query-render-featured-video' => 'Replaced with the Featured Video block.',
         'read-time' => 'Display the read time of the current page.',
-        'post-type' => 'Display the post type for the page, or in a query.',
+        'post-type' => 'Now available in wordpress core.',
         'counter' => 'Display stats and figures animated in on scroll.',
         'render-svg' => 'Enables upload and frontend rendering of SVG inline',
         'animation-controls' => 'Adds triggered animations to all blocks',
@@ -163,6 +166,7 @@ function mello_register_settings()
         'query-match-taxonomies' => 'Select a taxonomy to match with the current post.',
     ];
     $data_attributes = [
+        'buttons-allow-additional-blocks' => 'button',
         'button-modal-toggle' => 'button',
         'content-in-modal-toggle' => 'query',
         'columns-reverse-toggle' => 'columns',
@@ -192,7 +196,8 @@ function mello_register_settings()
     // Slugs that should appear as deprecated (still toggleable, but separated)
     $deprecated_extensions = [
         'query-render-featured-video',
-        'details-name-attribute'
+        'details-name-attribute',
+        'post-type'
     ];
 
     $grouped = [

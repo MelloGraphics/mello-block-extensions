@@ -1,4 +1,7 @@
 
+// Buttons Allow Additional Blocks Extension
+import './buttons-allow-additional-blocks/edit.js';
+
 // Button Modal Toggle Extension
 import './button-modal-toggle/edit.js';
 
