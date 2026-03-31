@@ -2,7 +2,8 @@
 
 /**
  * Store enabled Query Loop instances so their inner Post Template blocks
- * can later resolve the custom taxonomy-matching or ACF-matching settings.
+ * can later resolve the custom taxonomy-matching, ACF-matching, or
+ * static-post-picker settings.
  */
 function mello_match_current_taxonomy_register_query_block( $parsed_block ) {
     if ( ( $parsed_block['blockName'] ?? '' ) !== 'core/query' ) {
@@ -13,8 +14,9 @@ function mello_match_current_taxonomy_register_query_block( $parsed_block ) {
 
     $has_taxonomy = ! empty( $attributes['matchCurrentTaxonomy'] ) && ! empty( $attributes['matchTaxonomySlug'] );
     $has_acf      = ! empty( $attributes['matchAcfField'] ) && ! empty( $attributes['matchAcfFieldName'] );
+    $has_static   = ! empty( $attributes['matchStaticPosts'] ) && ! empty( $attributes['matchStaticPostIds'] );
 
-    if ( ! $has_taxonomy && ! $has_acf ) {
+    if ( ! $has_taxonomy && ! $has_acf && ! $has_static ) {
         return $parsed_block;
     }
 
@@ -34,6 +36,8 @@ function mello_match_current_taxonomy_register_query_block( $parsed_block ) {
         'matchAcfField'        => ! empty( $attributes['matchAcfField'] ),
         'matchAcfFieldName'    => $attributes['matchAcfFieldName'] ?? '',
         'matchAcfDirection'    => $attributes['matchAcfDirection'] ?? 'pull',
+        'matchStaticPosts'     => ! empty( $attributes['matchStaticPosts'] ),
+        'matchStaticPostIds'   => array_map( 'intval', (array) ( $attributes['matchStaticPostIds'] ?? [] ) ),
         'query'                => $attributes['query'] ?? [],
         'queryId'              => $query_id,
     ];
@@ -44,7 +48,8 @@ add_filter( 'render_block_data', 'mello_match_current_taxonomy_register_query_bl
 
 
 /**
- * Main query filter — handles both taxonomy matching and ACF field matching.
+ * Main query filter — handles taxonomy matching, ACF field matching, and
+ * static post picking.
  */
 function mello_match_current_taxonomy_query_vars( $query, $block, $page ) {
     $parsed_block = $block->parsed_block ?? [];
@@ -63,12 +68,25 @@ function mello_match_current_taxonomy_query_vars( $query, $block, $page ) {
 
     $has_taxonomy = ! empty( $attributes['matchCurrentTaxonomy'] ) && ! empty( $attributes['matchTaxonomySlug'] );
     $has_acf      = ! empty( $attributes['matchAcfField'] ) && ! empty( $attributes['matchAcfFieldName'] );
+    $has_static   = ! empty( $attributes['matchStaticPosts'] ) && ! empty( $attributes['matchStaticPostIds'] );
 
-    if ( ! $has_taxonomy && ! $has_acf ) {
+    if ( ! $has_taxonomy && ! $has_acf && ! $has_static ) {
         return $query;
     }
 
-    // Resolve the current post ID
+    // Static mode does not require a current post context.
+    if ( $has_static ) {
+        $query_settings = [];
+        if ( ! empty( $attributes['query'] ) && is_array( $attributes['query'] ) ) {
+            $query_settings = $attributes['query'];
+        } elseif ( ! empty( $block->context['query'] ) && is_array( $block->context['query'] ) ) {
+            $query_settings = $block->context['query'];
+        }
+
+        return mello_static_posts_query_vars( $query, $attributes, $query_settings, (int) $page );
+    }
+
+    // Resolve the current post ID (required for taxonomy and ACF modes).
     $current_post_id = 0;
     if ( ! empty( $block->context['postId'] ) ) {
         $current_post_id = (int) $block->context['postId'];
@@ -83,9 +101,7 @@ function mello_match_current_taxonomy_query_vars( $query, $block, $page ) {
         return $query;
     }
 
-    // Resolve block query settings (perPage, order, orderBy, offset, pages)
-    // from the block's stored query attribute — these mirror what the editor
-    // has configured and should be respected by our custom queries too.
+    // Resolve block query settings (perPage, order, orderBy, offset, pages).
     $query_settings = [];
     if ( ! empty( $attributes['query'] ) && is_array( $attributes['query'] ) ) {
         $query_settings = $attributes['query'];
@@ -128,7 +144,6 @@ function mello_resolve_query_settings( array $query, array $query_settings, int 
     }
 
     // ── Order ─────────────────────────────────────────────────────────────────
-    // The block stores orderBy in camelCase; WP_Query uses snake_case.
     $block_orderby = $query_settings['orderBy'] ?? $query_settings['orderby'] ?? '';
     $orderby_map   = [
         'date'          => 'date',
@@ -151,12 +166,59 @@ function mello_resolve_query_settings( array $query, array $query_settings, int 
     $offset = isset( $query_settings['offset'] ) ? (int) $query_settings['offset'] : 0;
 
     // ── Pagination ────────────────────────────────────────────────────────────
-    // $page comes from the filter and is 1-based. The block's `pages` attribute
-    // limits the total number of pages; we don't enforce that here — WordPress
-    // handles it via the pagination blocks — but we pass $page for paged queries.
     $paged = max( 1, $page );
 
     return compact( 'per_page', 'orderby', 'order', 'offset', 'paged' );
+}
+
+
+/**
+ * Build query vars for the static post picker mode.
+ *
+ * Displays exactly the posts the editor hand-picked, in the order they were
+ * selected. Block ordering / pagination settings are still respected.
+ */
+function mello_static_posts_query_vars( array $query, array $attributes, array $query_settings, int $page ): array {
+    $post_ids = array_values(
+        array_filter(
+            array_map( 'intval', (array) ( $attributes['matchStaticPostIds'] ?? [] ) )
+        )
+    );
+
+    if ( empty( $post_ids ) ) {
+        return mello_empty_query( $query );
+    }
+
+    $settings = mello_resolve_query_settings( $query, $query_settings, $page );
+
+    $query['post_type']           = 'any';
+    $query['post__in']            = $post_ids;
+    $query['posts_per_page']      = $settings['per_page'];
+    $query['paged']               = $settings['paged'];
+    $query['post__not_in']        = [];
+    $query['ignore_sticky_posts'] = true;
+    $query['nopaging']            = false;
+
+    // Default to preserving selection order; override if the block specifies
+    // a meaningful sort field.
+    if ( ! empty( $settings['orderby'] ) && 'date' !== $settings['orderby'] ) {
+        $query['orderby'] = $settings['orderby'];
+        $query['order']   = $settings['order'];
+    } else {
+        // Keep the hand-picked order.
+        $query['orderby'] = 'post__in';
+        $query['order']   = 'ASC';
+    }
+
+    if ( $settings['offset'] > 0 ) {
+        $query['offset'] = $settings['offset'];
+    } else {
+        unset( $query['offset'] );
+    }
+
+    unset( $query['tax_query'], $query['meta_query'] );
+
+    return $query;
 }
 
 
@@ -181,7 +243,6 @@ function mello_acf_field_query_vars( array $query, array $attributes, array $que
 
     if ( 'pull' === $direction ) {
         // ── Pull ──────────────────────────────────────────────────────────────
-        // Field lives on the current post and returns the posts it links to.
         $field_value = get_field( $field_name, $current_post_id );
 
         if ( ! empty( $field_value ) ) {
@@ -200,8 +261,6 @@ function mello_acf_field_query_vars( array $query, array $attributes, array $que
         }
     } else {
         // ── Push ──────────────────────────────────────────────────────────────
-        // Field lives on other posts and references the current post.
-        //
         // ACF stores post_object / relationship values in two different formats
         // depending on the field's `multiple` setting:
         //
@@ -209,8 +268,6 @@ function mello_acf_field_query_vars( array $query, array $attributes, array $que
         //   multiple: 1  →  serialised array: a:1:{i:0;s:3:"123";}
         //
         // We use a meta_query with relation OR to match both formats in one query.
-        // The EQUALS check catches the plain single value; the LIKE check catches
-        // the quoted ID inside a serialised array.
         $post_type = $query['post_type'] ?? 'post';
 
         $reverse_query = new WP_Query( [
@@ -221,13 +278,11 @@ function mello_acf_field_query_vars( array $query, array $attributes, array $que
             'ignore_sticky_posts' => true,
             'meta_query'          => [
                 'relation' => 'OR',
-                // Single value (multiple: 0) — stored as plain integer string
                 [
                     'key'     => $field_name,
                     'value'   => (string) $current_post_id,
                     'compare' => '=',
                 ],
-                // Multiple values (multiple: 1) — stored as serialised array
                 [
                     'key'     => $field_name,
                     'value'   => '"' . $current_post_id . '"',
@@ -243,9 +298,6 @@ function mello_acf_field_query_vars( array $query, array $attributes, array $que
         return mello_empty_query( $query );
     }
 
-    // Apply block ordering to the resolved post IDs.
-    // For post__in with a meaningful order, we let WP sort by the chosen field.
-    // If orderby is 'rand' we keep post__in intact and let WP shuffle.
     $query['post__in']            = $post_ids;
     $query['posts_per_page']      = $settings['per_page'];
     $query['paged']               = $settings['paged'];
@@ -257,8 +309,6 @@ function mello_acf_field_query_vars( array $query, array $attributes, array $que
         $query['orderby'] = 'rand';
         unset( $query['order'] );
     } else {
-        // When post__in is set and orderby is a date/title field, WP will
-        // sort within the post__in set — which is exactly what we want.
         $query['orderby'] = $settings['orderby'];
         $query['order']   = $settings['order'];
     }
@@ -313,7 +363,6 @@ function mello_taxonomy_query_vars( array $query, array $attributes, $block, arr
         $current_terms = [];
     }
 
-    // Shared WP_Query args — order/orderby come from block settings
     $shared_args = [
         'post_type'           => $post_type,
         'posts_per_page'      => $settings['per_page'],
@@ -439,6 +488,15 @@ function register_taxonomy_query_block_attributes() {
                     'matchAcfDirection'    => [
                         'type'    => 'string',
                         'default' => 'pull',
+                    ],
+                    'matchStaticPosts'     => [
+                        'type'    => 'boolean',
+                        'default' => false,
+                    ],
+                    'matchStaticPostIds'   => [
+                        'type'    => 'array',
+                        'default' => [],
+                        'items'   => [ 'type' => 'integer' ],
                     ],
                 ]
             );

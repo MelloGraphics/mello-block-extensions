@@ -1,5 +1,5 @@
 // Ultra-conservative video loading for mobile with abort protection
-(function() {
+(function () {
     let videoObserver;
     let sourceObserver;
     const videoStates = new WeakMap(); // Track state per video
@@ -7,9 +7,9 @@
     let isLoadingVideo = false; // Track if we're currently loading a video
 
     // Detect if device is mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-                     || window.innerWidth <= 768;
-    
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        || window.innerWidth <= 768;
+
     // Mobile-specific limits
     const MAX_LOADED_VIDEOS_MOBILE = 3;
     const MAX_PLAYING_VIDEOS_MOBILE = 2;
@@ -36,21 +36,21 @@
     // Safe play - handles abort errors
     function safePlay(video) {
         const state = getVideoState(video);
-        
+
         // Mark that we want to play
         state.shouldPlay = true;
-        
+
         // If already playing or a play is in progress, don't start another
         if (state.playing || state.playPromise) {
             return;
         }
-        
+
         // If not loaded yet, don't try to play
         if (!state.loaded) {
             console.log('[VIDEO] Waiting for video to load before playing');
             return;
         }
-        
+
         // Check if ready
         if (video.readyState < 3) {
             // Not ready yet, wait for canplay
@@ -63,7 +63,7 @@
             }, { once: true });
             return;
         }
-        
+
         // Start play (video-loaded class already added in loadVideo)
         state.playPromise = video.play()
             .then(() => {
@@ -83,10 +83,10 @@
     // Safe pause - handles abort errors
     function safePause(video) {
         const state = getVideoState(video);
-        
+
         // Mark that we don't want to play
         state.shouldPlay = false;
-        
+
         // If a play promise is pending, wait for it to complete before pausing
         if (state.playPromise) {
             state.playPromise
@@ -110,11 +110,11 @@
     // Unload video safely
     function unloadVideo(video) {
         const state = getVideoState(video);
-        
+
         console.log('[VIDEO] Unloading:', video.dataset.src);
-        
+
         safePause(video);
-        
+
         if (video.src) {
             // Remove fade class when unloading
             video.classList.remove('video-loaded');
@@ -128,22 +128,22 @@
     // Load video source
     function loadVideo(video) {
         const state = getVideoState(video);
-        
+
         if (state.loaded || video.src) {
             return Promise.resolve(); // Already loaded
         }
-        
+
         if (!video.dataset.src) {
             return Promise.resolve(); // No source to load
         }
-        
+
         // Add to queue and process
         return new Promise((resolve) => {
             loadQueue.push({ video, resolve });
             processLoadQueue();
         });
     }
-    
+
     // Process the load queue sequentially
     function processLoadQueue() {
         // Count currently loading videos
@@ -152,34 +152,34 @@
                 const state = getVideoState(v);
                 return state.loading;
             }).length;
-        
+
         // If we're at capacity, wait
         if (currentlyLoading >= MAX_CONCURRENT_LOADS) {
             return;
         }
-        
+
         // If queue is empty, nothing to do
         if (loadQueue.length === 0) {
             return;
         }
-        
+
         // Get next video from queue
         const { video, resolve } = loadQueue.shift();
         const state = getVideoState(video);
-        
+
         // Check if still needed (might have scrolled away)
         if (!state.shouldPlay && isMobile) {
             resolve();
             processLoadQueue(); // Process next in queue
             return;
         }
-        
+
         console.log('[VIDEO] Loading source:', video.dataset.src);
         state.loading = true;
-        
+
         try {
             video.src = video.dataset.src;
-            
+
             // Wait for video to be loaded enough to play
             const handleCanPlay = () => {
                 state.loaded = true;
@@ -187,27 +187,27 @@
                 video.classList.add('video-loaded'); // Fade in now that it's ready
                 console.log('[VIDEO] Video ready:', video.dataset.src);
                 resolve();
-                
+
                 // Process next video in queue
                 processLoadQueue();
             };
-            
+
             const handleError = () => {
                 state.loading = false;
                 console.error('[VIDEO] Error loading video:', video.dataset.src);
                 resolve();
-                
+
                 // Process next video in queue
                 processLoadQueue();
             };
-            
+
             // Listen for when video is ready
             video.addEventListener('canplaythrough', handleCanPlay, { once: true });
             video.addEventListener('error', handleError, { once: true });
-            
+
             // Start loading
             video.load();
-            
+
         } catch (error) {
             console.error('[VIDEO] Error loading video:', error);
             state.loading = false;
@@ -236,7 +236,7 @@
         if (!isMobile) return;
 
         const loadedVideos = getLoadedVideos();
-        
+
         // If too many loaded, unload furthest from viewport
         if (loadedVideos.length > MAX_LOADED_VIDEOS_MOBILE) {
             const videosWithDistance = loadedVideos.map(video => {
@@ -244,9 +244,9 @@
                 const distance = Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
                 return { video, distance };
             });
-            
+
             videosWithDistance.sort((a, b) => b.distance - a.distance);
-            
+
             const toUnload = videosWithDistance.slice(MAX_LOADED_VIDEOS_MOBILE);
             toUnload.forEach(({ video }) => {
                 const state = getVideoState(video);
@@ -255,7 +255,7 @@
                 }
             });
         }
-        
+
         // Enforce playing limit
         const playing = getPlayingVideos();
         if (playing.length > MAX_PLAYING_VIDEOS_MOBILE) {
@@ -277,11 +277,11 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const video = entry.target;
-                    
+
                     if (isMobile) {
                         enforceVideoLimits();
                     }
-                    
+
                     loadVideo(video);
                 }
             });
@@ -299,7 +299,7 @@
         return new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const video = entry.target;
-                
+
                 if (entry.isIntersecting) {
                     // Ensure loaded
                     loadVideo(video).then(() => {
@@ -311,14 +311,14 @@
                                 return;
                             }
                         }
-                        
+
                         // Play once loaded
                         safePlay(video);
                     });
                 } else {
                     // Pause when out of view
                     safePause(video);
-                    
+
                     // On mobile, unload after pausing
                     if (isMobile) {
                         setTimeout(() => {
@@ -335,9 +335,9 @@
 
     function observeVideos() {
         const videos = document.querySelectorAll('video.mello-featured-video[data-autoplay-on-scroll]');
-        
+
         console.log('[VIDEO] Observing', videos.length, 'videos');
-        
+
         if (!videos.length) return;
 
         if (!sourceObserver) {
@@ -362,23 +362,23 @@
     document.addEventListener('DOMContentLoaded', observeVideos);
 
     // Re-observe after Search & Filter Pro updates
-    document.addEventListener('sf:ajaxfinish', function(e) {
+    document.addEventListener('sf:ajaxfinish', function (e) {
         console.log('[VIDEO] Search filter finished, re-observing');
         setTimeout(observeVideos, 100);
     });
 
-    jQuery(document).on('sf:ajaxfinish', function() {
+    jQuery(document).on('sf:ajaxfinish', function () {
         setTimeout(observeVideos, 100);
     });
 
     // MutationObserver
     const targetNode = document.querySelector('body');
     if (targetNode) {
-        const mutationObserver = new MutationObserver(function(mutations) {
+        const mutationObserver = new MutationObserver(function (mutations) {
             let shouldReobserve = false;
-            
-            mutations.forEach(function(mutation) {
-                mutation.addedNodes.forEach(function(node) {
+
+            mutations.forEach(function (mutation) {
+                mutation.addedNodes.forEach(function (node) {
                     if (node.nodeType === 1) {
                         if (node.querySelector && node.querySelector('video.mello-featured-video[data-autoplay-on-scroll]')) {
                             shouldReobserve = true;
@@ -386,7 +386,7 @@
                     }
                 });
             });
-            
+
             if (shouldReobserve) {
                 console.log('[VIDEO] New videos detected in DOM');
                 observeVideos();

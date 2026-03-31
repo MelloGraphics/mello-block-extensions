@@ -73,15 +73,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Now initialize each swiper with its specific configuration
     swiperElements.forEach((swiperElement) => {
-        // Add `swiper-slide` class to each child
-        const wrapper = swiperElement.querySelector('.swiper-wrapper');
-        if (wrapper) {
-            wrapper.querySelectorAll(':scope > *').forEach((child) => {
-                if (!child.classList.contains('swiper-slide')) {
-                    child.classList.add('swiper-slide');
-                }
-            });
-        }
+    // Add `swiper-slide` class to each child
+    const wrapper = swiperElement.querySelector('.swiper-wrapper');
+
+    // Skip initialisation if there are no slides — prevents getComputedStyle error
+    if (!wrapper || wrapper.querySelectorAll(':scope > *').length === 0) return;
+
+    if (wrapper) {
+        wrapper.querySelectorAll(':scope > *').forEach((child) => {
+            if (!child.classList.contains('swiper-slide')) {
+                child.classList.add('swiper-slide');
+            }
+        });
+    }
 
         // Initialize base options and active modules array
         const options = {};

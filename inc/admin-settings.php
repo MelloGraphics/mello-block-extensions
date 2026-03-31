@@ -123,7 +123,7 @@ function mello_register_settings()
         'details-heading-level' => 'Details: Add heading level to summary',
         'details-name-attribute' => 'Details: Add name attribute',
         'add-data-attributes' => 'Global: Add data attributes',
-        'add-smooth-scroll' => 'Global: Smooth Scrolling',
+        'add-smooth-scroll' => 'Theme: Smooth Scrolling',
         'group-tag-name' => 'Group: Additional HTML tag options',
         'group-link-wrapper' => 'Group: Add group link',
         'navigation-allowed-blocks' => 'Navigation: Extend allowed blocks',
@@ -131,7 +131,7 @@ function mello_register_settings()
         'navigation-submenu-allowed-blocks' => 'Navigation Submenu: Extend allowed blocks',
         'query-exclude-current-post' => 'Query: Exclude current post',
         'query-render-featured-video' => 'Query: Render a featured video',
-        'render-svg' => 'Mixed: Enable SVG Support',
+        'render-svg' => 'Theme: Enable SVG Support',
         'animation-controls' => 'Global: Animation Controls',
         'button-icon-toggle' => 'Button: Render inline icon',
         'query-match-taxonomies' => 'Query: Query relevant taxonomy',
@@ -148,9 +148,8 @@ function mello_register_settings()
         'add-smooth-scroll' => 'Adds smooth scrolling and a slider to change a blocks scroll speed creating a parallax effect.',
         'group-tag-name' => 'Choose the HTML tag used for the Group block wrapper.',
         'group-link-wrapper' => 'Add a link URL within the group block that wraps the whole content',
-        'navigation-allowed-blocks' => 'Allows additional blocks inside Navigation block.',
+        'navigation-allowed-blocks' => 'Allows additional blocks inside Navigation and Navigation Submenu blocks.',
         'navigation-link-render-image' => 'Adds image field support to Navigation Link block.',
-        'navigation-submenu-allowed-blocks' => 'Allows blocks inside Navigation Submenu items.',
         'query-exclude-current-post' => 'Toggle to exclude the current post from Query block results.',
         'query-render-featured-video' => 'Replaced with the Featured Video block.',
         'read-time' => 'Display the read time of the current page.',
@@ -163,8 +162,6 @@ function mello_register_settings()
         'featured-video' => 'Add a featured video to posts and pages and render it in a query block.',
         'query-match-taxonomies' => 'Select a taxonomy to match with the current post.',
     ];
-
-    // New array to manually define data attributes for each extension.
     $data_attributes = [
         'button-modal-toggle' => 'button',
         'content-in-modal-toggle' => 'query',
@@ -173,18 +170,17 @@ function mello_register_settings()
         'details-faq-schema' => 'details',
         'details-heading-level' => 'details',
         'details-name-attribute' => 'details',
-        'add-data-attributes' => 'mixed',
-        'add-smooth-scroll' => 'animation',
+        'add-data-attributes' => 'theme',
+        'add-smooth-scroll' => 'theme',
         'group-tag-name' => 'group',
         'group-link-wrapper' => 'group',
         'navigation-allowed-blocks' => 'navigation',
         'navigation-link-render-image' => 'navigation',
-        'navigation-submenu-allowed-blocks' => 'navigation',
         'query-exclude-current-post' => 'query',
         'query-render-featured-video' => 'query',
-        'render-svg' => 'mixed',
-        'animation-controls' => 'animation',
-        'load-motion-library' => 'animation',
+        'render-svg' => 'theme',
+        'animation-controls' => 'theme',
+        'load-motion-library' => 'theme',
         'button-icon-toggle' => 'button',
         'query-match-taxonomies' => 'query',
     ];
@@ -236,8 +232,7 @@ function mello_register_settings()
                     echo "<button type='button' data-filter='button' class='mello-filter'>Button</button>";
                     echo "<button type='button' data-filter='navigation' class='mello-filter'>Navigation</button>";
                     echo "<button type='button' data-filter='group' class='mello-filter'>Group</button>";
-                    echo "<button type='button' data-filter='mixed' class='mello-filter'>Mixed</button>";
-                    echo "<button type='button' data-filter='animation' class='mello-filter'>Animation</button>";
+                    echo "<button type='button' data-filter='theme' class='mello-filter'>Theme</button>";
                     echo "</div>";
                 }
                 echo "</div>";
@@ -248,6 +243,7 @@ function mello_register_settings()
         foreach ($grouped[$type] as $extension_slug => $extension_label) {
             // Use the manual data attributes array for the 'extensions' type.
             $data_attribute = '';
+            $category_label = '';
             if ($type === 'extensions') {
                 if (isset($data_attributes[$extension_slug])) {
                     $group = $data_attributes[$extension_slug];
@@ -255,6 +251,7 @@ function mello_register_settings()
                     $group = 'another';
                 }
                 $data_attribute = "data-group='" . esc_attr($group) . "'";
+                $category_label = ucwords(str_replace('-', ' ', $group));
             }
 
             $section_id = 'section_' . $extension_slug;
@@ -262,7 +259,7 @@ function mello_register_settings()
             add_settings_section(
                 $section_id,
                 '',
-                function () use ($extension_slug, $titles, $grouped, $descriptions, $type, $data_attribute) {
+                function () use ($extension_slug, $titles, $grouped, $descriptions, $type, $data_attribute, $category_label) {
                     $options = get_option('mello_enabled_extensions', []);
                     $checked = isset($options[$extension_slug]) && $options[$extension_slug] ? 'checked' : '';
 
@@ -273,6 +270,9 @@ function mello_register_settings()
 
                     // Wrap the extension section in a div with the manually defined data attribute.
                     echo "<div class='mello-extension-section' $data_attribute>";
+                    if ($type === 'extensions' && !empty($category_label)) {
+                        echo "<p class='mello-extension-category'>" . esc_html($category_label) . "</p>";
+                    }
                     echo "<div class='mello-extension-header'>";
                     echo "<h2 class='mello-extension-title'>" . esc_html($extension_label) . "</h2>";
                     echo "<label class='mello-switch'>

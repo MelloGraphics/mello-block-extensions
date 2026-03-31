@@ -3,6 +3,7 @@
     --mello-base: #0F1421;
     --mello-contrast: #ffffff;
     --mello-gray: #747474;
+    --mello-radius-small: 3px;
     --mello-radius-med: 5px;
     --mello-spacing-small: 15px;
     --mello-spacing-med: 25px;
@@ -146,6 +147,15 @@ button.mello-filter.active{
     padding: var(--mello-spacing-med);
     background-color: var(--mello-contrast);
     color: var(--mello-base)
+}
+
+p.mello-extension-category{
+    font-size: 75%;
+    border-radius: var(--mello-radius-small);
+    margin: 0;
+    padding: .15em .4em;
+    border: solid 1px var(--mello-gray);
+    width: fit-content;
 }
 
 .mello-extension-header{
