@@ -1,5 +1,5 @@
 import { InnerBlocks, InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { __experimentalDivider as Divider, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
+import { __experimentalDivider as Divider, Notice, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -43,6 +43,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
         slidesPerViewAuto,
         autoHeight,
         loop,
+        loopAdditionalSlides,
         centeredSlides,
         autoplay,
         autoplayDelay,
@@ -78,8 +79,62 @@ export default function Edit({ attributes, setAttributes, clientId }) {
         freeModeMomentumVelocityRatio,
         freeModeSticky,
         overflowHidden,
-        allowTouchMove
+        allowTouchMove,
+        creativeEffectPrevTranslateX,
+        creativeEffectPrevTranslateY,
+        creativeEffectPrevTranslateZ,
+        creativeEffectPrevOpacity,
+        creativeEffectPrevScale,
+        creativeEffectPrevRotateZ,
+        creativeEffectPrevShadow,
+        creativeEffectPrevOrigin,
+        creativeEffectNextTranslateX,
+        creativeEffectNextTranslateY,
+        creativeEffectNextTranslateZ,
+        creativeEffectNextOpacity,
+        creativeEffectNextScale,
+        creativeEffectNextRotateZ,
+        creativeEffectNextShadow,
+        creativeEffectNextOrigin,
+        creativeEffectLimitProgress,
+        creativeEffectPrevFilter,
+        creativeEffectNextFilter,
     } = attributes;
+
+    // Convert a translate string like "100%" to string, or "0"/"-400" to number
+    const parseTranslateVal = (v) => {
+        if (v === undefined || v === '') return 0;
+        const n = Number(v);
+        return isNaN(n) ? v : n;
+    };
+
+    const creativeEffectData = effect === 'creative' ? JSON.stringify({
+        prev: {
+            translate: [
+                parseTranslateVal(creativeEffectPrevTranslateX ?? '-100%'),
+                parseTranslateVal(creativeEffectPrevTranslateY ?? '0'),
+                creativeEffectPrevTranslateZ ?? 0,
+            ],
+            ...(creativeEffectPrevOpacity !== undefined && { opacity: creativeEffectPrevOpacity }),
+            ...(creativeEffectPrevScale !== undefined && { scale: creativeEffectPrevScale }),
+            ...(creativeEffectPrevRotateZ !== undefined && { rotate: [0, 0, creativeEffectPrevRotateZ] }),
+            ...(creativeEffectPrevShadow && { shadow: true }),
+            ...(creativeEffectPrevOrigin && { origin: creativeEffectPrevOrigin }),
+        },
+        next: {
+            translate: [
+                parseTranslateVal(creativeEffectNextTranslateX ?? '100%'),
+                parseTranslateVal(creativeEffectNextTranslateY ?? '0'),
+                creativeEffectNextTranslateZ ?? 0,
+            ],
+            ...(creativeEffectNextOpacity !== undefined && { opacity: creativeEffectNextOpacity }),
+            ...(creativeEffectNextScale !== undefined && { scale: creativeEffectNextScale }),
+            ...(creativeEffectNextRotateZ !== undefined && { rotate: [0, 0, creativeEffectNextRotateZ] }),
+            ...(creativeEffectNextShadow && { shadow: true }),
+            ...(creativeEffectNextOrigin && { origin: creativeEffectNextOrigin }),
+        },
+        limitProgress: creativeEffectLimitProgress ?? 1,
+    }) : undefined;
 
     const innerBlocks = useSelect((select) => select('core/block-editor').getBlocks(clientId), [clientId]);
     const { updateBlockAttributes } = useDispatch('core/block-editor');
@@ -134,6 +189,12 @@ export default function Edit({ attributes, setAttributes, clientId }) {
             ...(!slidesPerViewAuto && slidesPerViewMobile !== undefined
                 ? { '--swiper-spv-mobile': slidesPerViewMobile }
                 : {}),
+            ...(effect === 'creative' && creativeEffectPrevFilter
+                ? { '--swiper-creative-prev-filter': creativeEffectPrevFilter }
+                : {}),
+            ...(effect === 'creative' && creativeEffectNextFilter
+                ? { '--swiper-creative-next-filter': creativeEffectNextFilter }
+                : {}),
         },
         'data-swiper': true,
         ...(slidesPerViewAuto
@@ -145,6 +206,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                 'data-swiper-slides-per-view-mobile': slidesPerViewMobile !== undefined ? slidesPerViewMobile : 1,
             }),
         'data-swiper-loop': loop,
+        ...(loop && loopAdditionalSlides !== undefined && { 'data-swiper-loop-additional-slides': loopAdditionalSlides }),
         'data-swiper-centered-slides': centeredSlides,
         'data-swiper-autoplay': autoplay,
         ...(autoHeight !== undefined && { 'data-swiper-auto-height': autoHeight }),
@@ -182,6 +244,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
         ...(thumbsTarget !== undefined && { 'data-swiper-thumbs-target': thumbsTarget }),
         ...(overflowHidden !== undefined && { 'data-swiper-overflow-hidden': overflowHidden }),
         ...(allowTouchMove !== undefined && { 'data-swiper-allow-touch-move': allowTouchMove }),
+        ...(creativeEffectData !== undefined && { 'data-swiper-creative-effect': creativeEffectData }),
     });
 
     return (
@@ -205,6 +268,17 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                         checked={loop}
                         onChange={(value) => setAttributes({ loop: value !== undefined ? value : undefined })}
                     />
+                    {loop && (
+                        <RangeControl
+                            label={__('Loop Additional Slides', 'mello-block')}
+                            value={loopAdditionalSlides}
+                            onChange={(value) => setAttributes({ loopAdditionalSlides: value !== undefined ? value : undefined })}
+                            min={0}
+                            max={20}
+                            step={1}
+                            help={__('Extra cloned slides added on each side — helps prevent gaps with effects or auto-width slides.', 'mello-block')}
+                        />
+                    )}
                     <ToggleControl
                         label={__('Center Slides', 'mello-block')}
                         checked={centeredSlides}
@@ -214,6 +288,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                         label={__('Auto Fit Slides', 'mello-block')}
                         checked={slidesPerViewAuto}
                         onChange={(value) => setAttributes({ slidesPerViewAuto: value !== undefined ? value : undefined })}
+                        disabled={effect === 'creative'}
                     />
                     <ToggleControl
                         label={__('Auto Height Slider', 'mello-block')}
@@ -235,6 +310,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                                 min={1}
                                 max={12}
                                 step={0.25}
+                                disabled={effect === 'creative'}
                             />
                             <RangeControl
                                 label={__('Slides Per View (> 1200px)', 'mello-block')}
@@ -243,6 +319,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                                 min={1}
                                 max={12}
                                 step={0.25}
+                                disabled={effect === 'creative'}
                             />
                             <RangeControl
                                 label={__('Slides Per View (> 782px)', 'mello-block')}
@@ -250,6 +327,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                                 onChange={(value) => setAttributes({ slidesPerViewTablet: value !== undefined ? value : undefined })}
                                 min={1}
                                 max={12}
+                                disabled={effect === 'creative'}
                                 step={0.25}
                             />
                             <RangeControl
@@ -259,6 +337,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                                 min={1}
                                 max={12}
                                 step={0.25}
+                                disabled={effect === 'creative'}
                             />
                             <Divider />
                         </>
@@ -280,6 +359,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                         min={0}
                         max={200}
                         step={1}
+                        disabled={effect === 'creative'}
                     />
                     <RangeControl
                         label={__('Space Between Slides (> 1200px)', 'mello-block')}
@@ -288,6 +368,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                         min={0}
                         max={200}
                         step={1}
+                        disabled={effect === 'creative'}
                     />
                     <RangeControl
                         label={__('Space Between Slides (> 782px)', 'mello-block')}
@@ -296,6 +377,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                         min={0}
                         max={200}
                         step={1}
+                        disabled={effect === 'creative'}
                     />
                     <RangeControl
                         label={__('Space Between Slides (Mobile)', 'mello-block')}
@@ -304,6 +386,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                         min={0}
                         max={200}
                         step={1}
+                        disabled={effect === 'creative'}
                     />
                 </PanelBody>
 
@@ -502,22 +585,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                             placeholder={__('CSS selector or ID of thumbs container', 'mello-block')}
                         />
                     )}
-                </PanelBody>
-
-                <PanelBody title={__('Effects', 'mello-block')} initialOpen={false}>
-                    <SelectControl
-                        __next40pxDefaultSize
-                        label={__('Effect', 'mello-block')}
-                        value={effect || 'slide'}
-                        options={[
-                            { label: __('Slide', 'mello-block'), value: 'slide' },
-                            { label: __('Fade', 'mello-block'), value: 'fade' },
-                        ]}
-                        onChange={(value) => setAttributes({ effect: value !== undefined ? value : undefined })}
-                    />
-                </PanelBody>
-
-                <PanelBody title={__('Mousewheel', 'mello-block')} initialOpen={false}>
+                    <Divider />
                     <ToggleControl
                         label={__('Enable Mousewheel', 'mello-block')}
                         checked={mousewheel}
@@ -557,6 +625,210 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                                     { label: __('Wrapper', 'mello-block'), value: 'wrapper' },
                                 ]}
                                 onChange={(value) => setAttributes({ mousewheelEventsTarget: value !== undefined ? value : undefined })}
+                            />
+                        </>
+                    )}
+                </PanelBody>
+
+                <PanelBody title={__('Effects', 'mello-block')} initialOpen={false}>
+                    <SelectControl
+                        __next40pxDefaultSize
+                        label={__('Effect', 'mello-block')}
+                        value={effect || 'slide'}
+                        options={[
+                            { label: __('Slide', 'mello-block'), value: 'slide' },
+                            { label: __('Fade', 'mello-block'), value: 'fade' },
+                            { label: __('Creative', 'mello-block'), value: 'creative' },
+                        ]}
+                        onChange={(value) => {
+                            const updates = { effect: value !== undefined ? value : undefined };
+                            if (value === 'creative') {
+                                updates.slidesPerView = 1;
+                                updates.slidesPerViewXLarge = 1;
+                                updates.slidesPerViewTablet = 1;
+                                updates.slidesPerViewMobile = 1;
+                                updates.slidesPerViewAuto = false;
+                                updates.spaceBetween = 0;
+                                updates.spaceBetweenXLarge = 0;
+                                updates.spaceBetweenTablet = 0;
+                                updates.spaceBetweenMobile = 0;
+                            }
+                            setAttributes(updates);
+                        }}
+                    />
+                    {effect === 'creative' && (
+                        <>
+                            <Notice status="warning" isDismissible={false}>
+                                {__('Creative effect requires Slides Per View set to 1 on all breakpoints.', 'mello-block')}
+                            </Notice>
+                            <Divider />
+                            <p style={{ margin: '0 0 8px', fontWeight: 600 }}>{__('Previous Slide', 'mello-block')}</p>
+                            <TextControl
+                                __next40pxDefaultSize
+                                label={__('Translate X', 'mello-block')}
+                                value={creativeEffectPrevTranslateX ?? '-100%'}
+                                onChange={(value) => setAttributes({ creativeEffectPrevTranslateX: value })}
+                                help={__('Use % (e.g. -100%) or px (e.g. -400)', 'mello-block')}
+                            />
+                            <TextControl
+                                __next40pxDefaultSize
+                                label={__('Translate Y', 'mello-block')}
+                                value={creativeEffectPrevTranslateY ?? '0'}
+                                onChange={(value) => setAttributes({ creativeEffectPrevTranslateY: value })}
+                                help={__('Use % (e.g. -100%) or px (e.g. -200)', 'mello-block')}
+                            />
+                            <RangeControl
+                                label={__('Translate Z (px)', 'mello-block')}
+                                value={creativeEffectPrevTranslateZ ?? 0}
+                                onChange={(value) => setAttributes({ creativeEffectPrevTranslateZ: value ?? 0 })}
+                                min={-1200}
+                                max={0}
+                                step={10}
+                            />
+                            <RangeControl
+                                label={__('Opacity', 'mello-block')}
+                                value={creativeEffectPrevOpacity}
+                                onChange={(value) => setAttributes({ creativeEffectPrevOpacity: value })}
+                                min={0}
+                                max={1}
+                                step={0.01}
+                            />
+                            <RangeControl
+                                label={__('Scale', 'mello-block')}
+                                value={creativeEffectPrevScale}
+                                onChange={(value) => setAttributes({ creativeEffectPrevScale: value })}
+                                min={0}
+                                max={2}
+                                step={0.01}
+                            />
+                            <RangeControl
+                                label={__('Rotate Z (deg)', 'mello-block')}
+                                value={creativeEffectPrevRotateZ}
+                                onChange={(value) => setAttributes({ creativeEffectPrevRotateZ: value })}
+                                min={-180}
+                                max={180}
+                                step={1}
+                            />
+                            <ToggleControl
+                                label={__('Shadow', 'mello-block')}
+                                checked={!!creativeEffectPrevShadow}
+                                onChange={(value) => setAttributes({ creativeEffectPrevShadow: value || undefined })}
+                            />
+                            <SelectControl
+                                __next40pxDefaultSize
+                                label={__('Transform Origin', 'mello-block')}
+                                value={creativeEffectPrevOrigin || ''}
+                                options={[
+                                    { label: __('Default', 'mello-block'), value: '' },
+                                    { label: __('Center Center', 'mello-block'), value: 'center center' },
+                                    { label: __('Left Center', 'mello-block'), value: 'left center' },
+                                    { label: __('Right Center', 'mello-block'), value: 'right center' },
+                                    { label: __('Center Top', 'mello-block'), value: 'center top' },
+                                    { label: __('Center Bottom', 'mello-block'), value: 'center bottom' },
+                                    { label: __('Left Top', 'mello-block'), value: 'left top' },
+                                    { label: __('Left Bottom', 'mello-block'), value: 'left bottom' },
+                                    { label: __('Right Top', 'mello-block'), value: 'right top' },
+                                    { label: __('Right Bottom', 'mello-block'), value: 'right bottom' },
+                                ]}
+                                onChange={(value) => setAttributes({ creativeEffectPrevOrigin: value || undefined })}
+                            />
+                            <Divider />
+                            <p style={{ margin: '0 0 8px', fontWeight: 600 }}>{__('Next Slide', 'mello-block')}</p>
+                            <TextControl
+                                __next40pxDefaultSize
+                                label={__('Translate X', 'mello-block')}
+                                value={creativeEffectNextTranslateX ?? '100%'}
+                                onChange={(value) => setAttributes({ creativeEffectNextTranslateX: value })}
+                                help={__('Use % (e.g. 100%) or px (e.g. 400)', 'mello-block')}
+                            />
+                            <TextControl
+                                __next40pxDefaultSize
+                                label={__('Translate Y', 'mello-block')}
+                                value={creativeEffectNextTranslateY ?? '0'}
+                                onChange={(value) => setAttributes({ creativeEffectNextTranslateY: value })}
+                                help={__('Use % (e.g. 100%) or px (e.g. 200)', 'mello-block')}
+                            />
+                            <RangeControl
+                                label={__('Translate Z (px)', 'mello-block')}
+                                value={creativeEffectNextTranslateZ ?? 0}
+                                onChange={(value) => setAttributes({ creativeEffectNextTranslateZ: value ?? 0 })}
+                                min={-1200}
+                                max={0}
+                                step={10}
+                            />
+                            <RangeControl
+                                label={__('Opacity', 'mello-block')}
+                                value={creativeEffectNextOpacity}
+                                onChange={(value) => setAttributes({ creativeEffectNextOpacity: value })}
+                                min={0}
+                                max={1}
+                                step={0.01}
+                            />
+                            <RangeControl
+                                label={__('Scale', 'mello-block')}
+                                value={creativeEffectNextScale}
+                                onChange={(value) => setAttributes({ creativeEffectNextScale: value })}
+                                min={0}
+                                max={2}
+                                step={0.01}
+                            />
+                            <RangeControl
+                                label={__('Rotate Z (deg)', 'mello-block')}
+                                value={creativeEffectNextRotateZ}
+                                onChange={(value) => setAttributes({ creativeEffectNextRotateZ: value })}
+                                min={-180}
+                                max={180}
+                                step={1}
+                            />
+                            <ToggleControl
+                                label={__('Shadow', 'mello-block')}
+                                checked={!!creativeEffectNextShadow}
+                                onChange={(value) => setAttributes({ creativeEffectNextShadow: value || undefined })}
+                            />
+                            <SelectControl
+                                __next40pxDefaultSize
+                                label={__('Transform Origin', 'mello-block')}
+                                value={creativeEffectNextOrigin || ''}
+                                options={[
+                                    { label: __('Default', 'mello-block'), value: '' },
+                                    { label: __('Center Center', 'mello-block'), value: 'center center' },
+                                    { label: __('Left Center', 'mello-block'), value: 'left center' },
+                                    { label: __('Right Center', 'mello-block'), value: 'right center' },
+                                    { label: __('Center Top', 'mello-block'), value: 'center top' },
+                                    { label: __('Center Bottom', 'mello-block'), value: 'center bottom' },
+                                    { label: __('Left Top', 'mello-block'), value: 'left top' },
+                                    { label: __('Left Bottom', 'mello-block'), value: 'left bottom' },
+                                    { label: __('Right Top', 'mello-block'), value: 'right top' },
+                                    { label: __('Right Bottom', 'mello-block'), value: 'right bottom' },
+                                ]}
+                                onChange={(value) => setAttributes({ creativeEffectNextOrigin: value || undefined })}
+                            />
+                            <Divider />
+                            <RangeControl
+                                label={__('Limit Progress', 'mello-block')}
+                                value={creativeEffectLimitProgress ?? 1}
+                                onChange={(value) => setAttributes({ creativeEffectLimitProgress: value ?? 1 })}
+                                min={1}
+                                max={20}
+                                step={0.5}
+                                help={__('How many slides beyond the adjacent slide are transformed', 'mello-block')}
+                            />
+                            <Divider />
+                            <TextControl
+                                __next40pxDefaultSize
+                                label={__('Prev Slide Filter', 'mello-block')}
+                                value={creativeEffectPrevFilter || ''}
+                                onChange={(value) => setAttributes({ creativeEffectPrevFilter: value || undefined })}
+                                placeholder="blur(10px) brightness(0.8)"
+                                help={__('CSS filter applied to the previous slide, e.g. blur(8px) brightness(0.9)', 'mello-block')}
+                            />
+                            <TextControl
+                                __next40pxDefaultSize
+                                label={__('Next Slide Filter', 'mello-block')}
+                                value={creativeEffectNextFilter || ''}
+                                onChange={(value) => setAttributes({ creativeEffectNextFilter: value || undefined })}
+                                placeholder="blur(10px) brightness(0.8)"
+                                help={__('CSS filter applied to the next slide, e.g. blur(8px) brightness(0.9)', 'mello-block')}
                             />
                         </>
                     )}

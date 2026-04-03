@@ -113,8 +113,11 @@
 
     // Auto Play delay = 0 - remove transition for marquee effect
 
-    &[data-swiper-autoplay-delay="0"] .swiper-wrapper {
-        transition-timing-function: linear;
+    &[data-swiper-autoplay-delay="0"] {
+        .swiper-wrapper,
+        .swiper-slide {
+            transition-timing-function: linear;
+        }
     }
 
     // Auto fit slides horizontal - shrink slides to fit content
@@ -145,6 +148,18 @@
 
     &[data-swiper-overflow-hidden="true"] {
         overflow: clip;
+    }
+
+    // Creative effect - CSS filters on prev/next slides
+
+    &[data-swiper-effect="creative"] {
+        .swiper-slide-prev {
+            filter: var(--swiper-creative-prev-filter, none);
+        }
+
+        .swiper-slide-next {
+            filter: var(--swiper-creative-next-filter, none);
+        }
     }
 
 }

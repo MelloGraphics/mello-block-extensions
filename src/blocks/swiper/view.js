@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         (el.getAttribute('data-swiper-autoplay') === 'true' || !isNaN(el.getAttribute('data-swiper-autoplay'))));
     const needsEffectFade = Array.from(swiperElements).some(el =>
         el.hasAttribute('data-swiper-effect') && el.getAttribute('data-swiper-effect') === 'fade');
+    const needsEffectCreative = Array.from(swiperElements).some(el =>
+        el.hasAttribute('data-swiper-effect') && el.getAttribute('data-swiper-effect') === 'creative');
     const needsFreeMode = Array.from(swiperElements).some(el =>
         el.hasAttribute('data-swiper-free-mode') && el.getAttribute('data-swiper-free-mode') === 'true');
     const needsThumbs = Array.from(swiperElements).some(el =>
@@ -59,6 +61,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (needsEffectFade) {
         const { EffectFade } = await import('swiper/modules');
         modulesToLoad.push({ module: EffectFade, name: 'EffectFade' });
+    }
+
+    if (needsEffectCreative) {
+        const { EffectCreative } = await import('swiper/modules');
+        modulesToLoad.push({ module: EffectCreative, name: 'EffectCreative' });
     }
 
     if (needsFreeMode) {
@@ -115,6 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             attr.name === 'data-swiper-autoplay' && (attr.value === 'true' || !isNaN(attr.value))
         );
         const hasEffectFade = dataAttributes.some(attr => attr.name === 'data-swiper-effect' && attr.value === 'fade');
+        const hasEffectCreative = dataAttributes.some(attr => attr.name === 'data-swiper-effect' && attr.value === 'creative');
         const hasFreeMode = dataAttributes.some(attr => attr.name === 'data-swiper-free-mode' && attr.value === 'true');
         const hasThumbs = dataAttributes.some(attr => attr.name === 'data-swiper-enable-thumbs' && attr.value === 'true');
         const thumbsTargetSelector = swiperElement.getAttribute('data-swiper-thumbs-target');
@@ -133,6 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 (moduleInfo.name === 'Mousewheel' && hasMousewheel) ||
                 (moduleInfo.name === 'Autoplay' && hasAutoplay) ||
                 (moduleInfo.name === 'EffectFade' && hasEffectFade) ||
+                (moduleInfo.name === 'EffectCreative' && hasEffectCreative) ||
                 (moduleInfo.name === 'FreeMode' && hasFreeMode) ||
                 (moduleInfo.name === 'Thumbs' && hasThumbs)
             ) {
@@ -179,6 +188,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (hasEffectFade) {
             options.effect = 'fade';
+        }
+
+        if (hasEffectCreative) {
+            options.effect = 'creative';
         }
 
         // Initialize Free Mode configuration
@@ -255,6 +268,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     break;
                 case 'allowTouchMove':
                     options.allowTouchMove = value;
+                    break;
+                case 'creativeEffect':
+                    try {
+                        options.creativeEffect = JSON.parse(attr.value);
+                    } catch { }
                     break;
                 case 'watchSlidesProgress':
                     options.watchSlidesProgress = value;

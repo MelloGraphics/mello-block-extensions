@@ -50,6 +50,9 @@
 			"type": "boolean",
 			"default": false
 		},
+		"loopAdditionalSlides": {
+			"type": "number"
+		},
 		"direction": {
 			"type": "string",
 			"default": "horizontal"
@@ -165,6 +168,70 @@
 		},
 		"overflowHidden": {
 			"type": "boolean"
+		},
+		"creativeEffectPrevTranslateX": {
+			"type": "string",
+			"default": "-100%"
+		},
+		"creativeEffectPrevTranslateY": {
+			"type": "string",
+			"default": "0"
+		},
+		"creativeEffectPrevTranslateZ": {
+			"type": "number",
+			"default": 0
+		},
+		"creativeEffectPrevOpacity": {
+			"type": "number"
+		},
+		"creativeEffectPrevScale": {
+			"type": "number"
+		},
+		"creativeEffectPrevRotateZ": {
+			"type": "number"
+		},
+		"creativeEffectPrevShadow": {
+			"type": "boolean"
+		},
+		"creativeEffectPrevOrigin": {
+			"type": "string"
+		},
+		"creativeEffectNextTranslateX": {
+			"type": "string",
+			"default": "100%"
+		},
+		"creativeEffectNextTranslateY": {
+			"type": "string",
+			"default": "0"
+		},
+		"creativeEffectNextTranslateZ": {
+			"type": "number",
+			"default": 0
+		},
+		"creativeEffectNextOpacity": {
+			"type": "number"
+		},
+		"creativeEffectNextScale": {
+			"type": "number"
+		},
+		"creativeEffectNextRotateZ": {
+			"type": "number"
+		},
+		"creativeEffectNextShadow": {
+			"type": "boolean"
+		},
+		"creativeEffectNextOrigin": {
+			"type": "string"
+		},
+		"creativeEffectLimitProgress": {
+			"type": "number",
+			"default": 1
+		},
+		"creativeEffectPrevFilter": {
+			"type": "string"
+		},
+		"creativeEffectNextFilter": {
+			"type": "string"
 		}
 	},
 	"example": {},

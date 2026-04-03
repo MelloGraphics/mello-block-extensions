@@ -17,7 +17,6 @@
     const LOAD_DISTANCE_DESKTOP = '300px';
     const MAX_CONCURRENT_LOADS = isMobile ? 1 : 3; // Load 1 at a time on mobile, 3 on desktop
 
-    console.log('[VIDEO] Device detected as:', isMobile ? 'MOBILE' : 'DESKTOP');
 
     // Get or initialize state for a video
     function getVideoState(video) {
@@ -47,8 +46,7 @@
 
         // If not loaded yet, don't try to play
         if (!state.loaded) {
-            console.log('[VIDEO] Waiting for video to load before playing');
-            return;
+                return;
         }
 
         // Check if ready
@@ -69,14 +67,9 @@
             .then(() => {
                 state.playing = true;
                 state.playPromise = null;
-                console.log('[VIDEO] Playing:', video.dataset.src);
             })
-            .catch(err => {
+            .catch(() => {
                 state.playPromise = null;
-                // Only log if it's not an abort (abort is expected when scrolling fast)
-                if (err.name !== 'AbortError') {
-                    console.warn('[VIDEO] Play failed:', err.name, err.message);
-                }
             });
     }
 
@@ -110,8 +103,6 @@
     // Unload video safely
     function unloadVideo(video) {
         const state = getVideoState(video);
-
-        console.log('[VIDEO] Unloading:', video.dataset.src);
 
         safePause(video);
 
@@ -174,7 +165,6 @@
             return;
         }
 
-        console.log('[VIDEO] Loading source:', video.dataset.src);
         state.loading = true;
 
         try {
@@ -185,7 +175,6 @@
                 state.loaded = true;
                 state.loading = false;
                 video.classList.add('video-loaded'); // Fade in now that it's ready
-                console.log('[VIDEO] Video ready:', video.dataset.src);
                 resolve();
 
                 // Process next video in queue
@@ -194,7 +183,6 @@
 
             const handleError = () => {
                 state.loading = false;
-                console.error('[VIDEO] Error loading video:', video.dataset.src);
                 resolve();
 
                 // Process next video in queue
@@ -208,8 +196,7 @@
             // Start loading
             video.load();
 
-        } catch (error) {
-            console.error('[VIDEO] Error loading video:', error);
+        } catch {
             state.loading = false;
             resolve();
             processLoadQueue();
@@ -307,7 +294,6 @@
                         if (isMobile) {
                             const playing = getPlayingVideos();
                             if (playing.length >= MAX_PLAYING_VIDEOS_MOBILE) {
-                                console.log('[VIDEO] Max playing limit reached');
                                 return;
                             }
                         }
@@ -336,8 +322,6 @@
     function observeVideos() {
         const videos = document.querySelectorAll('video.mello-featured-video[data-autoplay-on-scroll]');
 
-        console.log('[VIDEO] Observing', videos.length, 'videos');
-
         if (!videos.length) return;
 
         if (!sourceObserver) {
@@ -362,8 +346,7 @@
     document.addEventListener('DOMContentLoaded', observeVideos);
 
     // Re-observe after Search & Filter Pro updates
-    document.addEventListener('sf:ajaxfinish', function (e) {
-        console.log('[VIDEO] Search filter finished, re-observing');
+    document.addEventListener('sf:ajaxfinish', function () {
         setTimeout(observeVideos, 100);
     });
 
@@ -388,7 +371,6 @@
             });
 
             if (shouldReobserve) {
-                console.log('[VIDEO] New videos detected in DOM');
                 observeVideos();
             }
         });

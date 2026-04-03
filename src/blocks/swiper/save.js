@@ -9,6 +9,7 @@ export default function save({ attributes }) {
         slidesPerViewAuto,
         autoHeight,
         loop,
+        loopAdditionalSlides,
         autoplay,
         autoplayDelay,
         autoplayDisableOnInteraction,
@@ -44,8 +45,61 @@ export default function save({ attributes }) {
         enableThumbs,
         thumbsTarget,
         overflowHidden,
-        allowTouchMove
+        allowTouchMove,
+        creativeEffectPrevTranslateX,
+        creativeEffectPrevTranslateY,
+        creativeEffectPrevTranslateZ,
+        creativeEffectPrevOpacity,
+        creativeEffectPrevScale,
+        creativeEffectPrevRotateZ,
+        creativeEffectPrevShadow,
+        creativeEffectPrevOrigin,
+        creativeEffectNextTranslateX,
+        creativeEffectNextTranslateY,
+        creativeEffectNextTranslateZ,
+        creativeEffectNextOpacity,
+        creativeEffectNextScale,
+        creativeEffectNextRotateZ,
+        creativeEffectNextShadow,
+        creativeEffectNextOrigin,
+        creativeEffectLimitProgress,
+        creativeEffectPrevFilter,
+        creativeEffectNextFilter,
     } = attributes;
+
+    const parseTranslateVal = (v) => {
+        if (v === undefined || v === '') return 0;
+        const n = Number(v);
+        return isNaN(n) ? v : n;
+    };
+
+    const creativeEffectData = effect === 'creative' ? JSON.stringify({
+        prev: {
+            translate: [
+                parseTranslateVal(creativeEffectPrevTranslateX ?? '-100%'),
+                parseTranslateVal(creativeEffectPrevTranslateY ?? '0'),
+                creativeEffectPrevTranslateZ ?? 0,
+            ],
+            ...(creativeEffectPrevOpacity !== undefined && { opacity: creativeEffectPrevOpacity }),
+            ...(creativeEffectPrevScale !== undefined && { scale: creativeEffectPrevScale }),
+            ...(creativeEffectPrevRotateZ !== undefined && { rotate: [0, 0, creativeEffectPrevRotateZ] }),
+            ...(creativeEffectPrevShadow && { shadow: true }),
+            ...(creativeEffectPrevOrigin && { origin: creativeEffectPrevOrigin }),
+        },
+        next: {
+            translate: [
+                parseTranslateVal(creativeEffectNextTranslateX ?? '100%'),
+                parseTranslateVal(creativeEffectNextTranslateY ?? '0'),
+                creativeEffectNextTranslateZ ?? 0,
+            ],
+            ...(creativeEffectNextOpacity !== undefined && { opacity: creativeEffectNextOpacity }),
+            ...(creativeEffectNextScale !== undefined && { scale: creativeEffectNextScale }),
+            ...(creativeEffectNextRotateZ !== undefined && { rotate: [0, 0, creativeEffectNextRotateZ] }),
+            ...(creativeEffectNextShadow && { shadow: true }),
+            ...(creativeEffectNextOrigin && { origin: creativeEffectNextOrigin }),
+        },
+        limitProgress: creativeEffectLimitProgress ?? 1,
+    }) : undefined;
 
     // Helper function to add attribute only if it has a valid and truthy value
     const addAttributeIfTruthy = (attributeName, value) => {
@@ -60,6 +114,14 @@ export default function save({ attributes }) {
     };
 
     const blockProps = useBlockProps.save({
+        style: {
+            ...(effect === 'creative' && creativeEffectPrevFilter
+                ? { '--swiper-creative-prev-filter': creativeEffectPrevFilter }
+                : {}),
+            ...(effect === 'creative' && creativeEffectNextFilter
+                ? { '--swiper-creative-next-filter': creativeEffectNextFilter }
+                : {}),
+        },
         'data-swiper': true,
         ...(slidesPerViewAuto
             ? addAttributeIfTruthy('slides-per-view-auto', true)
@@ -71,6 +133,7 @@ export default function save({ attributes }) {
             }),
         ...addAttributeIfTruthy('auto-height', autoHeight),
         ...addAttributeIfTruthy('loop', loop),
+        ...(loop && loopAdditionalSlides !== undefined ? addAttributeIfTruthy('loop-additional-slides', loopAdditionalSlides) : {}),
         ...addAttributeIfTruthy('autoplay', autoplay),
         // Only add autoplay-related attributes if autoplay is true
         ...(autoplay === true ? addAttributeIfTruthy('autoplay-delay', autoplayDelay) : {}),
@@ -112,6 +175,7 @@ export default function save({ attributes }) {
         ...(enableThumbs === true ? addAttributeIfTruthy('thumbs-target', thumbsTarget) : {}),
         ...(overflowHidden === true ? addAttributeIfTruthy('overflow-hidden', overflowHidden) : {}),
         ...(allowTouchMove === false ? { 'data-swiper-allow-touch-move': false } : {}),
+        ...(creativeEffectData !== undefined ? { 'data-swiper-creative-effect': creativeEffectData } : {}),
     });
 
     return (
