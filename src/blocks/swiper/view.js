@@ -372,16 +372,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
         }
 
-        // Handle loop mode - set loopedSlides to match total slide count
-        if (options.loop === true) {
-            // Count the actual number of slides
-            const slideCount = wrapper ? wrapper.querySelectorAll(':scope > *').length : 0;
-            
-            // Set loopedSlides to the total number of slides so Swiper duplicates all of them
-            if (slideCount > 0) {
-                options.loopedSlides = slideCount;
-            }
-        }
+        // Handle loop mode - loopedSlides was removed in Swiper v12, loopAdditionalSlides is used instead
+        // and is already handled via the data attribute default switch case
 
         // Handle thumbs integration if enabled
         if (hasThumbs && hasThumbsTarget) {
@@ -525,13 +517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         thumbsOptions.direction = thumbsEl.getAttribute('data-swiper-direction');
                     }
 
-                    // Handle loop mode for thumbs
-                    if (thumbsOptions.loop === true) {
-                        const thumbsSlideCount = thumbsWrapper ? thumbsWrapper.querySelectorAll(':scope > *').length : 0;
-                        if (thumbsSlideCount > 0) {
-                            thumbsOptions.loopedSlides = thumbsSlideCount;
-                        }
-                    }
+                    // loopedSlides removed in Swiper v12 - loopAdditionalSlides handles this via data attributes
 
                     const thumbsSwiper = new Swiper(thumbsEl, thumbsOptions);
                     options.thumbs = { swiper: thumbsSwiper };

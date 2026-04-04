@@ -55,6 +55,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
         spaceBetweenMobile,
         speed,
         navigation,
+        navigationIcon,
         pagination,
         paginationType,
         paginationClickable,
@@ -220,6 +221,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
         ...(speed !== undefined && { 'data-swiper-speed': speed }),
         ...(direction !== undefined && { 'data-swiper-direction': direction }),
         ...(navigation !== undefined && { 'data-swiper-navigation': navigation }),
+        ...(navigationIcon && { 'data-swiper-navigation-icon': true }),
         ...(pagination !== undefined && { 'data-swiper-pagination': pagination }),
         ...(paginationType !== undefined && { 'data-swiper-pagination-type': paginationType }),
         ...(paginationClickable !== undefined && { 'data-swiper-pagination-clickable': paginationClickable }),
@@ -511,6 +513,14 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                             setInnerBlockVisibility('Prev / Next Buttons', value);
                         }}
                     />
+                    {navigation && (
+                        <ToggleControl
+                            label={__('Use Swiper Icon', 'mello-block')}
+                            checked={!!navigationIcon}
+                            onChange={(value) => setAttributes({ navigationIcon: value || undefined })}
+                            help={__('Show the default Swiper arrow icon injected by Swiper v12+', 'mello-block')}
+                        />
+                    )}
                     <Divider />
                     {/* Pagination Toggle and controls */}
                     <ToggleControl

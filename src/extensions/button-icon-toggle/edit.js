@@ -11,19 +11,18 @@ import {
     ToggleControl,
 } from "@wordpress/components";
 import { createHigherOrderComponent } from "@wordpress/compose";
-import { Fragment } from "@wordpress/element";
+import { Fragment, useMemo } from "@wordpress/element";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
 
 const ICON_TYPES = [
-    { label: __("None", "mello-block-extensions"), value: "none" },
     { label: __("Font Awesome Icon", "mello-block-extensions"), value: "fa" },
     { label: __("Image", "mello-block-extensions"), value: "image" },
 ];
 
 const addIconControls = (BlockEdit) => {
     return (props) => {
-        const { attributes, setAttributes, isSelected, name } = props;
+        const { attributes, setAttributes, isSelected, name, clientId } = props;
 
         if (name !== "core/button") return <BlockEdit {...props} />;
 
@@ -33,10 +32,28 @@ const addIconControls = (BlockEdit) => {
             iconGlyph = "",
             iconImageID,
             iconImageURL,
+            iconPosition = "before",
         } = attributes;
+
+        const editorPreviewStyle = useMemo(() => {
+            if (!iconEnabled || iconType === 'none') return null;
+
+            const pseudo = iconPosition === 'after' ? 'after' : 'before';
+            const selector = `[data-block="${clientId}"] .wp-block-button__link`;
+            let css = `${selector} { display: inline-flex; align-items: center; gap: 0.5em; }`;
+
+            if (iconType === 'fa' && iconGlyph) {
+                css += `${selector}::${pseudo} { content: "${iconGlyph}"; font-family: var(--wp--preset--font-family--icon); speak: none; flex-shrink: 0; }`;
+            } else if (iconType === 'image' && iconImageURL) {
+                css += `${selector}::${pseudo} { content: ''; display: inline-block; width: 1em; height: 1em; background-image: url(${iconImageURL}); background-size: contain; background-repeat: no-repeat; background-position: center; flex-shrink: 0; }`;
+            }
+
+            return css;
+        }, [iconEnabled, iconType, iconGlyph, iconImageURL, iconPosition, clientId]);
 
         return (
             <Fragment>
+                {editorPreviewStyle && <style>{editorPreviewStyle}</style>}
                 <BlockEdit {...props} />
                 {isSelected && (
                     <InspectorControls>
@@ -46,7 +63,10 @@ const addIconControls = (BlockEdit) => {
                                 __nextHasNoMarginBottom
                                 label={__("Enable Icon", "mello-block-extensions")}
                                 checked={iconEnabled}
-                                onChange={(value) => setAttributes({ iconEnabled: value })}
+                                onChange={(value) => setAttributes({
+                                iconEnabled: value,
+                                iconType: value ? "fa" : "none",
+                            })}
                             />
                             {iconEnabled && (
                                 <>
@@ -56,6 +76,14 @@ const addIconControls = (BlockEdit) => {
                                         value={iconType}
                                         options={ICON_TYPES}
                                         onChange={(value) => setAttributes({ iconType: value })}
+                                    />
+
+                                    <ToggleControl
+                                        __next40pxDefaultSize
+                                        __nextHasNoMarginBottom
+                                        label={__("Icon After Text", "mello-block-extensions")}
+                                        checked={iconPosition === "after"}
+                                        onChange={(value) => setAttributes({ iconPosition: value ? "after" : "before" })}
                                     />
 
                                     {iconType === "fa" && (
@@ -131,6 +159,10 @@ const addIconAttributes = (settings, name) => {
         iconImageURL: {
             type: "string",
             default: "",
+        },
+        iconPosition: {
+            type: "string",
+            default: "before",
         },
     };
     return settings;

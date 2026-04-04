@@ -95,6 +95,9 @@
     "navigation": {
       "type": "boolean"
     },
+    "navigationIcon": {
+      "type": "boolean"
+    },
     "pagination": {
       "type": "boolean"
     },

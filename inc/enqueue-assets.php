@@ -50,6 +50,8 @@ class Block_Extensions
         add_action('init', [$this, 'include_extension_functions']);
         // Hook for editor-only assets.
         add_action('enqueue_block_editor_assets', [$this, 'enqueue_block_editor_assets']);
+        // Hook for editor styles — must use enqueue_block_assets to load inside the iframe.
+        add_action('enqueue_block_assets', [$this, 'enqueue_block_editor_styles']);
         // Hook for frontend-only assets.
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
         // Hook to register blocks on init
@@ -110,6 +112,25 @@ class Block_Extensions
                         true
                     );
                 }
+
+            }
+        }
+    }
+
+    /**
+     * Enqueue editor styles inside the block editor iframe.
+     */
+    public function enqueue_block_editor_styles()
+    {
+        if (!is_admin()) return;
+
+        $enabled = \Mello\mello_get_enabled_extensions();
+
+        foreach ($enabled as $slug => $active) {
+            if (!$active) continue;
+
+            foreach (['extensions', 'blocks'] as $base) {
+                $editor_css = plugin_dir_path(__FILE__) . "../build/$base/$slug/editor-style.css";
 
                 if (file_exists($editor_css)) {
                     wp_enqueue_style(

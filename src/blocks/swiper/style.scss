@@ -60,9 +60,40 @@
             font-size: inherit;
         }
 
-        // .swiper-navigation-icon {
-        //     display: none;
-        // }
+        // Hide the v12 SVG icon by default — existing builds use custom button content
+        .swiper-navigation-icon {
+            display: none;
+            visibility: hidden;
+        }
+    }
+
+    // Opt-in to show the Swiper SVG icon
+    &[data-swiper-navigation-icon="true"] {
+        .swiper-button-next,
+        .swiper-button-prev {
+            position: relative;
+
+            .wp-block-button__link {
+                position: relative;
+                font-size: 0;
+            }
+
+            .swiper-navigation-icon {
+                display: block;
+                visibility: visible;
+                pointer-events: none;
+                color: var(--wp--preset--color--primary-contrast);
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                height: 1em;
+            }
+
+            &.swiper-button-prev .swiper-navigation-icon {
+                transform: translate(-50%, -50%) rotate(180deg);
+            }
+        }
     }
 
     &[data-swiper-navigation="true"] {

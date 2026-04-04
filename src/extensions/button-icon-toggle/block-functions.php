@@ -8,6 +8,7 @@ add_filter('render_block', function($block_content, $block) {
     $iconType = isset($block['attrs']['iconType']) ? $block['attrs']['iconType'] : 'none';
     $iconGlyph = isset($block['attrs']['iconGlyph']) ? $block['attrs']['iconGlyph'] : '';
     $iconImageURL = isset($block['attrs']['iconImageURL']) ? $block['attrs']['iconImageURL'] : '';
+    $iconPosition = isset($block['attrs']['iconPosition']) ? $block['attrs']['iconPosition'] : 'before';
     
     // Parse the existing button content to extract text and attributes
     $dom = new DOMDocument();
@@ -71,11 +72,14 @@ add_filter('render_block', function($block_content, $block) {
     }
     $newContent .= '>';
     
-    if (!empty($iconHtml)) {
-        $newContent .= '<span class="mello-button-icon__wrapper">' . $iconHtml . '</span>';
+    $iconSpan = !empty($iconHtml) ? '<span class="mello-button-icon__wrapper">' . $iconHtml . '</span>' : '';
+    $textSpan = '<span class="mello-button-icon__button-text">' . esc_html($buttonText) . '</span>';
+
+    if ($iconPosition === 'after') {
+        $newContent .= $textSpan . $iconSpan;
+    } else {
+        $newContent .= $iconSpan . $textSpan;
     }
-    
-    $newContent .= '<span class="mello-button-icon__button-text">' . esc_html($buttonText) . '</span>';
     $newContent .= '</a></div>';
     
     return $newContent;

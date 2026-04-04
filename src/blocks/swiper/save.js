@@ -21,6 +21,7 @@ export default function save({ attributes }) {
         speed,
         direction,
         navigation,
+        navigationIcon,
         pagination,
         paginationType,
         paginationClickable,
@@ -146,6 +147,7 @@ export default function save({ attributes }) {
         ...addAttributeIfTruthy('speed', speed),
         ...addAttributeIfTruthy('direction', direction),
         ...addAttributeIfTruthy('navigation', navigation),
+        ...(navigationIcon ? { 'data-swiper-navigation-icon': true } : {}),
         ...addAttributeIfTruthy('pagination', pagination),
         // Only add pagination-related attributes if pagination is true
         ...(pagination === true ? addAttributeIfTruthy('pagination-type', paginationType) : {}),
