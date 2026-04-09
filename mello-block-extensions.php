@@ -3,7 +3,7 @@
  * Plugin Name:       Mello Block Extensions
  * Plugin URI:        https://mellographics.com/
  * Description:       Custom block extensions and functionality for WordPress block themes.
- * Version: 2.1.37
+ * Version: 2.1.38
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Ashley Pickering
@@ -38,9 +38,6 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
 
 // Set the branch that contains the stable release
 $myUpdateChecker->setBranch('main');
-
-// Optional: Add a GitHub access token for private repositories or to increase API rate limit
-$myUpdateChecker->setAuthentication('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');
 
 // Optional: If you're using release assets instead of the source code
 $myUpdateChecker->getVcsApi()->enableReleaseAssets();

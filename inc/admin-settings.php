@@ -111,6 +111,19 @@ function mello_render_settings_page()
     <?php
 }
 
+function mello_sanitize_extensions( $input ) {
+    $valid_slugs = array_keys( mello_get_available_extensions() );
+    $sanitized   = [];
+    if ( is_array( $input ) ) {
+        foreach ( $input as $slug => $value ) {
+            if ( in_array( $slug, $valid_slugs, true ) ) {
+                $sanitized[ $slug ] = (bool) $value;
+            }
+        }
+    }
+    return $sanitized;
+}
+
 add_action('admin_init', 'mello_register_settings');
 function mello_register_settings()
 {
@@ -189,7 +202,9 @@ function mello_register_settings()
         'query-match-taxonomies' => 'query',
     ];
 
-    register_setting('mello_block_extensions_group', 'mello_enabled_extensions');
+    register_setting( 'mello_block_extensions_group', 'mello_enabled_extensions', [
+        'sanitize_callback' => 'mello_sanitize_extensions',
+    ] );
 
     $extensions = mello_get_available_extensions();
 
