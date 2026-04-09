@@ -1,6 +1,6 @@
-<h1 >Mello Block Extensions</h1>
+<h1>Mello Block Extensions</h1>
 
-<p >
+<p>
   A modular plugin for extending WordPress core blocks with enhanced functionality, built for Mello Graphics projects.
   <br /><br />
   <a href="https://mellographics.com" target="_blank"><strong>Visit Mello Graphics</strong></a>
@@ -21,9 +21,10 @@
 mello-block-extensions/
 ├── build/              # Compiled assets for active extensions
 ├── src/blocks/         # Source files for each MelloBlock
+├── src/extensions/     # Source files for each block extension
 ├── inc/                # Admin panel, enqueue logic, helpers
 ├── languages/          # .pot file for translations
-├── bin/                # Holds custom build processess
+├── bin/                # Holds custom build processes
 ├── mello-block-extensions.php  # Plugin bootstrap
 </code></pre>
 
@@ -36,7 +37,7 @@ mello-block-extensions/
   <li><code>block-functions.php</code> – Optional PHP for rendering filters/templates</li>
 </ul>
 
-<h2>Example Extensions</h2>
+<h2>Extensions</h2>
 
 <table>
   <thead>
@@ -47,60 +48,88 @@ mello-block-extensions/
   </thead>
   <tbody>
     <tr>
-      <td><code>extend-core-button-modal</code></td>
-      <td>Adds modal popup support to core Button block</td>
+      <td><code>add-data-attributes</code></td>
+      <td>Adds an input to render custom data attributes on the front end</td>
     </tr>
     <tr>
-      <td><code>extend-core-columns</code></td>
-      <td>Adds responsive layout options to core Columns block</td>
+      <td><code>add-smooth-scroll</code></td>
+      <td>Adds smooth scroll controls to core and mellobase blocks</td>
     </tr>
     <tr>
-      <td><code>extend-core-cover-ext-video</code></td>
-      <td>Allows external video URLs (YouTube/Vimeo) in Cover block</td>
+      <td><code>animation-controls</code></td>
+      <td>Adds scroll-triggered animation controls to core and mellobase blocks</td>
     </tr>
     <tr>
-      <td><code>extend-core-details-heading-level</code></td>
-      <td>Adds custom heading level control inside the Details block</td>
+      <td><code>button-icon-toggle</code></td>
+      <td>Adds icon upload and position controls to the core Button block</td>
     </tr>
     <tr>
-      <td><code>extend-core-details-name-attribute</code></td>
-      <td>Adds an input for a name attribute on the details block</td>
+      <td><code>button-modal-toggle</code></td>
+      <td>Adds modal popup support to the core Button block</td>
     </tr>
     <tr>
-      <td><code>extend-core-details-schema</code></td>
-      <td>Adds a toggle that outputs FAQ schema on the Details block</td>
+      <td><code>buttons-allow-additional-blocks</code></td>
+      <td>Allows additional blocks to be nested inside the core Buttons block</td>
     </tr>
     <tr>
-      <td><code>extend-core-group</code></td>
-      <td>Adds more html tag options to the Group block</td>
+      <td><code>columns-reverse-toggle</code></td>
+      <td>Adds a responsive reverse-order toggle to the core Columns block</td>
     </tr>
     <tr>
-      <td><code>extend-core-navigation</code></td>
-      <td>Allows for additional blocks within the Navigation block to create complex menus</td>
+      <td><code>content-in-modal-toggle</code></td>
+      <td>Adds a toggle to wrap block content inside a modal on the front end</td>
     </tr>
     <tr>
-      <td><code>extend-core-navigation-link</code></td>
-      <td>Allows for additional blocks within the Navigation-link block to create complex menus</td>
+      <td><code>cover-ext-video</code></td>
+      <td>Allows external video URLs (YouTube/Vimeo) in the core Cover block</td>
     </tr>
     <tr>
-      <td><code>extend-core-navigation-submenu</code></td>
-      <td>Allows for additional blocks within the Navigation-link block to create complex menus</td>
+      <td><code>details-faq-schema</code></td>
+      <td>Adds a toggle that outputs FAQ schema markup on the core Details block</td>
     </tr>
     <tr>
-      <td><code>extend-core-query</code></td>
-      <td>Re-renders the block without the current post in the loop</td>
+      <td><code>details-heading-level</code></td>
+      <td>Adds a custom heading level control inside the core Details block</td>
     </tr>
     <tr>
-      <td><code>extend-core-query</code></td>
-      <td>Re-renders the block without the current post in the loop</td>
+      <td><code>details-name-attribute</code></td>
+      <td>Adds a name attribute input to the core Details block</td>
     </tr>
     <tr>
-      <td><code>extend-core-query-video</code></td>
-      <td>Enables featured video (ACF) inside Query Loop block. ACF field 'featured_video' must be added seperately</td>
+      <td><code>group-link-wrapper</code></td>
+      <td>Adds a URL link wrapper to the core Group block via the toolbar</td>
     </tr>
     <tr>
-      <td><code>extend-data-attruibutes</code></td>
-      <td>Adds an input for to render data attributes on the front end</td>
+      <td><code>group-tag-name</code></td>
+      <td>Adds additional HTML tag options to the core Group block</td>
+    </tr>
+    <tr>
+      <td><code>load-motion-library</code></td>
+      <td>Loads the Motion.js animation library globally on the front end</td>
+    </tr>
+    <tr>
+      <td><code>navigation-allowed-blocks</code></td>
+      <td>Allows additional blocks within the core Navigation block to create complex menus</td>
+    </tr>
+    <tr>
+      <td><code>navigation-link-render-image</code></td>
+      <td>Renders an image inside the core Navigation Link block</td>
+    </tr>
+    <tr>
+      <td><code>query-exclude-current-post</code></td>
+      <td>Re-renders the Query Loop block excluding the current post from results</td>
+    </tr>
+    <tr>
+      <td><code>query-match-taxonomies</code></td>
+      <td>Adds taxonomy-matching controls to filter the Query Loop by related terms</td>
+    </tr>
+    <tr>
+      <td><code>query-render-featured-video</code></td>
+      <td>Enables featured video (ACF) inside the Query Loop block. Requires an ACF <code>featured_video</code> field.</td>
+    </tr>
+    <tr>
+      <td><code>render-svg</code></td>
+      <td>Adds a toggle to render inline SVG output on image-based blocks</td>
     </tr>
   </tbody>
 </table>
@@ -110,26 +139,57 @@ mello-block-extensions/
 <table>
   <thead>
     <tr>
-      <th>Block title</th>
+      <th>Block</th>
       <th>Description</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Table of Contents</td>
-      <td>Displays a list of core/heading titles as a table of contents</td>
-    </tr>
-    <tr>
-      <td>Post Type</td>
-      <td>Displays the post-type name of the current page or within a query loop</td>
-    </tr>
-    <tr>
-      <td>Read Time</td>
-      <td>Displays the read time of the current page</td>
+      <td>Swiper</td>
+      <td>Full-featured Swiper.js slider block supporting query elements, responsive slides, autoplay, pagination, navigation, creative effects, and more</td>
     </tr>
     <tr>
       <td>Counter</td>
-      <td>Display stats and figures animated in on scroll</td>
+      <td>Displays stats and figures animated in on scroll</td>
+    </tr>
+    <tr>
+      <td>Featured Video</td>
+      <td>Renders a featured video field (ACF) for the current post</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Deprecated Extensions</h2>
+
+<p>The following extensions are no longer in active use and have been excluded from the build:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Extension</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>post-type</code> block</td>
+      <td>Superseded by WordPress core</td>
+    </tr>
+    <tr>
+      <td><code>read-time</code> block</td>
+      <td>Superseded by WordPress core</td>
+    </tr>
+    <tr>
+      <td><code>add-data-aria-label</code></td>
+      <td>Superseded by <code>add-data-attributes</code></td>
+    </tr>
+    <tr>
+      <td><code>mega-menu</code></td>
+      <td>No longer maintained</td>
+    </tr>
+    <tr>
+      <td><code>mega-menu-section</code></td>
+      <td>No longer maintained</td>
     </tr>
   </tbody>
 </table>
@@ -191,7 +251,7 @@ npm run build
 </ul>
 
 <h2>License</h2>
-<p>GPL-3.0 © <a href="https://mellographics.com">Mello Graphics</a></p>
+<p>GPL-2.0+ © <a href="https://mellographics.com">Mello Graphics</a></p>
 
 <h2>Maintainer</h2>
 <p><strong>Ashley Pickering</strong> – <a href="https://mellographics.com">https://mellographics.com</a></p>
