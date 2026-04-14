@@ -244,7 +244,7 @@ npm run build
 
 <h2>Roadmap</h2>
 <ul>
-  <li>[ ] UI improvements for admin toggles</li>
+  <li>[ ] Scroll based animations</li>
   <li>[ ] Auto-detection of available extensions</li>
   <li>[ ] Extension grouping in admin UI</li>
   <li>[ ] JSON config import/export</li>
