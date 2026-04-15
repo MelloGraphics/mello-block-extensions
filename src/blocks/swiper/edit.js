@@ -483,6 +483,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                                         min={0}
                                         max={10}
                                         step={0.1}
+                                        help={__('Controls how long the throw ease-out lasts. Higher = longer deceleration. (1000ms × ratio)', 'mello-block')}
                                     />
                                     <RangeControl
                                         label={__('Momentum Velocity Ratio', 'mello-block')}
@@ -491,6 +492,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                                         min={0}
                                         max={10}
                                         step={0.1}
+                                        help={__('Controls how far the throw travels. Higher = more distance.', 'mello-block')}
                                     />
                                     <ToggleControl
                                         label={__('Sticky', 'mello-block')}

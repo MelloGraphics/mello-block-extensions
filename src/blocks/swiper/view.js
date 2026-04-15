@@ -541,6 +541,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Initialize Swiper with configured options
-        new Swiper(swiperElement, options);
+        const swiperInstance = new Swiper(swiperElement, options);
+
+        // If both marquee (autoplay delay=0) and free mode are active, the CSS linear
+        // transition timing breaks the throw feel. Switch to ease-out on touch and
+        // restore linear when the transition ends so both behaviours coexist.
+        const isMarquee = swiperElement.getAttribute('data-swiper-autoplay-delay') === '0';
+        if (isMarquee && hasFreeMode) {
+            const wrapper = swiperElement.querySelector('.swiper-wrapper');
+            swiperInstance.on('touchStart', () => {
+                if (wrapper) wrapper.style.transitionTimingFunction = 'ease-out';
+            });
+            swiperInstance.on('transitionEnd', () => {
+                if (wrapper) wrapper.style.transitionTimingFunction = '';
+            });
+        }
     });
 });

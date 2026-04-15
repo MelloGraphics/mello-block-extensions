@@ -71,10 +71,12 @@
       "type": "boolean"
     },
     "freeModeMomentumRatio": {
-      "type": "number"
+      "type": "number",
+      "default": 0.5
     },
     "freeModeMomentumVelocityRatio": {
-      "type": "number"
+      "type": "number",
+      "default": 0.5
     },
     "freeModeSticky": {
       "type": "boolean"
