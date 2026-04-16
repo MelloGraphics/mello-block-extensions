@@ -473,27 +473,31 @@ export default function Edit({ attributes, setAttributes, clientId }) {
                                 <>
                                     <ToggleControl
                                         label={__('Momentum', 'mello-block')}
-                                        checked={freeModeMomentum}
-                                        onChange={(value) => setAttributes({ freeModeMomentum: value !== undefined ? value : undefined })}
+                                        checked={freeModeMomentum !== false}
+                                        onChange={(value) => setAttributes({ freeModeMomentum: value })}
                                     />
-                                    <RangeControl
-                                        label={__('Momentum Ratio', 'mello-block')}
-                                        value={freeModeMomentumRatio}
-                                        onChange={(value) => setAttributes({ freeModeMomentumRatio: value !== undefined ? value : undefined })}
-                                        min={0}
-                                        max={10}
-                                        step={0.1}
-                                        help={__('Controls how long the throw ease-out lasts. Higher = longer deceleration. (1000ms × ratio)', 'mello-block')}
-                                    />
-                                    <RangeControl
-                                        label={__('Momentum Velocity Ratio', 'mello-block')}
-                                        value={freeModeMomentumVelocityRatio}
-                                        onChange={(value) => setAttributes({ freeModeMomentumVelocityRatio: value !== undefined ? value : undefined })}
-                                        min={0}
-                                        max={10}
-                                        step={0.1}
-                                        help={__('Controls how far the throw travels. Higher = more distance.', 'mello-block')}
-                                    />
+                                    { freeModeMomentum !== false && (
+                                        <>
+                                            <RangeControl
+                                                label={__('Momentum Ratio', 'mello-block')}
+                                                value={freeModeMomentumRatio}
+                                                onChange={(value) => setAttributes({ freeModeMomentumRatio: value !== undefined ? value : undefined })}
+                                                min={0}
+                                                max={10}
+                                                step={0.1}
+                                                help={__('Controls how long the throw ease-out lasts. Higher = longer deceleration. (1000ms × ratio)', 'mello-block')}
+                                            />
+                                            <RangeControl
+                                                label={__('Momentum Velocity Ratio', 'mello-block')}
+                                                value={freeModeMomentumVelocityRatio}
+                                                onChange={(value) => setAttributes({ freeModeMomentumVelocityRatio: value !== undefined ? value : undefined })}
+                                                min={0}
+                                                max={10}
+                                                step={0.1}
+                                                help={__('Controls how far the throw travels. Higher = more distance.', 'mello-block')}
+                                            />
+                                        </>
+                                    )}
                                     <ToggleControl
                                         label={__('Sticky', 'mello-block')}
                                         checked={freeModeSticky}
